@@ -4,7 +4,8 @@ export const initialState = {
     showLogInModel: false,
     showSignUpModel: false,
     userInfo: undefined,
-    isSeller: false
+    isSeller: false,
+    gigData: undefined
 };
 
 const reducer = (state, action) => {
@@ -40,6 +41,13 @@ const reducer = (state, action) => {
                 ...state,
                 isSeller: !state.isSeller
             }
+
+        case reducerCases.SET_GIG_DATA:
+            return{
+                ...state,
+                gigData: action.gigData
+            }
+
         default:
             return state
     };

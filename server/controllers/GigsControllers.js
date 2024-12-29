@@ -98,7 +98,10 @@ export const getGigData = async (req, res) => {
         if(req?.params?.gigId){
             const prisma = new PrismaClient();
             const gig = await prisma.gigs.findUnique({
-                where: {id: parseInt(req.params.gigId)}
+                where: {id: parseInt(req.params.gigId)},
+                include: {
+                    createdBy: true
+                }
             });
 
             return res.status(200).json({
@@ -202,35 +205,8 @@ export const editGig = async (req,res) => {
     }
 }
 
-export const searchGig = async (req, res) => {
-    try {
-
-        if(req?.query?.searchTerm || req?.query?.category){
-            const prisma = new PrismaClient();
-            const gigs = await prisma.gigs.findMany(
-                createSearchQuery(req.query.searchTerm, req.query.category)
-            );
-            return res.status(200).json({
-                gigs,
-                success: true
-            })
-
-        }
-        return res.status(404).json({
-            msg: 'Gigs not found',
-            success: false
-        });
-        
-    } catch (error) {
-        console.log('err', error);
-        return res.status(501).json({
-            msg: 'Internal Server Error',
-            success: false
-        });
-    }
-};
-
 const createSearchQuery = (searchTerm, category) => {
+    console.log(searchTerm, category);
     const query = {
         where: {
             OR: [],
@@ -247,6 +223,12 @@ const createSearchQuery = (searchTerm, category) => {
                 mode: 'insensitive'
             }
         });
+        query.where.OR.push({
+            category: {
+                contains: searchTerm,
+                mode: 'insensitive'
+            },
+        })
         query.where.OR.push({
             shortDesc: {
                 contains: searchTerm,
@@ -284,5 +266,36 @@ const createSearchQuery = (searchTerm, category) => {
 
     return query;
 };
+
+export const searchGig = async (req, res) => {
+    try {
+        // if the search term or category is provided then we will search the gigs
+        if(req?.query?.searchTerm || req?.query?.category){
+            const prisma = new PrismaClient();
+            const gigs = await prisma.gigs.findMany(
+                createSearchQuery(req.query.searchTerm, req.query.category)
+            );
+            return res.status(200).json({
+                gigs,
+                success: true
+            })
+
+        };
+
+        // if the search term and category is not provided then we will return the error message
+        return res.status(404).json({
+            msg: 'Gigs not found',
+            success: false
+        });
+        
+    } catch (error) {
+        console.log('err', error);
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: false
+        });
+    }
+};
+
 
 
