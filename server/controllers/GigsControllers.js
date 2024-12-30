@@ -100,14 +100,33 @@ export const getGigData = async (req, res) => {
             const gig = await prisma.gigs.findUnique({
                 where: {id: parseInt(req.params.gigId)},
                 include: {
-                    createdBy: true
+                    createdBy: true,
+                    reviews: {
+                        include: {
+                            reviewer: true
+                        }
+                    }
                 }
             });
 
-            return res.status(200).json({
-                gig,
-                success: true
-            });
+            const userWithGigs = await prisma.user.findUnique({
+                where: {id: gig?.createdBy?.id},
+                include: {gigs: {include: {reviews: true}}}
+            })
+
+            const totalReviews = userWithGigs.gigs.reduce(
+                (acc, gig) => acc + gig.reviews.length,
+                0
+            )
+
+            const averageRating = (
+                userWithGigs.gigs.reduce(
+                    (acc, gig) => acc = gig.reviews.reduce((sum, review) => sum + review.rating,0),
+                    0
+                )/ totalReviews
+            ).toFixed(1);
+
+            return res.status(200).json({ gig: {...gig, totalReviews, averageRating},success: true});
         }
         return res.status(404).json({
             msg: 'Gig not found',
@@ -213,6 +232,11 @@ const createSearchQuery = (searchTerm, category) => {
         },
         include: {
             createdBy: true,
+            reviews: {
+                include: {
+                    reviewer: true
+                }
+            }
     },
 }
     
@@ -297,5 +321,92 @@ export const searchGig = async (req, res) => {
     }
 };
 
+const checkOrder = async (userId, gigId) => {
+    try {
+        const prisma = new PrismaClient();
+        const hasUserOrderedGig = await prisma.orders.findFirst({
+            where: {
+                buyerId: parseInt(userId),
+                gigId: parseInt(gigId),
+                inCompleted: true
+            }
+        });
+        return hasUserOrderedGig;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const checkGigOrder = async (req, res) => {
+    try {
+        if(req?.user?.userId && req?.params?.gigId){
+            const hasUserOrderedGig = await checkOrder(req.user.userId, req.params.gigId);
+
+            return res.status(201).json({
+                hasUserOrderedGig: hasUserOrderedGig ? true : false
+            })
+        }
+
+        return res.status(201).json({
+            msg: 'Gig is not valid',
+            success: false
+        })
+        
+    } catch (error) {
+        console.log('err', error);
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: false
+        });
+    }
+}
+
+export const addReview = async (req, res, _) => {
+    try {
+        if(req?.user?.userId && req.params.gigId){
+            if(await checkOrder(req?.user?.userId , req.params.gigId)){
+                if(req.body.reviewText && req.body.rating){
+                    const prisma = new PrismaClient();
+                    const newReview = await prisma.reviews.create({
+                        data: {
+                            rating: req.body.rating,
+                            reviewText: req.body.reviewText,
+                            reviewer: { connect : {id: parseInt(req?.user?.userId)}},
+                            gig: {connect: {id: parseInt(req?.params?.gigId)}}
+                        },
+                        include: {
+                            reviewer: true
+                        }
+                    });
+                    return res.status(201).json({
+                        newReview,
+                        success: true
+                    });
+                }
+                return res.status(400).json({
+                    msg: 'Rating and text is required',
+                    success: false
+                });
+            }
+            return res.status(400).json({
+                msg: 'You need to purchase the gig to give a rating',
+                success: false
+            });
+        };
+
+        return res.status(400).json({
+            msg: 'invalid',
+            success: false
+        });
+
+        
+    } catch (error) {
+        console.log('err', error);
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: false
+        });
+    }
+}
 
 

@@ -17,7 +17,11 @@ export const GET_USER_GIGS = `${GIG_ROUTES}/get-user-gigs`;
 export const GET_GIG_DATA = `${GIG_ROUTES}/get-gig-data`;
 export const EDIT_GIG = `${GIG_ROUTES}/edit-gig`;
 export const SEARCH_GIGS_ROUTE = `${GIG_ROUTES}/search`;
+export const CHECK_USER_ORDERED_GIG_ROUTE = `${GIG_ROUTES}/check-gig-order`;
+export const ADD_REVIEW = `${GIG_ROUTES}/add-review`
 
 // Orders Routes
 export const CREATE_ORDER = `${ORDER_ROUTES}/create`;
-export const ORDER_SUCCESS_ROUTE = `${ORDER_ROUTES}/success`
+export const ORDER_SUCCESS_ROUTE = `${ORDER_ROUTES}/success`;
+export const GET_BUYER_ORDERS_ROUTE = `${ORDER_ROUTES}/get-buyer-orders`;
+export const GET_SELLER_ORDERS_ROUTE = `${ORDER_ROUTES}/get-seller-orders`;

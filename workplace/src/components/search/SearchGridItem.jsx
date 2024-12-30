@@ -6,18 +6,26 @@ import { FaStar } from 'react-icons/fa'
 
 const SearchGridItem = ({ gig }) => {
 
-    console.log('gig', gig)
+    // console.log('gig', gig)
     const router = useRouter();
     const calculateRatings = () => {
+        const { reviews } = gig;
+        let rating = 0;
+        if(!reviews?.length){
+            return 0;
+        }
 
+        reviews?.forEach((review) => {
+            rating += review.rating
+        });
+
+        return (rating / reviews.length).toFixed(1);
     }
 
     return (
         <div
             className='max-w-[300px] flex flex-col gap-2 p-1 cursor-pointer mb-8'
-            onClick={() => router.push(`/gig/${gig?.id}`)}
-            // onClick={() => console.log('hello')}
-            
+            onClick={() => router.push(`/gig/${gig?.id}`)}            
         >
             <div className='relative w-64 h-40'>
                 <Image

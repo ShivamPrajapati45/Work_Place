@@ -145,7 +145,7 @@ export const getUserInfo = async (req,res) => {
         }
         
     } catch (error) {
-        // console.log('err', error);
+        console.log('err', error);
         return res.status(501).json({
             msg: 'Internal Server Error',
             success: false

@@ -4,10 +4,14 @@ import { HOST } from '@/utils/constant';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import { FaStar } from 'react-icons/fa';
+import Reviews from './Reviews';
+import AddReview from './AddReview';
 
 const Details = () => {
-    const [{ gigData,userInfo }] = useStateProvider();
+    const [{ gigData,userInfo,hasOrdered }] = useStateProvider();
     const [currentImages, setCurrentImages] = useState();
+    const [averageRatings, setAverageRatings] = useState("0");
+    
     
     useEffect(() => {
         console.log('dataGig',gigData)
@@ -15,6 +19,14 @@ const Details = () => {
             setCurrentImages(gigData?.images[0]);
         }
     },[gigData]);
+
+    useEffect(() => {
+            if(gigData && gigData?.reviews.length){
+                let avgRating  = 0;
+                gigData.reviews.forEach(({ rating }) => (avgRating += rating));
+                setAverageRatings((avgRating / gigData.reviews.length).toFixed(1));
+            }
+    },[gigData,averageRatings])
 
     return (
         <>
@@ -52,10 +64,13 @@ const Details = () => {
                                 {[1,2,3,4,5].map((star) => (
                                     <FaStar
                                         key={star}
-                                        // className={`cursor-pointer ${Math.ceil(averageRatings) >= star ? 'text-yellow-400' : 'text-gray-200'}`}
+                                        className={`cursor-pointer ${Math.ceil(averageRatings) >= star ? 'text-yellow-400' : 'text-gray-200'}`}
                                     />
                                 ))}
                             </div>
+                            <span className='text-yellow-400'>
+                                {averageRatings}
+                            </span>
                         </div>
                     </div>
                     <div className='flex flex-col gap-4'>
@@ -131,10 +146,14 @@ const Details = () => {
                                             />
                                         ))}
                                     </div>
+                                    <span className='text-yellow-400'>{gigData.averageRating}</span>
+                                    <span className='text-gray-400'>({gigData.totalReviews})</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <Reviews/>
+                    {hasOrdered && <AddReview/>}
                 </div>
             )}
         </>

@@ -59,7 +59,7 @@ export const confirmOrder = async (req, res) => {
             const prisma = new PrismaClient();
             await prisma.orders.update({
                 where: {paymentIntent: req.body.paymentIntent},
-                data: { isCompleted: true }
+                data: { inCompleted: true }
             });
 
             return res.status(201).json({
@@ -81,3 +81,69 @@ export const confirmOrder = async (req, res) => {
         });
     }
 };
+
+// this is for getting all seller orders matlab user ne kitne gig order kiye he
+export const getSellerOrders = async (req, res) => {
+    try {
+        if(req?.user?.userId){
+            const prisma = new PrismaClient();
+            const orders = await prisma.orders.findMany({
+                where: {
+                    gig: {
+                        createdBy: {
+                            id: parseInt(req?.user?.userId)
+                        },
+                    },
+                    inCompleted: true
+                },
+                include: {
+                    gig: true,
+                    buyer: true
+                }
+            });
+
+            return res.status(201).json({
+                orders
+            }) 
+        }
+
+        return res.status(400).json({
+            msg: "User not found"
+        })
+        
+    } catch (error) {
+        console.log('er',error);
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: true
+        })
+    }
+}
+
+// jisne gig banaya he uske gig ko kitne orders aaye he
+export const getBuyerOrders = async (req, res) => {
+    try {
+        if(req?.user?.userId){
+            const prisma = new PrismaClient();
+            const orders = await prisma.orders.findMany({
+                where: {buyerId: req?.user?.userId, inCompleted: true},
+                include: {gig: true}
+            });
+
+            return res.status(201).json({
+                orders
+            }) 
+        }
+
+        return res.status(400).json({
+            msg: "User not found"
+        })
+        
+    } catch (error) {
+        console.log('er',error);
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: true
+        })
+    }
+}
