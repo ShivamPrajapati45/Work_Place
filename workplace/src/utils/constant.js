@@ -2,6 +2,7 @@ export const HOST = process.env.SERVER_URL;
 export const API_URl = `${HOST}/api`;
 export const AUTH_ROUTES = `${API_URl}/auth`;
 export const GIG_ROUTES = `${API_URl}/gigs`;
+export const ORDER_ROUTES = `${API_URl}/order`
 
 // User Routes
 export const SIGNUP_ROUTES = `${AUTH_ROUTES}/signup`;
@@ -16,3 +17,7 @@ export const GET_USER_GIGS = `${GIG_ROUTES}/get-user-gigs`;
 export const GET_GIG_DATA = `${GIG_ROUTES}/get-gig-data`;
 export const EDIT_GIG = `${GIG_ROUTES}/edit-gig`;
 export const SEARCH_GIGS_ROUTE = `${GIG_ROUTES}/search`;
+
+// Orders Routes
+export const CREATE_ORDER = `${ORDER_ROUTES}/create`;
+export const ORDER_SUCCESS_ROUTE = `${ORDER_ROUTES}/success`

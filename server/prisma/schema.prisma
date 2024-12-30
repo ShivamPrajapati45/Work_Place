@@ -17,7 +17,8 @@ model User {
   profileImage     String?
   isProfileInfoSet Boolean? @default(false)
   createdAt        DateTime @default(now())
-  gigs             Gigs[]
+  gigs Gigs[]
+  orders Orders[]
 }
 
 model Gigs {
@@ -32,6 +33,19 @@ model Gigs {
   shortDesc    String
   createdAt    DateTime @default(now())
   images       String[]
-  userId       Int
   createdBy    User     @relation(fields: [userId], references: [id])
+  userId       Int
+  orders Orders[]
+}
+
+model Orders {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  buyer User @relation(fields: [buyerId],references: [id])
+  buyerId Int
+  paymentIntent String @unique
+  inCompleted Boolean @default(false)
+  gig Gigs @relation(fields: [gigId],references: [id])
+  gigId Int
+  price Int
 }

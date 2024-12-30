@@ -88,6 +88,53 @@ const Details = () => {
                             <p>{gigData?.description}</p>
                         </div>
                     </div>
+                    <div className=''>
+                        <h3 className='text-3xl my-5 font-semibold text-gray-400'>
+                            About The Seller
+                        </h3>
+                        <div className='flex gap-4'>
+                            <div>
+                                {gigData?.createdBy?.profileImage ? (
+                                    <Image
+                                        src={HOST + '/' + gigData?.createdBy?.profileImage}
+                                        alt='profile'
+                                        height={120}
+                                        width={120}
+                                        className='rounded-full'
+                                    />
+                                ) : (
+                                    <div className='bg-purple-500 h-10 w-10 flex items-center justify-center rounded-full relative'>
+                                        <span className='text-xl text-white'>
+                                            {gigData?.createdBy?.email[0].toUpperCase()}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                            <div className='flex flex-col gap-3'>
+                                <div className='flex gap-2 items-center'>
+                                    <h4 className='font-medium text-lg'>
+                                        {gigData?.createdBy?.fullName}
+                                    </h4>
+                                    <span className='text-gray-400'>
+                                        @{gigData?.createdBy?.username}
+                                    </span>
+                                </div>
+                                <div className=''>
+                                    <p>{gigData?.createdBy?.description}</p>
+                                </div>
+                                <div className='flex items-center gap-3'>
+                                    <div className='flex text-yellow-400'>
+                                        {[1,2,3,4,5].map((star) => (
+                                            <FaStar
+                                                key={star}
+                                                className={`cursor-pointer ${Math.ceil(gigData?.averageRating) >= star ? 'text-yellow-400' : 'text-gray-200'}`}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </>
