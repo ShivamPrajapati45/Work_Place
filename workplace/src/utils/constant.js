@@ -3,6 +3,7 @@ export const API_URl = `${HOST}/api`;
 export const AUTH_ROUTES = `${API_URl}/auth`;
 export const GIG_ROUTES = `${API_URl}/gigs`;
 export const ORDER_ROUTES = `${API_URl}/order`
+export const MESSAGE_ROUTES = `${API_URl}/message`
 
 // User Routes
 export const SIGNUP_ROUTES = `${AUTH_ROUTES}/signup`;
@@ -25,3 +26,7 @@ export const CREATE_ORDER = `${ORDER_ROUTES}/create`;
 export const ORDER_SUCCESS_ROUTE = `${ORDER_ROUTES}/success`;
 export const GET_BUYER_ORDERS_ROUTE = `${ORDER_ROUTES}/get-buyer-orders`;
 export const GET_SELLER_ORDERS_ROUTE = `${ORDER_ROUTES}/get-seller-orders`;
+
+// Messages Routes
+export const GET_MESSAGES = `${MESSAGE_ROUTES}/get-messages`;
+export const ADD_MESSAGES = `${MESSAGE_ROUTES}/add-messages`
