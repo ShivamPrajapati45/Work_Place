@@ -2,8 +2,9 @@ export const HOST = process.env.SERVER_URL;
 export const API_URl = `${HOST}/api`;
 export const AUTH_ROUTES = `${API_URl}/auth`;
 export const GIG_ROUTES = `${API_URl}/gigs`;
-export const ORDER_ROUTES = `${API_URl}/order`
-export const MESSAGE_ROUTES = `${API_URl}/message`
+export const ORDER_ROUTES = `${API_URl}/order`;
+export const MESSAGE_ROUTES = `${API_URl}/message`;
+export const DASHBOARD_ROUTES = `${API_URl}/dashboard`;
 
 // User Routes
 export const SIGNUP_ROUTES = `${AUTH_ROUTES}/signup`;
@@ -30,3 +31,8 @@ export const GET_SELLER_ORDERS_ROUTE = `${ORDER_ROUTES}/get-seller-orders`;
 // Messages Routes
 export const GET_MESSAGES = `${MESSAGE_ROUTES}/get-messages`;
 export const ADD_MESSAGES = `${MESSAGE_ROUTES}/add-messages`
+export const GET_UNREAD_MESSAGES = `${MESSAGE_ROUTES}/unread-messages`
+export const MARK_AS_READ = `${MESSAGE_ROUTES}/mark-as-read`
+
+// Dashboard Routes
+export const GET_SELLER_DASHBOARD_DATA = `${DASHBOARD_ROUTES}/seller`

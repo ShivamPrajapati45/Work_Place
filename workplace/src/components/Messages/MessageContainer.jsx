@@ -1,10 +1,12 @@
 
 import { useStateProvider } from '@/context/StateContext';
-import { GET_MESSAGES } from '@/utils/constant';
+import { ADD_MESSAGES, GET_MESSAGES } from '@/utils/constant';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
+import { BsCheckAll } from 'react-icons/bs';
+import { FaRegPaperPlane } from 'react-icons/fa';
 
 const MessageContainer = () => {
 
@@ -22,13 +24,42 @@ const MessageContainer = () => {
                 const {data} = await axios.get(`${GET_MESSAGES}/${orderId}`,{withCredentials: true})
                 
                 setMessages(data?.messages);
-                setRecipientId(data.recipient);
+                setRecipientId(data.recipientId);
+
             } catch (error) {
                 console.log(error)
             }
         };
         if(orderId && userInfo) getMessages();
-    },[orderId, userInfo])
+    },[orderId, userInfo]);
+
+    const formatTime = (timeStamp) => {
+        const date = new Date(timeStamp);
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        const amPm = hours >= 12 ? 'PM' : 'AM';
+        hours %= 12;
+        hours = hours || 12;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        const formattedTime = `${hours}:${minutes}${amPm}`;
+        return formattedTime
+    };
+
+    const sendMessage = async () => {
+        try {
+            if(messageText.length){
+                const response = await axios.post(`${ADD_MESSAGES}/${orderId}`,{message: messageText, recipientId},{withCredentials: true});
+
+                if(response.data.success){
+                    setMessages([...messages,response.data.message]);
+                    setMessageText("");
+                }
+            }
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <div className='h-[80vh]'>
@@ -42,13 +73,42 @@ const MessageContainer = () => {
                                     className={`flex ${message.senderId === userInfo.id ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div 
-                                        className={`inline-block rounded-lg ${message.senderId === userInfo.id ? 'bg-green-400 text-white' : 'bg-gray-200 text-gray-400'} px-4 py-2 break-all`}
+                                        className={`inline-block rounded-lg 
+                                            ${message.senderId === userInfo.id 
+                                                ? 'bg-green-400 text-white' 
+                                                : 'bg-gray-200 text-gray-400'
+                                            } px-4 py-2 break-all`}
                                     >
                                         <p>{message.text}</p>
+                                        <span className='text-sm text-gray-400'>
+                                            {formatTime(message.createdAt)}
+                                        </span>
+                                        <span>
+                                            {message.senderId === userInfo.id && message.isRead && (
+                                                <BsCheckAll/>
+                                            )}
+                                        </span>
                                     </div>
                                 </div>
                             ))}
                         </div>
+                    </div>
+                    <div className='flex mt-4'>
+                        <input 
+                            type="text" 
+                            className='rounded-full py-2 px-4 text-black mr-5 w-full'
+                            placeholder='type a msg'
+                            name='message'
+                            onChange={(e) => setMessageText(e.target.value)}
+                            value={messageText}
+                        />
+                        <button 
+                            className='rounded-full bg-green-400 px-4 py-2 text-white'
+                            type='submit'
+                            onClick={sendMessage}
+                        >
+                            <FaRegPaperPlane/>
+                        </button>
                     </div>
                 </div>
             </div>

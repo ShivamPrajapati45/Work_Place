@@ -95,3 +95,67 @@ export const getMessages = async (req, res) => {
         })
     }
 }
+
+export const getUnreadMessages = async (req, res) => {
+    try {
+        if(req.user.userId){
+            const prisma = new PrismaClient();
+            const messages = await prisma.messages.findMany({
+                where: {
+                    recipientId: req.user.userId,
+                    isRead: false
+                },
+                include: {
+                    sender: true
+                }
+            });
+
+            return res.status(201).json({
+                messages,
+                success: true
+            })
+        }
+        return res.status(400).json({
+            msg: 'User is not valid',
+            success: false
+        })
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: true
+        })
+    }
+}
+
+export const markAsRead = async (req, res) => {
+    try {
+        if(req.user.userId && req.params.messageId){
+            const prisma = new PrismaClient();
+            await prisma.messages.update({
+                where: {
+                    id: parseInt(eq.params.messageId),
+                },
+                data: {
+                    isRead: true
+                }
+            });
+            return res.status(201).json({
+                msg: "Messages mark as read",
+                success: true
+            })
+        }
+        return res.status(400).json({
+            msg: 'User is not valid',
+            success: false
+        })
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: true
+        })
+    }
+}

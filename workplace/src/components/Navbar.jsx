@@ -111,7 +111,7 @@ const Navbar = () => {
     // this method check if user is seller or buyer if seller then navigate to order
     const handleOrdersNavigate = () => {
         if(isSeller) router.push('/seller/orders')
-            router.push('/buyer/orders')
+            router.push('/buyer/orders');
     };
 
     const handleModeSwitch = () => {
@@ -203,7 +203,7 @@ const Navbar = () => {
                                             Orders
                                         </li>
                                         <li
-                                            className='cursor-pointer font-medium'
+                                            className='cursor-pointer text-black font-medium'
                                             onClick={handleModeSwitch}
                                         >
                                                 Switch to {isSeller ? 'Buyer' : 'Seller'}

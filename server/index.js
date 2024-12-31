@@ -6,6 +6,7 @@ import authRoutes from './routes/AuthRoutes.js';
 import gigsRoutes from './routes/GigsRoutes.js';
 import orderRoutes from './routes/OrdersRoutes.js';
 import messageRoutes from './routes/MessagesRoute.js'
+import dashBoardRoutes from './routes/DashBoardRoutes.js';
 
 dotenv.config({
     path: true
@@ -28,6 +29,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/gigs', gigsRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/message',messageRoutes);
+app.use('/api/dashboard',dashBoardRoutes)
 
 
 app.listen(port,()=> {

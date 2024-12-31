@@ -134,7 +134,7 @@ export const getUserInfo = async (req,res) => {
             const prisma = new PrismaClient();
             const user = await prisma.user.findUnique({
                 where:{
-                    id: req.user.userId
+                    id: req?.user?.userId
                 },
             });
             delete user.password;  // it will delete password from user object
