@@ -6,7 +6,7 @@ import Logo from './Logo';
 import {IoSearchOutline} from 'react-icons/io5'
 import {useCookies} from 'react-cookie'
 import axios from 'axios';
-import { GET_USER_INFO, HOST } from '@/utils/constant';
+import { GET_USER_INFO, HOST, LOGIN_ROUTES, LOGOUT_ROUTES } from '@/utils/constant';
 import { reducerCases } from '@/context/constants';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
@@ -21,12 +21,14 @@ const Navbar = () => {
     const router = useRouter();
     const [cookies] = useCookies();
     const pathName = usePathname();
+    const [showInput, setShowInput] = useState(false);
 
     useEffect(() => {
         if(pathName === '/'){
             console.log('in')
             const positionNavbar = () => {
                 window.pageYOffset > 0 ? setIsFixed(true) : setIsFixed(false);
+                window.pageYOffset > 200 ? setShowInput(true) : setShowInput(false);
             };
             window.addEventListener('scroll', positionNavbar);
             return () => window.removeEventListener('scroll',positionNavbar);
@@ -36,7 +38,7 @@ const Navbar = () => {
     },[router,pathName]);
 
     const handleSignUp = () => {
-        console.log('hello');
+        // console.log('hello');
         // if(showLogInModel){
             dispatch({
                 type: reducerCases.TOGGLE_LOGIN_MODEL,
@@ -49,7 +51,7 @@ const Navbar = () => {
         // }
     };
     const handleLogin = () => {
-        console.log('hello')
+        // console.log('hello');
         // if(showSignUpModel){
             dispatch({
                 type: reducerCases.TOGGLE_SIGNUP_MODEL,
@@ -65,15 +67,13 @@ const Navbar = () => {
     const links = [
         { linkName: "Workplace Business", handler: '#',type: 'link' },
         { linkName: "Explore", handler: '#',type: 'link' },
-        { linkName: "English", handler: '#',type: 'link' },
-        { linkName: "Become a Seller", handler: '#',type: 'link' },
         { linkName: "Sign In", handler: handleLogin,type: 'button' },
         { linkName: "Join ", handler: handleSignUp,type: 'button2' },
     ];
 
     useEffect(() => {
         // if token rahega and userinfo nahi hoga tab jake ye call hoga
-        console.log('token',cookies.token,userInfo);
+        // console.log('token',cookies.token,userInfo);
 
         if(cookies.token && !userInfo){
             const getUserInfo = async () => {
@@ -124,22 +124,38 @@ const Navbar = () => {
         }
     }
 
+    const logout = async () => {
+        try{
+            const res = await axios.post(LOGOUT_ROUTES,{},{withCredentials: true});
+            if(res.data.success){
+                dispatch({
+                    type: reducerCases.SET_USER,
+                    userInfo: undefined
+                });
+                router.push('/');
+            }
+
+        }catch(err){
+            console.log(err);
+        }
+    }
+
     return (
         <>
             {
                 isLoaded && (
-                    <nav className={`w-full flex px-24 justify-between h-10 items-center py-6 top-0 z-30 transition-all duration-300
+                    <nav className={`flex w-screen px-24 justify-between h-14 items-center py-6 top-0 z-30 transition-all duration-300
                         ${isFixed || userInfo ? 'fixed bg-white border-b border-gray-200' : 'absolute  bg-transparent border-transparent'}`}>
                             <div className=''>
                                 <Link href={'/'}>
                                     <Logo fillColor={!isFixed && userInfo ? '#fff' : '#404145'} />
                                 </Link>
                             </div>
-                            <div className={`flex ${isFixed || userInfo ? 'opacity-100' : 'opacity-0'}`}>
+                            <div className={`flex ${showInput || userInfo ? 'opacity-100' : 'opacity-0'}`}>
                                 <input 
                                     type="text" 
-                                    className='w-[30rem] text-black py-2 px-4 border'
-                                    placeholder='search service'
+                                    className='w-[20rem] text-black py-2 px-4 border'
+                                    placeholder='search services are you looking for ?'
                                     value={searchData}
                                     onChange={(e) => setSearchData(e.target.value)}
                                 />
@@ -150,23 +166,26 @@ const Navbar = () => {
                                         router.push(`/search?q=${searchData}`)
                                     }}
                                 >
-                                    <IoSearchOutline className='fill-white text-white ' />
+                                    <IoSearchOutline className='fill-white text-2xl  text-white ' />
                                 </button>
                             </div>
                             {
                                 !userInfo ? (
-                                    <ul className='flex gap-10 text-black items-center'>
+                                    <ul className='flex gap-4 items-center'>
                                         {links.map(({ linkName,handler,type }) => {
                                             return(
                                                 <li
                                                     key={linkName}
-                                                    className={`${isFixed ? 'text-base' : 'text-white'} font-medium`}
+                                                    className={`${isFixed ? 'text-base' : 'text-white'} font-medium `}
                                                 >
-                                                    {type === 'link' && <Link href={handler} >
+                                                    {type === 'link' && <Link 
+                                                    className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
+                                                    href={handler} >
                                                         {linkName}
                                                     </Link>}
                                                     {type === 'button' && (
                                                         <button 
+                                                            className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
                                                             onClick={handler}
                                                         >
                                                             {linkName}
@@ -175,7 +194,7 @@ const Navbar = () => {
                                                     {type === 'button2' && (
                                                         <button
                                                             onClick={handler}
-                                                            className={`border text-lg font-semibold py-1 px-3 rounded-sm ${ isFixed ? 'border-[#1dbf73] text-green-300' : 'border-white text-white'} hover:bg-green-300 hover:text-white transition-all duration-500`}
+                                                            className={`border uppercase text-lg font-semibold py-[2px] px-4 rounded-sm ${ isFixed ? 'bg-[#34A853] outline-none border-none text-white' : 'border-white text-white'} hover:bg-[#66ba7d] hover:text-white transition-all duration-500`}
                                                         >
                                                             {linkName}
                                                         </button>
@@ -207,6 +226,17 @@ const Navbar = () => {
                                             onClick={handleModeSwitch}
                                         >
                                                 Switch to {isSeller ? 'Buyer' : 'Seller'}
+                                        </li>
+                                        <li
+                                            className='cursor-pointer border rounded-md border-black text-black font-medium'
+
+                                        >
+                                            <button
+                                                onClick={logout}
+                                                className='rounded-md px-2 py-1'
+                                            >
+                                                Logout
+                                            </button>
                                         </li>
                                         <li
                                             className='cursor-pointer'

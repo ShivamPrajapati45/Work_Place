@@ -24,7 +24,6 @@ const page = () => {
     });
 
     useEffect(() => {
-        // console.log('id',id)
         const fetchData = async () => {
             try {
                 const {data: {gig}} = await axios.get(`${GET_GIG_DATA}/${id}`,{withCredentials: true})
@@ -34,14 +33,13 @@ const page = () => {
                 gig.images.forEach((image) => {
                     const url = HOST + '/uploads/' + image;
                     const fileName = image;
-                    fetch(url).then( async (response) => {
-                        const contentType = response.headers.get('content-type');
-                        const blob = await response.blob();
+                    fetch(url).then(async (res) => {
+                        const contentType = res.headers.get('content-type');
+                        const blob = await res.blob();
                         const files = new File([blob], fileName, {contentType});
                         setFiles([files]);
                     });
-                });
-
+                })
             } catch (error) {
                 console.log('err', error);
             }
@@ -76,7 +74,7 @@ const page = () => {
     const editGig = async () => {
         try {
             const { title, category, description, time, revisions, price, shortDesc } = data;
-            if(title && category && description && time && revisions && price && shortDesc){
+            if(title && category && description && time > 0 && revisions > 0 && price > 0 && shortDesc){
                 const formData = new FormData();
                 files.forEach((file) => {
                     formData.append('images', file);
@@ -89,7 +87,7 @@ const page = () => {
                     revisions,
                     price,
                     shortDesc,
-                    features
+                    features,
                 };
 
                 const response = await axios.put(`${EDIT_GIG}/${id}`,formData,{
@@ -241,7 +239,10 @@ const page = () => {
                                 Gig Images
                             </label>
                             <div>
-                                <ImageUpload files={files} setFile={setFiles} />
+                                <ImageUpload 
+                                    files={files} 
+                                    setFile={setFiles} 
+                                />
                             </div>
                         </div>
                 </div>

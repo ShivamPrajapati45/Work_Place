@@ -1,8 +1,10 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { compare, genSalt, hash } from "bcrypt";
 import jwt from 'jsonwebtoken'
-import fs from 'fs'
-
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { oauth2Client } from "../utils/googleConfig.js";
+import bcrypt from 'bcrypt'
+import axios from 'axios'
 // Generating Bcrypt or Hash password
 const generateHashPassword = async (password) => {
     const salt = await genSalt(10);
@@ -72,6 +74,72 @@ export const signup = async (req, res) => {
         })
     }
 };
+
+export const googleAuth = async (req, res) => {
+    try {
+        const {code} = req.query;
+        const googleRes = await oauth2Client.getToken(code);
+        oauth2Client.setCredentials(googleRes.tokens);
+
+        const userRes = await axios.get(
+            `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
+        );
+        const {email, name, picture} = userRes.data;
+        const data = userRes.data;
+        console.log('data', data);
+        const prisma = new PrismaClient();
+        const existUser = await prisma.user.findUnique({
+            where: {email},
+        });
+        if(existUser){
+            const token = createToken(email, existUser.id);
+            return res
+            .cookie('token',token,{
+                httpOnly: false,
+                maxAge: maxAge * 1000
+            })
+            .status(201)
+            .json({
+                user: {
+                    id: existUser.id,
+                    email: existUser.email
+                },
+                token,
+                success: true
+            });
+        }
+        const randomPassword = await bcrypt.hash(Math.random().toString(36).slice(-8), 10);
+        const user = await prisma.user.create({
+            data:{
+                email,
+                fullName: name,
+                password: randomPassword
+            }
+        });
+        const token = createToken(email, user.id);
+        return res
+        .cookie('token',token,{
+            httpOnly: false,
+            maxAge: maxAge * 1000
+        })
+        .status(201)
+        .json({
+            user: {
+                id: user.id,
+                email: user.email
+            },
+            token,
+            success: true
+        });
+
+    } catch (error) {
+        console.log('google',error);
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: false
+        });
+    }
+}
 
 export const login = async (req, res) => {
     try {
@@ -207,25 +275,41 @@ export const setUserInfo = async (req,res) => {
         throw error
     }
 }
+
+// here i want to use cloudinary for uploading profileImage of user
 export const setUserImage = async (req,res) => {
     try {
         // console.log(req);
-        console.log(req?.file);
+        // console.log( "first",req?.file);
         if(req?.file){
             if(req?.user?.userId){
-                console.log(req?.file);
-                const date =  Date.now();
-                let fileName = 'uploads/profiles' + date + req.file.originalname;
-                fs.renameSync(req.file.path, fileName);
+                const localFile = req.file;
+                // console.log("sec",localFile);
+                if(!localFile) return res.status(404).json({
+                    msg: 'image is required',
+                    success: false
+                })
+
+                const cloud = await uploadOnCloudinary(localFile.path);
+                // console.log("set image", cloud);
+                if(!cloud) return res.status(404).json({
+                    msg: 'Profile Image is required',
+                    success: false
+                })
+
+                // const date =  Date.now();
+                // let fileName = 'uploads/profiles' + date + req.file.originalname;
+                // fs.renameSync(req.file.path, fileName);
                 const prisma = new PrismaClient();
-                await prisma.user.update({
+                const user = await prisma.user.update({
                     where: {id: req?.user?.userId},
                     data: {
-                        profileImage: fileName
+                        profileImage: cloud.secure_url
                     }
                 });
                 return res.status(200).json({
-                    img: fileName,
+                    user,
+                    img: user.profileImage,
                     success: true
                 })
             }
@@ -240,10 +324,32 @@ export const setUserImage = async (req,res) => {
         })
         
     } catch (error) {
-        console.log('err', error);
+        // console.log('err', error);
         return res.status(501).json({
             msg: 'Internal Server Error',
             success: false
         });
+    }
+}
+
+export const logOut = async (req,res) => {
+    try {
+        if(req.user.userId){
+            return res.status(201).cookie('token','').json({
+                msg: 'Logout successfully',
+                success: true
+            })
+        }
+        return res.status(404).json({
+            msg: 'Invalid User',
+            success: false
+        })
+        
+    } catch (error) {
+        console.log('logout',error);
+        return res.status(501).json({
+            msg: "Internal Server Error",
+            success: false
+        })
     }
 }

@@ -8,14 +8,12 @@ import orderRoutes from './routes/OrdersRoutes.js';
 import messageRoutes from './routes/MessagesRoute.js'
 import dashBoardRoutes from './routes/DashBoardRoutes.js';
 
-dotenv.config({
-    path: true
-});
+dotenv.config();
 const app = express();
 const port = process.env.PORT || 3001
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000'],
     methods: ['GET','POST','PUT','DELETE'],
     credentials: true
 }));

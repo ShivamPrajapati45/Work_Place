@@ -1,10 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { create } from 'domain';
 import {existsSync, renameSync, unlinkSync} from 'fs'
+import { uploadMultipleToCloudinary } from '../utils/cloudinary.js';
+
 
 export const addGig = async (req,res) => {
     try {
-        if(req?.files){
+        if(req.files && req.query){
+
             const filesKeys = Object.keys(req.files);
             const fileNames = [];
             filesKeys.forEach((file) => {
@@ -15,7 +17,8 @@ export const addGig = async (req,res) => {
                 );
                 fileNames.push(date + req.files[file].originalname);
             });
-            if(req.query){
+
+            const cloudResponse = await uploadMultipleToCloudinary(req.files);
                 const {
                     title, 
                     description,
@@ -48,7 +51,6 @@ export const addGig = async (req,res) => {
                     msg: 'Gig created successfully',
                     success: true
                 });
-            }
         }
 
         return res.status(400).json({
@@ -142,9 +144,10 @@ export const getGigData = async (req, res) => {
     }
 };
 
-export const editGig = async (req,res) => {
+export const editGig = async (req, res) => {
     try {
-        if(req?.files){
+        if (req?.files && req.query) {
+
             const filesKeys = Object.keys(req.files);
             const fileNames = [];
             filesKeys.forEach((file) => {
@@ -155,74 +158,67 @@ export const editGig = async (req,res) => {
                 );
                 fileNames.push(date + req.files[file].originalname);
             });
-            if(req.query){
-                const {
-                    title, 
+
+            const prisma = new PrismaClient();
+            const {
+                title,
+                description,
+                category,
+                features,
+                price,
+                revisions,
+                time,
+                shortDesc,
+            } = req.query;
+
+
+            const oldGig = await prisma.gigs.findUnique({
+                where: { id: parseInt(req?.params?.gigId) }, // Ensure gigId is parsed as an integer
+            });
+
+            // Update the gig with new data
+            await prisma.gigs.update({
+                where: { id: parseInt(req?.params?.gigId) },
+                data: {
+                    title,
                     description,
+                    deliveryTime: parseInt(time),
                     category,
                     features,
-                    price,
-                    revisions,
-                    time,
-                    shortDesc, 
-                } = req.query;
+                    price: parseFloat(price),
+                    shortDesc,
+                    revisions: parseInt(revisions),
+                    images: fileNames,
+                    createdBy: { connect: { id: req.user.userId } },
+                },
+            });
 
-                const prisma = new PrismaClient();
-
-                // first we will get the old data of the gig
-                const oidData = await prisma.gigs.findUnique({
-                    where: { id: parseInt(req?.params?.gigId) }
-                })
-
-                // then we will update the gig with the new data
-                await prisma.gigs.update({
-                    where: { id: parseInt(req?.params?.gigId) },
-                    data: {
-                        title,
-                        description,
-                        deliveryTime: parseInt(time),
-                        category,
-                        features,
-                        price: parseFloat(price),
-                        shortDesc,
-                        revisions: parseInt(revisions),
-                        images: fileNames,
-                        createdBy: {connect: {id: req.user.userId}}
-                        
-                    }
-                });
-
-
-                // delete the old images
-                oidData?.images?.forEach((image) => {
-                    if(existsSync(`uploads/${image}`)){
-                        unlinkSync(`uploads/${image}`);
-                    } 
-                })
-
-
-                // if everything goes well then we will return the success message
-                return res.status(200).json({
-                    msg: 'Gig updated successfully',
-                    success: true
-                });
-            }
+            oidData?.images?.forEach((image) => {
+                if(existsSync(`uploads/${image}`)){
+                    unlinkSync(`uploads/${image}`);
+                } 
+            })
+            // If everything goes well, return the success message
+            return res.status(200).json({
+                msg: 'Gig updated successfully',
+                success: true,
+            });
         }
 
-        // if anything goes wrong then we will return the error message
+        // If any required field is missing, return an error
         return res.status(400).json({
-            msg: 'All Field is Required',
-            success: false
+            msg: 'All fields are required',
+            success: false,
         });
-
     } catch (error) {
         console.log('err', error);
         return res.status(501).json({
             msg: 'Internal Server Error',
-            success: false
+            success: false,
         });
     }
-}
+};
+
 
 const createSearchQuery = (searchTerm, category) => {
     console.log(searchTerm, category);

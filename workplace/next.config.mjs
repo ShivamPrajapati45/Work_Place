@@ -4,6 +4,7 @@ const nextConfig = {
         SERVER_URL: 'http://localhost:3001'
     },
     images: {
+        domains: ['res.cloudinary.com'],
         remotePatterns:[
             {
                 protocol: 'http',

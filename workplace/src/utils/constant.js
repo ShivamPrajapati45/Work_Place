@@ -12,6 +12,7 @@ export const LOGIN_ROUTES = `${AUTH_ROUTES}/login`;
 export const GET_USER_INFO = `${AUTH_ROUTES}/get-user-info`;
 export const SET_USER_INFO = `${AUTH_ROUTES}/set-user-info`;
 export const SET_USER_IMAGE = `${AUTH_ROUTES}/set-user-image`;
+export const LOGOUT_ROUTES = `${AUTH_ROUTES}/logout`
 
 // Gigs Routes
 export const ADD_GIG_ROUTE = `${GIG_ROUTES}/add`;

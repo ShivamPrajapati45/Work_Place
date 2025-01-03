@@ -9,37 +9,41 @@ const imageUpload = ({ files, setFile }) => {
     const handleFile = (e) => {
         setMsg('');
         let file = e.target.files;
-
-        for(let i=0; i<file.length; i++){
+        for(let i=0; i < file.length; i++){
             const fileType = file[i].type;
-            const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+            const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
             if(validImageTypes.includes(fileType)){
-                setFile([...files,file[i]]);
+                setFile([...files, file[i]]);
             }else{
                 setMsg('Please select valid image type (jpg, jpeg, png)');
             }
         }
     };
-
-    const removeImage = (i) => {
-        setFile(files.filter((x) => x.name !== i));
+    console.log('files: ', files)
+    const removeImage = (fileName) => {
+        setFile(files.filter((x) => x.name !== fileName));
     }
-
-
-
 
     return (
         <div>
             <div className='flex items-center px-3'>
                 <div className='rounded-lg bg-gray-50 w-full'>
                     <div className='m-4'>
-                        <span className='flex justify-center items-center text-lg mb-1 text-red-500'>
-                            {msg}
-                        </span>
+                    {msg && (
+                            <span className="flex justify-center items-center text-lg mb-1 text-red-500">
+                                {msg}
+                            </span>
+                    )}
                         <div className='flex items-center justify-center w-full'>
                             <label htmlFor="" className='flex cursor-pointer flex-col w-full h-32 border-2 rounded-md border-dashed hover:bg-gray-100 hover:border-gray-300'>
                                 <div className='flex flex-col items-center justify-center pt-7'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className='h-12 w-12 text-gray-400 group-hover:text-gray-600' fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        className='h-12 w-12 text-gray-400 group-hover:text-gray-600' 
+                                        fill="currentColor" 
+                                        viewBox="0 0 24 24" 
+                                        stroke="currentColor"
+                                    >
                                         <path   
                                             fillRule='evenodd'
                                             d='M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z'
@@ -52,7 +56,7 @@ const imageUpload = ({ files, setFile }) => {
                                 </div>
                                 <input 
                                     type="file" 
-                                    multiple 
+                                    multiple={true}
                                     className='opacity-0' 
                                     onChange={handleFile}
                                     name='files[]'
@@ -60,8 +64,7 @@ const imageUpload = ({ files, setFile }) => {
                             </label>
                         </div>
                         <div className='flex flex-wrap gap-2 mt-2'>
-                            {files?.map((file, key) => {
-                                return (
+                            {files?.map((file, key) => (
                                     <div key={key} className='relative overflow-hidden'>
                                         <i
                                             onClick={() => {
@@ -79,8 +82,8 @@ const imageUpload = ({ files, setFile }) => {
                                             />
                                         </div>
                                     </div>
-                                )
-                            })}
+                            )
+                            )}
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
@@ -50,24 +50,40 @@ const PopularServices = () => {
 
 
     return (
-        <div className='mx-20 my-16 text-white'>
-        <h2 className='text-4xl mb-10  text-white text-center font-bold ml-4'>Popular Services</h2>
-        <ul className='flex flex-wrap gap-10 justify-center'>
-            {popularServices.map(({name,label,image})=>(
-            <li key={name} 
-                className='relative cursor-pointer' 
-                // Aisa ek page banana he click karne pe search page pe jaye with query
-                onClick={()=> router.push(`/search?q-${name.toLowerCase()}`)} 
-            >
-                <div className='absolute z-10  left-5 top-4'>
-                <span>{label}</span>
-                <h6 className='font-extrabold text-2xl'>{name}</h6>
-                </div>
-                <div className='h-60 w-60 '>
-                <Image  alt='service' src={image} className='rounded-xl hover:shadow-md transition-all hover:shadow-black' fill></Image>
-                </div>
-            </li>
-            ))}
+        <div className='mt-3 text-white'>
+        <h2 className='text-4xl mb-5  text-[#212121] text-center font-bold ml-4'>Popular Services</h2>
+        <ul className='flex flex-wrap gap-10 justify-center bg-[#000] py-10'>
+            {popularServices.map(({name,label,image})=>{
+                const [isHovered, setIsHovered] = useState(false);
+                return(
+                    <li key={name} 
+                        className='relative cursor-pointer' 
+                        onClick={()=> router.push(`/search?q-${name.toLowerCase()}`)} 
+                    >
+                        <div className='absolute z-10  left-5 top-4'>
+                            <span>{label}</span>
+                            <h6 className={`font-extrabold text-2xl relative`}>
+                                {name}
+                                <span
+                                    className={`absolute left-0 bottom-0 h-1 w-full bg-white transition-all duration-300 transform ${
+                                                isHovered ? 'scale-x-100' : 'scale-x-0'
+                                                } origin-left`}
+                                ></span>
+                            </h6>
+                        </div>
+                        <div className='h-60 w-60 overflow-hidden '>
+                            <Image  
+                                alt='service' 
+                                src={image} 
+                                fill
+                                onMouseEnter={()=>setIsHovered(true)}
+                                onMouseLeave={()=>setIsHovered(false)}
+                                className='rounded-xl w-full hover:shadow-md h-full object-cover hover:scale-105 transition-all hover:shadow-blue-300' 
+                            />
+                        </div>
+                    </li>
+                )
+            })}
         </ul>
         </div>
     )

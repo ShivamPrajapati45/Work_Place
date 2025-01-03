@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
             <div className={`mb-auto w-full m-auto ${pathName !== '/' ? 'mt-16':''} `}>
               {children}
             </div>
-            {/* <Footer/> */}
+            <Footer/>
           </div>
         </StateProvider>
       </body>
