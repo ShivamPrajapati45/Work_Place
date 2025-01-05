@@ -58,7 +58,7 @@ const PopularServices = () => {
                 return(
                     <li key={name} 
                         className='relative cursor-pointer' 
-                        onClick={()=> router.push(`/search?q-${name.toLowerCase()}`)} 
+                        onClick={()=> router.push(`/search?q=${name.toLowerCase()}`)} 
                     >
                         <div className='absolute z-10  left-5 top-4'>
                             <span>{label}</span>

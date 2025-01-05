@@ -6,6 +6,7 @@ import Image from 'next/image'
 const HeroBanner = () => {
     const router = useRouter();
     const[image,setImage] = useState(3);
+    const [search, setSearch] = useState('');
     const placeholders = [
         'Try building a mobile app',
         'Find a logo designer',
@@ -14,6 +15,20 @@ const HeroBanner = () => {
         'Launch your marketing campaign',
     ];
     const [currentPlaceHolders, setCurrentPlaceHolders] = useState(placeholders[0]);
+    const data = [
+        {
+            name: 'Website Design'
+        },
+        {
+            name: 'Logo Design'
+        },
+        {
+            name: 'UI/UX'
+        },
+        {
+            name: 'Singer'
+        }
+    ]
 
 
     useEffect(()=>{
@@ -48,23 +63,39 @@ const HeroBanner = () => {
 
         <div className='z-1 relative w-[650px] flex justify-center flex-col h-full gap-5 ml-20'>
             <h1 className='text-white text-5xl leading-snug'>find the perfect &nbsp; <i>Freelancer</i><br />Services for your business</h1>
-            <div className='flex align-middle'>
+            <form 
+                className='flex align-middle'
+                onSubmit={(e) => {
+                    e.preventDefault()
+                    router.push(`/search?q=${search}`)
+                }}
+            >
             <div className='relative'>
                 <input 
                     type="text" 
                     className='h-14 w-[450px] text-xl pl-10 rounded-md rounded-r-none outline-none transition-all duration-300' 
                     placeholder={currentPlaceHolders} 
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                 />
             </div>
-                <button className='bg-[#34A853] text-white px-12 text-lg font-semibold rounded-r-md uppercase'>search</button>
-            </div>
+                <button 
+                    type='submit'
+                    className='bg-[#34A853] text-white px-12 text-lg font-semibold rounded-r-md uppercase'
+                >search</button>
+            </form>
             <div className='text-white flex gap-4 justify-center items-center'>
                 POPULAR:{" "}
                 <ul className='flex gap-5'>
-                <li className='text-sm py-1 px-3 border rounded-full hover:bg-white hover:text-black transition-all duration-300 cursor-pointer'>Website Design</li>
-                <li className='text-sm py-1 px-3 border rounded-full hover:bg-white hover:text-black transition-all duration-300 cursor-pointer'>WordPress</li>
-                <li className='text-sm py-1 px-3 border rounded-full hover:bg-white hover:text-black transition-all duration-300 cursor-pointer'>Logo Design</li>
-                <li className='text-sm py-1 px-3 border rounded-full hover:bg-white hover:text-black transition-all duration-300 cursor-pointer'>Ai Services</li>
+                    {data.map(({name}) => (
+                        <li
+                            key={name}
+                            className='text-sm py-1 px-3 border rounded-full hover:bg-white hover:text-black transition-all duration-300 cursor-pointer'
+                            onClick={() => router.push(`/search?category=${name}`)}
+                        >
+                            {name}
+                        </li>
+                    ))}
                 </ul>
             </div> 
         </div>

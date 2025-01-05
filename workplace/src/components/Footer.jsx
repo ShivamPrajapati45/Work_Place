@@ -104,7 +104,7 @@ const Footer = () => {
             </ul>
             
             <div className='mt-8 flex items-center bg-[#000] py-3 px-4 rounded-lg justify-between'>
-                <Logo/>
+                {/* <Logo/> */}
                 <ul className='flex gap-5'>
                     {socialLinks.map(({name,icon,link})=>{
                         return (

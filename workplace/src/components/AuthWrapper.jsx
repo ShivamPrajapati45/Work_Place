@@ -10,11 +10,11 @@ import { useGoogleLogin } from '@react-oauth/google'
 import { googleAuth } from '@/utils/api'
 import { useFormik } from 'formik'
 import * as yup from 'yup';
-import { MdCancel } from 'react-icons/md'
+import { useRouter } from 'next/navigation'
 
 const AuthWrapper = ({ type }) => {
-    const [ cookies, setCookie, removeCookie ] = useCookies();
     const [{showLogInModel, showSignUpModel}, dispatch] = useStateProvider();
+    const router = useRouter();
 
     const responseGoogle = async (response) => {
         try {
@@ -39,10 +39,6 @@ const AuthWrapper = ({ type }) => {
         flow: 'auth-code',
     });
 
-    const closeAuth = () => {
-        dispatch({type: reducerCases.CLOSE_AUTH_MODEL});
-    }
-
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -63,11 +59,14 @@ const AuthWrapper = ({ type }) => {
                 const { data: {user,token},res} = await axios.post( type === 'login' ?  LOGIN_ROUTES : SIGNUP_ROUTES, values,               {withCredentials: true}
                 );
 
-                dispatch({type: reducerCases.CLOSE_AUTH_MODEL});
+                // dispatch({type: reducerCases.CLOSE_AUTH_MODEL});
                 if(user){
                     dispatch({type: reducerCases.SET_USER, userInfo: user});
+                    router.push('/gigs');
                     window.location.reload();
+                    
                 }
+                
 
             }catch(err){
                 setErrors({email: 'Invalid email or password', password: 'Invalid email or password'});
@@ -91,10 +90,6 @@ const AuthWrapper = ({ type }) => {
             >
                 <div className='p-6 gap-4 flex flex-col justify-center items-center'>
                     <div>
-                        <MdCancel 
-                            onClick={closeAuth}
-                            className='h-8 w-8 hover:scale-110 transition-transform duration-300 cursor-pointer text-gray-400 absolute right-4 top-3'
-                        />
                         <h3 className='text-[#212121] uppercase font-semibold text-xl'>
                             {
                                 type === 'login' ? 

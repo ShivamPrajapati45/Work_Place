@@ -8,27 +8,36 @@ import JoinWorkplace from "@/components/Landing/JoinWorkplace";
 import PopularServices from "@/components/Landing/PopularServices";
 import Services from "@/components/Landing/Services";
 import { useStateProvider } from "@/context/StateContext";
-import {GoogleOAuthProvider} from '@react-oauth/google'
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
 
 
 export default function Home() {
-  const [{ showLogInModel, showSignUpModel }] = useStateProvider();
+  const [{ showLogInModel, showSignUpModel,userinfo }] = useStateProvider();
+  const [isLogin, setIsLogin] = useState(false);
+  const token = Cookies.get('token');
+
+  useEffect(() => {
+    if(token || userinfo){
+      setIsLogin(true);
+    }else{
+      setIsLogin(false);
+    }
+  },[token, userinfo])
+
 
   return (
-    <div className="">
+    <div>
       <HeroBanner/>
       <PopularServices/>
       <Companies/>
       <Everything/>
       <Services/>
-      <Business/>
-      <JoinWorkplace/>
       {
-        (showLogInModel || showSignUpModel) && (
-          <GoogleOAuthProvider clientId="198016048437-u54f4ia3klfebhq4darcvhv2e5ba1noe.apps.googleusercontent.com" >
-            <AuthWrapper type = {showLogInModel ? 'login' : 'signup'} />
-          </GoogleOAuthProvider>
-        )
+        !isLogin && <>
+            <Business/>
+            <JoinWorkplace/>
+        </>
       }
     </div>
   );

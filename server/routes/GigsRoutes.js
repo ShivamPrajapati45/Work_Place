@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { verifyToken } from '../middlewares/AuthMiddleware.js';
-import { addGig, addReview, checkGigOrder, editGig, getGigData, getGigs, searchGig } from '../controllers/GigsControllers.js';
+import { addGig, addReview, checkGigOrder, editGig, getAllGigs, getGigData, getGigs, searchGig } from '../controllers/GigsControllers.js';
 import { uploadGigs } from '../middlewares/Multer.js';
 const gigsRoutes = Router();
 
@@ -11,5 +11,6 @@ gigsRoutes.put('/edit-gig/:gigId',verifyToken,uploadGigs.array("images",5),editG
 gigsRoutes.get('/search',searchGig);
 gigsRoutes.get('/check-gig-order/:gigId', verifyToken, checkGigOrder);
 gigsRoutes.post('/add-review/:gigId',verifyToken,addReview);
+gigsRoutes.get('/get-gigs',verifyToken,getAllGigs);
 
 export default gigsRoutes

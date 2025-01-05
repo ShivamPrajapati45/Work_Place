@@ -69,7 +69,7 @@ export const addGig = async (req,res) => {
 // this getGigs function will get all the gigs of the user
 export const getGigs = async (req, res) => {
     try{
-        console.log(req?.user)
+        // console.log(req?.user)
         const prisma = new PrismaClient();
         const user = await prisma.user.findUnique({
             where : {id: req?.user.userId},
@@ -78,7 +78,7 @@ export const getGigs = async (req, res) => {
                 gigs: true
             }
         })
-        console.log(user)
+        // console.log(user)
         return res.status(200).json({
             gigs: user?.gigs,
             msg: 'Gigs fetched successfully',
@@ -219,9 +219,8 @@ export const editGig = async (req, res) => {
     }
 };
 
-
 const createSearchQuery = (searchTerm, category) => {
-    console.log(searchTerm, category);
+    // console.log(searchTerm, category);
     const query = {
         where: {
             OR: [],
@@ -271,6 +270,12 @@ const createSearchQuery = (searchTerm, category) => {
             }
         });
         query.where.OR.push({
+            category: {
+                contains: category,
+                mode: 'insensitive'
+            },
+        });
+        query.where.OR.push({
             shortDesc: {
                 contains: category,
                 mode: 'insensitive'
@@ -290,6 +295,7 @@ const createSearchQuery = (searchTerm, category) => {
 export const searchGig = async (req, res) => {
     try {
         // if the search term or category is provided then we will search the gigs
+        console.log('query: ', req.query);
         if(req?.query?.searchTerm || req?.query?.category){
             const prisma = new PrismaClient();
             const gigs = await prisma.gigs.findMany(
@@ -405,4 +411,67 @@ export const addReview = async (req, res, _) => {
     }
 }
 
+export const getAllGigs = async (req,res) => {
+    try {
+        const {category} = req.query;
+        const prisma = new PrismaClient();
+        const gigs = await prisma.gigs.findMany({
+            where: {
+                category: {
+                    contains: category,
+                    mode: 'insensitive'
+                }
+            },
+            include: {
+                createdBy: true,  // this will include the user who created the gig
+                reviews: {
+                    include: {
+                        reviewer: true // this will include the user who reviewed the gig
+                    }
+                }
+            }
+        });
+
+        return res.status(200).json({
+            gigs,
+            success: true
+        })
+        
+    } catch (error) {
+        console.log("Get All Gigs Error :", error);
+        return res.status(500).json({
+            msg: "Internal Server Error",
+            success: false
+        })
+    }
+}
+
+export const getGigsByQuery = async (req,res) => {
+    // console.log( "Params : ",req.query)
+    try {
+        const prisma = new PrismaClient();
+        const gigs = await prisma.gigs.findMany({
+            include: {
+                createdBy: true,  // this will include the user who created the gig
+                reviews: {
+                    include: {
+                        reviewer: true // this will include the user who reviewed the gig
+                    }
+                }
+            }
+        });
+
+        return res.status(200).json({
+            gigs,
+            success: true
+        })
+        
+    } catch (error) {
+        console.log("Get All Gigs Error :", error);
+        return res.status(500).json({
+            msg: "Internal Server Error",
+            success: false
+        })
+    }
+}
 

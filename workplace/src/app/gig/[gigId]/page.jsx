@@ -12,7 +12,6 @@ const page = () => {
     const { gigId } = useParams();
     const router = useRouter();
     const [{userInfo}, dispatch] = useStateProvider();
-
     useEffect(() => {
         const fetchGigData = async () => {
             try {

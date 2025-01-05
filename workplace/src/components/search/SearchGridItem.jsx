@@ -24,15 +24,15 @@ const SearchGridItem = ({ gig }) => {
 
     return (
         <div
-            className='max-w-[300px] flex flex-col gap-2 p-1 cursor-pointer mb-8'
+            className='max-w-[300px]  min-h-[320px] rounded-lg flex flex-col mx-auto gap-2 border border-black cursor-pointer'
             onClick={() => router.push(`/gig/${gig?.id}`)}            
         >
-            <div className='relative w-64 h-40'>
+            <div className='relative w-60 h-40 border'>
                 <Image
                     src={`${HOST}/uploads/${gig?.images[0]}`}
                     alt='gig'
                     fill
-                    className='rounded-xl'
+                    className='rounded-lg h-full w-full object-cover'
                 />
             </div>
             <div className='flex items-center gap-2'>

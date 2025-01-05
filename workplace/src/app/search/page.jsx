@@ -12,18 +12,13 @@ const page = () => {
     const search = useSearchParams();  // search is an object that contains the query parameters
     const query = search.get('q');
     const category = search.get('category');
-
     useEffect(() => {
-        
-    
-        // console.log('s', query);
         // this function will get the data from the server based on the search term and category
         const getData = async () => {
             try {
                 const response = await axios.get(`${SEARCH_GIGS_ROUTE}?searchTerm=${query}&category=${category}`,{withCredentials: true});
                 console.log('data', response?.data?.gigs);
                 setGigs(response?.data?.gigs);
-                // console.log('d',gig);
 
             } catch (error) {
                 console.log('error', error);
@@ -34,7 +29,6 @@ const page = () => {
         if(query || category) getData();
 
     },[search,query,category])
-    // console.log('gig', gigs)
 
 
     return (

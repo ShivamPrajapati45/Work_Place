@@ -14,7 +14,6 @@ const page = () => {
     const router = useRouter();
     const [cookies] = useCookies();
     const [clientSecret, setClientSecret] = useState('');
-
     const query = useSearchParams();
     // console.log(query.get('gigId'))
     const gigId = query.get('gigId');

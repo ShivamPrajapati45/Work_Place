@@ -21,7 +21,6 @@ const page = () => {
         fullName: '',
         description: ''
     });
-
     useEffect(() => {
         const handleData = {...data};
         if(userInfo){

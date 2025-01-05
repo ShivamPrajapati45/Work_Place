@@ -6,7 +6,7 @@ import Logo from './Logo';
 import {IoSearchOutline} from 'react-icons/io5'
 import {useCookies} from 'react-cookie'
 import axios from 'axios';
-import { GET_USER_INFO, HOST, LOGIN_ROUTES, LOGOUT_ROUTES } from '@/utils/constant';
+import { GET_USER_INFO, HOST, LOGOUT_ROUTES } from '@/utils/constant';
 import { reducerCases } from '@/context/constants';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
@@ -17,18 +17,19 @@ const Navbar = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isFixed, setIsFixed] = useState(false);
     const [searchData, setSearchData] = useState("");
-    const [{ showLogInModel,showSignUpModel,userInfo,isSeller }, dispatch] = useStateProvider();
+    const [{ userInfo,isSeller }, dispatch] = useStateProvider();
     const router = useRouter();
     const [cookies] = useCookies();
     const pathName = usePathname();
     const [showInput, setShowInput] = useState(false);
+    console.log('user', userInfo)
 
     useEffect(() => {
         if(pathName === '/'){
             console.log('in')
             const positionNavbar = () => {
                 window.pageYOffset > 0 ? setIsFixed(true) : setIsFixed(false);
-                window.pageYOffset > 200 ? setShowInput(true) : setShowInput(false);
+                window.pageYOffset > 300 ? setShowInput(true) : setShowInput(false);
             };
             window.addEventListener('scroll', positionNavbar);
             return () => window.removeEventListener('scroll',positionNavbar);
@@ -38,8 +39,6 @@ const Navbar = () => {
     },[router,pathName]);
 
     const handleSignUp = () => {
-        // console.log('hello');
-        // if(showLogInModel){
             dispatch({
                 type: reducerCases.TOGGLE_LOGIN_MODEL,
                 showLogInModel: false
@@ -48,11 +47,9 @@ const Navbar = () => {
                 type: reducerCases.TOGGLE_SIGNUP_MODEL,
                 showSignUpModel: true
             });
-        // }
+            router.push('/login');
     };
     const handleLogin = () => {
-        // console.log('hello');
-        // if(showSignUpModel){
             dispatch({
                 type: reducerCases.TOGGLE_SIGNUP_MODEL,
                 showSignUpModel: false
@@ -61,12 +58,14 @@ const Navbar = () => {
                 type: reducerCases.TOGGLE_LOGIN_MODEL,
                 showLogInModel: true
             });
-        // }
+            router.push('/login');
     };
+    const handleClickToGigs = () => {
+        router.push('/gigs')
+    }
 
     const links = [
-        { linkName: "Workplace Business", handler: '#',type: 'link' },
-        { linkName: "Explore", handler: '#',type: 'link' },
+        { linkName: "Explore", handler: handleClickToGigs,type: 'link' },
         { linkName: "Sign In", handler: handleLogin,type: 'button' },
         { linkName: "Join ", handler: handleSignUp,type: 'button2' },
     ];
@@ -151,7 +150,7 @@ const Navbar = () => {
                                     <Logo fillColor={!isFixed && userInfo ? '#fff' : '#404145'} />
                                 </Link>
                             </div>
-                            <div className={`flex ${showInput || userInfo ? 'opacity-100' : 'opacity-0'}`}>
+                            <div className={`flex ${showInput ? 'opacity-100' : 'opacity-0'}`}>
                                 <input 
                                     type="text" 
                                     className='w-[20rem] text-black py-2 px-4 border'
@@ -178,11 +177,12 @@ const Navbar = () => {
                                                     key={linkName}
                                                     className={`${isFixed ? 'text-base' : 'text-white'} font-medium `}
                                                 >
-                                                    {type === 'link' && <Link 
-                                                    className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
-                                                    href={handler} >
+                                                    {type === 'link' && <button 
+                                                        className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
+                                                        onClick={handleClickToGigs}
+                                                    >
                                                         {linkName}
-                                                    </Link>}
+                                                    </button>}
                                                     {type === 'button' && (
                                                         <button 
                                                             className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
@@ -204,11 +204,11 @@ const Navbar = () => {
                                         })}
                                     </ul>
                                 ) : (
-                                    <ul className='flex gap-10 items-center' >
+                                    <ul className='flex gap-4 items-center' >
                                         {
                                             isSeller && (
                                                 <li
-                                                    className='cursor-pointer font-medium text-green-400'
+                                                    className='py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/10 transition-all'
                                                     onClick={() => router.push('/seller/gigs/create')}
                                                 >
                                                     Create Gig
@@ -216,24 +216,24 @@ const Navbar = () => {
                                             )
                                         }
                                         <li
-                                            className='cursor-pointer font-medium text-green-400'
+                                            className='py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/10 transition-all'
                                             onClick={handleOrdersNavigate}
                                         >
                                             Orders
                                         </li>
                                         <li
-                                            className='cursor-pointer text-black font-medium'
+                                            className='py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/10 transition-all'
                                             onClick={handleModeSwitch}
                                         >
                                                 Switch to {isSeller ? 'Buyer' : 'Seller'}
                                         </li>
                                         <li
-                                            className='cursor-pointer border rounded-md border-black text-black font-medium'
+                                            className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
 
                                         >
                                             <button
                                                 onClick={logout}
-                                                className='rounded-md px-2 py-1'
+                                                className=''
                                             >
                                                 Logout
                                             </button>
@@ -246,9 +246,9 @@ const Navbar = () => {
                                             title='profile'
                                         >
                                             {
-                                                userInfo?.profileImage ? (
+                                                userInfo?.isProfileInfoSet ? (
                                                     <Image
-                                                        src={userInfo?.profileImage}
+                                                        src={userInfo?.imageName}
                                                         alt='Profile'
                                                         width={40}
                                                         height={40}

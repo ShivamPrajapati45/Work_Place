@@ -22,6 +22,7 @@ export const EDIT_GIG = `${GIG_ROUTES}/edit-gig`;
 export const SEARCH_GIGS_ROUTE = `${GIG_ROUTES}/search`;
 export const CHECK_USER_ORDERED_GIG_ROUTE = `${GIG_ROUTES}/check-gig-order`;
 export const ADD_REVIEW = `${GIG_ROUTES}/add-review`
+export const GET_GIGS = `${GIG_ROUTES}/get-gigs`;
 
 // Orders Routes
 export const CREATE_ORDER = `${ORDER_ROUTES}/create`;

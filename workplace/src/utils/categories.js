@@ -40,3 +40,40 @@ export const categories = [
         logo: '/images/service-10.svg'
     },
 ];
+
+export const allCategories = [
+    {
+        name: 'Graphic Design',
+    },
+    {
+        name: 'Digital Marketing',
+    },
+    {
+        name: 'Writing & Transition',
+    },
+    {
+        name: 'Video & Animation',
+    },
+    {
+        name: 'Music & Audio',
+    },
+    {
+        name: 'Tech',
+    },
+    {
+        name: 'Business',
+    },
+    {
+        name: 'Lifestyle',
+    },
+    {
+        name: 'Data',
+    },
+    {
+        name: 'Photography',
+    },
+    {
+        name: 'All'
+    }
+]
+

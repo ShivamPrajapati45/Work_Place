@@ -1,5 +1,6 @@
 'use client'
 import { useStateProvider } from '@/context/StateContext';
+import useAuth from '@/hooks/useAuth';
 import { GET_BUYER_ORDERS_ROUTE } from '@/utils/constant';
 import axios from 'axios';
 import Link from 'next/link';
@@ -7,6 +8,7 @@ import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 
 const page = () => {
+    useAuth();
     const [cookie] = useCookies();
     const [orders, setOrders] = useState([]);
     const [{userInfo}] = useStateProvider();
