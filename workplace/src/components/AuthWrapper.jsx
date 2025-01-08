@@ -5,7 +5,6 @@ import { useStateProvider } from '@/context/StateContext'
 import { reducerCases } from '@/context/constants'
 import axios from 'axios'
 import { LOGIN_ROUTES, SIGNUP_ROUTES } from '@/utils/constant'
-import { useCookies } from 'react-cookie'
 import { useGoogleLogin } from '@react-oauth/google'
 import { googleAuth } from '@/utils/api'
 import { useFormik } from 'formik'
@@ -56,15 +55,21 @@ const AuthWrapper = ({ type }) => {
 
         onSubmit: async (values, {setSubmitting, setErrors}) => {
             try{
-                const { data: {user,token},res} = await axios.post( type === 'login' ?  LOGIN_ROUTES : SIGNUP_ROUTES, values,               {withCredentials: true}
-                );
+                // const { data: {user,token},res} = await axios.post( type === 'login' ?  LOGIN_ROUTES : SIGNUP_ROUTES, values,               {withCredentials: true}
+                // );
 
                 // dispatch({type: reducerCases.CLOSE_AUTH_MODEL});
-                if(user){
-                    dispatch({type: reducerCases.SET_USER, userInfo: user});
-                    router.push('/gigs');
-                    window.location.reload();
+                // if(user){
+                //     router.push('/gigs');
+                //     dispatch({type: reducerCases.SET_USER, userInfo: user});
+                //     // window.location.reload();
                     
+                // }
+                const response = await axios.post( type === 'login' ? LOGIN_ROUTES : SIGNUP_ROUTES, values,{withCredentials: true} );
+                console.log("Auth : ", response);
+                if(response.data.success){
+                    router.push('/gigs');
+                    dispatch({ type: reducerCases.SET_USER, userInfo: response.data.user });
                 }
                 
 

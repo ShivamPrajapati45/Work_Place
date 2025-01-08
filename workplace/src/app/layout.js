@@ -14,12 +14,11 @@ export default function RootLayout({ children }) {
   const token = Cookies.get('token');
   const router = useRouter();
 
-    useEffect(() => {
-      if(!token && pathName !== '/'){
-        router.push('/login');
-      }
-      router.push('/');
-    },[token])
+    // useEffect(() => {
+    //   if(!token && pathName !== '/'){
+    //     router.push('/login');
+    //   }
+    // },[token])
   return (
     <html lang="en">
       <body>

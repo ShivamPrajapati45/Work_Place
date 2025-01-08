@@ -11,6 +11,10 @@ import { reducerCases } from '@/context/constants';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
+import {Sheet,SheetClose,SheetContent,SheetDescription,SheetFooter,SheetHeader,SheetTitle,SheetTrigger} from '@/components/ui/sheet'
+import { Label } from './ui/label';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
 
 const Navbar = () => {
 
@@ -22,6 +26,20 @@ const Navbar = () => {
     const [cookies] = useCookies();
     const pathName = usePathname();
     const [showInput, setShowInput] = useState(false);
+    const [edit, setEdit] = useState(true);
+    const [data, setData] = useState({
+        fullName: userInfo ? userInfo.fullName : '',
+        userName: userInfo ? userInfo.username : '',
+        email: userInfo ? userInfo.email : '',
+        description: userInfo ? userInfo.description : ''
+    });
+
+    const handleValueChange = (e) => {
+        setData({
+            ...data,
+            [e.target.name]: e.target.value
+        })
+    }
     console.log('user', userInfo)
 
     useEffect(() => {
@@ -245,25 +263,76 @@ const Navbar = () => {
                                             }}
                                             title='profile'
                                         >
-                                            {
-                                                userInfo?.isProfileInfoSet ? (
-                                                    <Image
-                                                        src={userInfo?.imageName}
-                                                        alt='Profile'
-                                                        width={40}
-                                                        height={40}
-                                                        className='rounded-full'
-                                                        unoptimized
+                                            <Sheet>
+                                                <SheetTrigger asChild>
+                                                    {
+                                                        userInfo?.isProfileInfoSet ? (
+                                                            <Image
+                                                                src={userInfo?.imageName}
+                                                                alt='Profile'
+                                                                width={40}
+                                                                height={40}
+                                                                className='rounded-full'
+                                                                unoptimized
+                                                                
+                                                            />
+                                                        ) : (
+                                                            <div className='bg-purple-500 flex items-center justify-center h-10 w-10 rounded-full relative'>
+                                                                <span className='text-xl text-white'>
+                                                                    {userInfo?.email[0].toUpperCase()}
+                                                                </span>
+                                                            </div>
+                                                        )
+                                                    }
+                                                </SheetTrigger>
+                                                <SheetContent>
+                                                    <SheetHeader>
+                                                        <SheetTitle>Edit Profile</SheetTitle>
+                                                        <SheetDescription>
+                                                            Make changes to your profile here. Click save when you're done.
+                                                        </SheetDescription>
+                                                    </SheetHeader>
                                                         
-                                                    />
-                                                ) : (
-                                                    <div className='bg-purple-500 flex items-center justify-center h-10 w-10 rounded-full relative'>
-                                                        <span className='text-xl text-white'>
-                                                            {userInfo?.email[0].toUpperCase()}
-                                                        </span>
+                                                    <div className="grid gap-4 py-4">
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="fullName" className="text-right">
+                                                                Name
+                                                            </Label>
+                                                            <Input disabled={edit} id="fullName" value={data.fullName} className="col-span-3" />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="username" className="text-right">
+                                                                Username
+                                                            </Label>
+                                                            <Input disabled={edit} id="username" value={data.userName} className="col-span-3" />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="email" className="text-right">
+                                                                Email
+                                                            </Label>
+                                                            <Input disabled={edit} id="email" value={data.email} className="col-span-3" />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="description" className="text-right">
+                                                                Description
+                                                            </Label>
+                                                            <Input disabled={edit} id="description" value={data.description} className="col-span-3" />
+                                                        </div>
                                                     </div>
-                                                )
-                                            }
+                                                    <SheetFooter>
+                                                        <SheetClose asChild>
+                                                            <Button type='submit' className='font-semibold uppercase'>Save Changes</Button>
+                                                        </SheetClose>
+                                                        <button 
+                                                            type='button' 
+                                                            className='border-blue-600 hover:bg-gray-50 border-2 text-blue-600 px-5 transition-all py-1 rounded-md font-semibold' 
+                                                            onClick={() => setEdit(!edit)}
+                                                        >
+                                                            EDIT
+                                                        </button>
+                                                    </SheetFooter>
+                                                </SheetContent>
+                                            </Sheet>
                                         </li>
                                     </ul>
                                 )

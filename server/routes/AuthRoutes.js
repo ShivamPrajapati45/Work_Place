@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getUserInfo, googleAuth, login, logOut, setUserImage, setUserInfo, signup } from '../controllers/AuthControllers.js';
+import { editProfile, getUserInfo, googleAuth, login, logOut, setUserImage, setUserInfo, signup } from '../controllers/AuthControllers.js';
 // import multer from 'multer';
 import { verifyToken } from '../middlewares/AuthMiddleware.js';
 import { upload } from '../middlewares/Multer.js';
@@ -19,5 +19,6 @@ authRoutes.post('/set-user-image',
     setUserImage
 );
 authRoutes.post('/logout',verifyToken,logOut);
+authRoutes.post('/edit-profile',verifyToken,upload.single('profileImage'),editProfile);
 
 export default authRoutes

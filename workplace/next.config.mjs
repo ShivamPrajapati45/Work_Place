@@ -13,7 +13,12 @@ const nextConfig = {
             }
             
         ]
+    },
+    devIndicators: {
+        buildActivity: false, // Disables the building indicators
+        autoPrerender: false,  // Disable Prerender warnings
     }
+
 };
 
 export default nextConfig;

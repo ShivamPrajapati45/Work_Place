@@ -283,16 +283,13 @@ export const setUserImage = async (req,res) => {
         // console.log(req);
         // console.log( "first",req?.file);
         if(req?.file){
-            if(req?.user?.userId){
                 const localFile = req.file;
-                // console.log("sec",localFile);
                 if(!localFile) return res.status(404).json({
                     msg: 'image is required',
                     success: false
                 })
 
                 const cloud = await uploadOnCloudinary(localFile.path);
-                // console.log("set image", cloud);
                 if(!cloud) return res.status(404).json({
                     msg: 'Profile Image is required',
                     success: false
@@ -313,7 +310,7 @@ export const setUserImage = async (req,res) => {
                     img: user.profileImage,
                     success: true
                 })
-            }
+            
             return res.status(400).json({
                 msg: 'Cookie Error',
                 success: false
@@ -352,5 +349,58 @@ export const logOut = async (req,res) => {
             msg: "Internal Server Error",
             success: false
         })
+    }
+}
+
+export const editProfile = async (req,res) => {
+    try {
+            const {username, fullName, description} = req.body;
+            if(username || fullName || description){
+                const prisma = new PrismaClient();
+                const existUser = await prisma.user.findUnique({
+                    where:{ username }
+                });
+                if(existUser){
+                    return res.status(201).json({
+                        msg: 'User Name Already taken',
+                        userNameError: true
+                    });
+                };
+
+                const user = await prisma.user.update({
+                    where: {id: req?.user?.userId},
+                    data: {
+                        username,
+                        fullName,
+                        description,
+                    },
+                })
+                return res.status(200).json({
+                    user,
+                    msg: 'Profile Updated Successfully',
+                    success: true
+                });
+            }
+
+            return res.status(201).json({
+                success: true
+            })
+
+        
+    } catch (error) {
+        console.log('err', error)
+        if(error instanceof Prisma.PrismaClientKnownRequestError){
+            if(error.code === 'P2002'){
+                return res.status(409).json({
+                    userNameError: true
+                });
+            }
+        }else{
+            return res.status(501).json({
+                msg: 'Internal Server Error',
+                success: false
+            });
+        }
+        throw error
     }
 }
