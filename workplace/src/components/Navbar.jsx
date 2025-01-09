@@ -6,14 +6,12 @@ import Logo from './Logo';
 import {IoSearchOutline} from 'react-icons/io5'
 import {useCookies} from 'react-cookie'
 import axios from 'axios';
-import { GET_USER_INFO, HOST, LOGOUT_ROUTES } from '@/utils/constant';
+import { EDIT_USER_IMAGE, EDIT_USER_INFO, GET_USER_INFO, HOST, LOGOUT_ROUTES } from '@/utils/constant';
 import { reducerCases } from '@/context/constants';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import {Sheet,SheetClose,SheetContent,SheetDescription,SheetFooter,SheetHeader,SheetTitle,SheetTrigger} from '@/components/ui/sheet'
-import { Label } from './ui/label';
-import { Input } from './ui/input';
 import { Button } from './ui/button';
 
 const Navbar = () => {
@@ -27,12 +25,31 @@ const Navbar = () => {
     const pathName = usePathname();
     const [showInput, setShowInput] = useState(false);
     const [edit, setEdit] = useState(true);
+    const [image, setImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
+    const [error, setError] = useState('');
+    const [imageHover, setImageHover] = useState(false);
+    const [loader, setLoader] = useState(false);
     const [data, setData] = useState({
-        fullName: userInfo ? userInfo.fullName : '',
-        userName: userInfo ? userInfo.username : '',
-        email: userInfo ? userInfo.email : '',
-        description: userInfo ? userInfo.description : ''
+        fullName: '',
+        username: '',
+        email: '',
+        description: ''
     });
+
+    useEffect(() => {
+        const handleData = {...data};
+        if(userInfo){
+            if(userInfo?.userName) handleData.username = userInfo.username;
+            if(userInfo?.fullName) handleData.fullName = userInfo.fullName;
+            if(userInfo?.description) handleData.description = userInfo.description;
+            if(userInfo.email) handleData.email = userInfo.email;
+        };
+        setData(handleData);
+
+    },[userInfo])
+
+    console.log(userInfo)
 
     const handleValueChange = (e) => {
         setData({
@@ -40,7 +57,6 @@ const Navbar = () => {
             [e.target.name]: e.target.value
         })
     }
-    console.log('user', userInfo)
 
     useEffect(() => {
         if(pathName === '/'){
@@ -88,6 +104,24 @@ const Navbar = () => {
         { linkName: "Sign In", handler: handleLogin,type: 'button' },
         { linkName: "Join ", handler: handleSignUp,type: 'button2' },
     ];
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if(file){
+            const fileType = file.type;
+            const validImageType = ['image/png', 'image/jpeg', 'image/jpg'];
+            if(validImageType.includes(fileType)){
+                const imageUrl = URL.createObjectURL(file);
+                setImage(file);
+                setPreviewImage(imageUrl)
+            }else{
+                console.error('Invalid Image Type !');
+            }
+        }else{
+            console.error('No file Selected !');
+
+        }
+    }
 
     useEffect(() => {
         // if token rahega and userinfo nahi hoga tab jake ye call hoga
@@ -158,6 +192,45 @@ const Navbar = () => {
 
         }catch(err){
             console.log(err);
+        }
+    }
+
+    const handleEditProfile = async () => {
+        try{
+            setLoader(true)
+            const res = await axios.post(EDIT_USER_INFO,{...data},{withCredentials: true});
+            console.log('res : ', res);
+            if(res.data.userNameError){
+                setError(res.data.msg);
+            }else{
+                setError('');
+                if(image){
+                    const formData = new FormData();
+                    formData.append('profileImage', image);
+                    const {data: {user}} = await axios.post(EDIT_USER_IMAGE, formData, {
+                        withCredentials: true,
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+                    console.log('user : ', user)
+                    if(res.data.success){
+                        setLoader(false);
+                        dispatch({
+                            type: reducerCases.SET_USER,
+                            userInfo: {
+                                ...userInfo,
+                                ...user
+                            }
+                        });
+                    }
+                }
+            }
+            
+        }catch(err){
+            console.log("Edit : ", err);
+        }finally{
+            setLoader(false);
         }
     }
 
@@ -263,17 +336,6 @@ const Navbar = () => {
                                         >
                                                 Switch to {isSeller ? 'Buyer' : 'Seller'}
                                         </li>
-                                        {/* <li
-                                            className='py-[5px] px-2 rounded-md hover:bg-black/5 transition-all'
-
-                                        >
-                                            <button
-                                                onClick={logout}
-                                                className='hover:text-red-500 duration-300'
-                                            >
-                                                Logout
-                                            </button>
-                                        </li> */}
                                         <li
                                             className='cursor-pointer'
                                             onClick={(e) => {
@@ -286,7 +348,7 @@ const Navbar = () => {
                                                     {
                                                         userInfo?.isProfileInfoSet ? (
                                                             <Image
-                                                                src={userInfo?.imageName}
+                                                                src={userInfo?.profileImage}
                                                                 alt='Profile'
                                                                 width={40}
                                                                 height={40}
@@ -311,35 +373,117 @@ const Navbar = () => {
                                                         </SheetDescription>
                                                     </SheetHeader>
                                                         
+                                                    <div 
+                                                        className='flex flex-col items-center'
+                                                        
+                                                    >
+                                                        <label className='mb-2 text-lg font-medium text-slate-800 dark:text-white'>Select a profile picture</label>
+                                                        <div 
+                                                            className='h-20 w-20 cursor-pointer flex items-center justify-center rounded-full relative'
+                                                            onMouseEnter={() => setImageHover(true)}
+                                                            onMouseLeave={() => setImageHover(false)}
+                                                        >
+                                                            {
+                                                                previewImage ?  (
+                                                                    <img
+                                                                        src={previewImage}
+                                                                        alt='Profile'
+                                                                        className='rounded-full h-full w-full object-contain'
+                                                                    />
+                                                                ) : (
+                                                                    <img
+                                                                        src={`${userInfo?.profileImage ? userInfo.profileImage : '/images/avatar.png'}`}
+                                                                        alt='Profile'
+                                                                        className='rounded-full h-full w-full object-contain'
+                                                                    />
+                                                                )
+                                                            }
+                                                            <div className={`absolute bg-slate-400 h-20 w-20 rounded-full flex items-center justify-center transition-all duration-500 ${imageHover ? 'opacity-100' : 'opacity-0'}`}>
+                                                                <span className={'flex items-center justify-center relative cursor-pointer'}>
+                                                                    <svg
+                                                                        xmlns='http://www.w1.org/2000/svg'
+                                                                        className='w-12 h-12 text-white absolute cursor-pointer'
+                                                                        fill='currentColor'
+                                                                        viewBox='0 0 20 20'
+                                                                    >
+                                                                        <path
+                                                                            fillRule='evenodd'
+                                                                            clipRule='evenodd'
+                                                                            d='M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z'
+                                                                        />
+                                                                    </svg>
+                                                                    <input 
+                                                                        type="file" 
+                                                                        onChange={handleFileChange}
+                                                                        className='opacity-0 cursor-pointer'
+                                                                        name='profileImage'
+                                                                        multiple={true}
+                                                                    />
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div className="grid gap-4 py-4">
                                                         <div className="grid grid-cols-4 items-center gap-4">
-                                                            <Label htmlFor="fullName" className="text-right">
+                                                            <label htmlFor="fullName" className="text-right font-semibold">
                                                                 Name
-                                                            </Label>
-                                                            <Input disabled={edit} id="fullName" value={data.fullName} className="col-span-3" />
+                                                            </label>
+                                                            <input 
+                                                                disabled={edit} 
+                                                                id="fullName" 
+                                                                name='fullName'
+                                                                value={data.fullName}
+                                                                onChange={handleValueChange}
+                                                                className="text-black col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400" 
+                                                            />
                                                         </div>
                                                         <div className="grid grid-cols-4 items-center gap-4">
-                                                            <Label htmlFor="username" className="text-right">
+                                                            <label htmlFor="username" className="text-right font-semibold">
                                                                 Username
-                                                            </Label>
-                                                            <Input disabled={edit} id="username" value={data.userName} className="col-span-3" />
+                                                            </label>
+                                                            <input 
+                                                                disabled={edit} 
+                                                                id="username" 
+                                                                name='username'
+                                                                value={data.username} 
+                                                                onChange={handleValueChange}
+                                                                className="text-black col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400" 
+                                                            />
                                                         </div>
                                                         <div className="grid grid-cols-4 items-center gap-4">
-                                                            <Label htmlFor="email" className="text-right">
+                                                            <label htmlFor="email" className="text-right font-semibold">
                                                                 Email
-                                                            </Label>
-                                                            <Input disabled={edit} id="email" value={data.email} className="col-span-3" />
+                                                            </label>
+                                                            <input 
+                                                                disabled={edit} 
+                                                                id="email" 
+                                                                name='email'
+                                                                value={data.email}
+                                                                onChange={handleValueChange} 
+                                                                className="text-black col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400" 
+                                                            />
                                                         </div>
                                                         <div className="grid grid-cols-4 items-center gap-4">
-                                                            <Label htmlFor="description" className="text-right">
+                                                            <label htmlFor="description" className="text-right font-semibold">
                                                                 Description
-                                                            </Label>
-                                                            <Input disabled={edit} id="description" value={data.description} className="col-span-3" />
+                                                            </label>
+                                                            <input 
+                                                                disabled={edit} 
+                                                                id="description" 
+                                                                name='description'
+                                                                value={data.description} 
+                                                                onChange={handleValueChange}
+                                                                className="text-black col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400" 
+                                                            />
                                                         </div>
                                                     </div>
                                                     <SheetFooter>
                                                         <SheetClose asChild>
-                                                            <Button type='submit' className='font-semibold uppercase'>Save Changes</Button>
+                                                            <Button 
+                                                                type='submit' 
+                                                                className='font-semibold uppercase'
+                                                                onClick={handleEditProfile}
+                                                            >Save Changes</Button>
                                                         </SheetClose>
                                                         <button 
                                                             type='button' 
@@ -348,7 +492,7 @@ const Navbar = () => {
                                                         >
                                                             EDIT
                                                         </button>
-                                                        <SheetClose>
+                                                        <SheetClose asChild>
                                                             <Button
                                                                 type='button'
                                                                 onClick={logout}

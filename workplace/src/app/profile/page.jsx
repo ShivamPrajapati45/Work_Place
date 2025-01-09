@@ -24,7 +24,7 @@ const page = () => {
     useEffect(() => {
         const handleData = {...data};
         if(userInfo){
-            if(userInfo?.userName) handleData.userName = userInfo.userName;
+            if(userInfo?.userName) handleData.userName = userInfo.username;
             if(userInfo?.fullName) handleData.fullName = userInfo.fullName;
             if(userInfo?.description) handleData.description = userInfo.description;
         }
@@ -77,8 +77,6 @@ const page = () => {
                             'Content-Type': 'multipart/form-data'
                         }
                     });
-                    // if(data.success){
-                    // }
                 }
                 dispatch({
                     type: reducerCases.SET_USER,

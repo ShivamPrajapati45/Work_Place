@@ -292,10 +292,6 @@ export const setUserImage = async (req,res) => {
                     msg: 'Profile Image is required',
                     success: false
                 })
-
-                // const date =  Date.now();
-                // let fileName = 'uploads/profiles' + date + req.file.originalname;
-                // fs.renameSync(req.file.path, fileName);
                 const prisma = new PrismaClient();
                 const user = await prisma.user.update({
                     where: {id: req?.user?.userId},
@@ -308,11 +304,6 @@ export const setUserImage = async (req,res) => {
                     img: user.profileImage,
                     success: true
                 })
-            
-            return res.status(400).json({
-                msg: 'Cookie Error',
-                success: false
-            })
         }
         return res.status(404).json({
             msg: 'Image not Found',
@@ -353,16 +344,19 @@ export const logOut = async (req,res) => {
 export const editProfile = async (req,res) => {
     try {
             const {username, fullName, description} = req.body;
+
             if(username || fullName || description){
                 const prisma = new PrismaClient();
-                const existUser = await prisma.user.findUnique({
-                    where:{ username }
-                });
-                if(existUser){
-                    return res.status(201).json({
-                        msg: 'User Name Already taken',
-                        userNameError: true
+                if(username){
+                    const existUser = await prisma.user.findUnique({
+                        where:{ username }
                     });
+                    if(existUser){
+                        return res.status(201).json({
+                            msg: 'User Name Already taken',
+                            userNameError: true
+                        });
+                    };
                 };
 
                 const user = await prisma.user.update({
@@ -375,7 +369,6 @@ export const editProfile = async (req,res) => {
                 })
                 return res.status(200).json({
                     user,
-                    msg: 'Profile Updated Successfully',
                     success: true
                 });
             }
@@ -400,5 +393,46 @@ export const editProfile = async (req,res) => {
             });
         }
         throw error
+    }
+}
+
+export const editUserProfileImage = async (req,res) => {
+    try {
+        if(req?.file){
+                const localFile = req.file;
+
+                const cloud = await uploadOnCloudinary(localFile.path);
+                if(!cloud) return res.status(404).json({
+                    msg: 'Image not found',
+                    success: false
+                })
+
+                // const date =  Date.now();
+                // let fileName = 'uploads/profiles' + date + req.file.originalname;
+                // fs.renameSync(req.file.path, fileName);
+                const prisma = new PrismaClient();
+                const user = await prisma.user.update({
+                    where: {id: req?.user?.userId},
+                    data: {
+                        profileImage: cloud.secure_url,
+                    }
+                });
+                return res.status(200).json({
+                    user,
+                    img: user.profileImage,
+                    success: true
+                })
+        }
+        return res.status(404).json({
+            msg: 'Image not Found',
+            success: false
+        })
+        
+    } catch (error) {
+        // console.log('err', error);
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: false
+        });
     }
 }
