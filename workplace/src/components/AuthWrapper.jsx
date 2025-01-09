@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import {FcGoogle} from 'react-icons/fc'
+import {IoClose} from 'react-icons/io5'
 import { useStateProvider } from '@/context/StateContext'
 import { reducerCases } from '@/context/constants'
 import axios from 'axios'
@@ -12,7 +13,7 @@ import * as yup from 'yup';
 import { useRouter } from 'next/navigation'
 
 const AuthWrapper = ({ type }) => {
-    const [{showLogInModel, showSignUpModel}, dispatch] = useStateProvider();
+    const [dispatch] = useStateProvider();
     const router = useRouter();
 
     const responseGoogle = async (response) => {
@@ -55,16 +56,6 @@ const AuthWrapper = ({ type }) => {
 
         onSubmit: async (values, {setSubmitting, setErrors}) => {
             try{
-                // const { data: {user,token},res} = await axios.post( type === 'login' ?  LOGIN_ROUTES : SIGNUP_ROUTES, values,               {withCredentials: true}
-                // );
-
-                // dispatch({type: reducerCases.CLOSE_AUTH_MODEL});
-                // if(user){
-                //     router.push('/gigs');
-                //     dispatch({type: reducerCases.SET_USER, userInfo: user});
-                //     // window.location.reload();
-                    
-                // }
                 const response = await axios.post( type === 'login' ? LOGIN_ROUTES : SIGNUP_ROUTES, values,{withCredentials: true} );
                 console.log("Auth : ", response);
                 if(response.data.success){
@@ -94,6 +85,7 @@ const AuthWrapper = ({ type }) => {
                 id='auth-model'
             >
                 <div className='p-6 gap-4 flex flex-col justify-center items-center'>
+                    <IoClose onClick={() => router.push('/')} className='cursor-pointer text-2xl absolute right-5 top-5 hover:scale-105 transition-all hover:bg-gray-100 hover:text-red-800 rounded-full '/>
                     <div>
                         <h3 className='text-[#212121] uppercase font-semibold text-xl'>
                             {

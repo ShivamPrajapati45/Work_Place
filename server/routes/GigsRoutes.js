@@ -11,6 +11,6 @@ gigsRoutes.put('/edit-gig/:gigId',verifyToken,uploadGigs.array("images",5),editG
 gigsRoutes.get('/search',searchGig);
 gigsRoutes.get('/check-gig-order/:gigId', verifyToken, checkGigOrder);
 gigsRoutes.post('/add-review/:gigId',verifyToken,addReview);
-gigsRoutes.get('/get-gigs',verifyToken,getAllGigs);
+gigsRoutes.get('/get-gigs',getAllGigs);
 
 export default gigsRoutes

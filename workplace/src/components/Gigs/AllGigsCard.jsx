@@ -1,4 +1,6 @@
+import { useStateProvider } from '@/context/StateContext';
 import { HOST } from '@/utils/constant';
+import Cookies from 'js-cookie';
 import { ChevronLeft, ChevronRight, Clock, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
@@ -16,6 +18,9 @@ const AllGigsCard = ({ gig }) => {
         });
         return (rating / reviews.length).toFixed(1);
     }
+    const [{userInfo}] = useStateProvider();
+    const token = Cookies.get('token');
+
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const nextImage = () => {
@@ -25,22 +30,43 @@ const AllGigsCard = ({ gig }) => {
         setCurrentImageIndex((prev) => (prev - 1 + gig?.images.length) % gig?.images.length);
     };
 
-    
+    const handleAuthUser = (id) => {
+        if(token && userInfo){
+            router.push(`/gig/${id}`)
+        }else{
+            router.push('/login');
+        }
+        
+    }
 
     return (
         <div
+
         >
             <div
-                className="w-[280px] h-[350px] bg-white rounded-lg shadow-md overflow-hidden"
+                className={`w-[280px] h-[350px] bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300 ease-in-out ${
+                    isHovered ? "shadow-lg shadow-gray-500 duration-500" : ""
+                }`}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                <div className="relative h-[170px]">
-                    <img
-                        src={`${HOST}/uploads/${gig?.images[currentImageIndex]}`}
-                        alt={`Product ${currentImageIndex + 1}`}
-                        className="w-full h-full object-cover"
-                    />
+                <div className="relative h-[170px] overflow-hidden">
+                    <div 
+                        className='flex transition-transform duration-500 ease-in-out' 
+                        style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                    >
+                        {
+                            gig?.images.map((image, index) => (
+                                <div key={index} className='w-full h-full flex-shrink-0'>
+                                    <img 
+                                        src={`${HOST}/uploads/${image}`} 
+                                        alt={`Product ${index + 1}`}
+                                        className="w-full h-full object-cover hover:scale-105 duration-500 transition-all"
+                                    />
+                                </div>
+                            ))
+                        }
+                    </div>
                     <span className="absolute top-2 left-2 bg-white/90 px-2 py-1 rounded-full text-xs">
                         {gig?.category}
                     </span>
@@ -56,7 +82,7 @@ const AllGigsCard = ({ gig }) => {
                                 onClick={nextImage}
                                 className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-1 rounded-full hover:bg-white/90 transition-colors"
                             >
-                            <ChevronRight size={20} />
+                                <ChevronRight size={20} />
                             </button>
                         </>
                         )}
@@ -72,7 +98,7 @@ const AllGigsCard = ({ gig }) => {
 
                 {/* detail section */}
                 <div
-                    onClick={() => router.push(`/gig/${gig?.id}`)}
+                    onClick={() => handleAuthUser(gig?.id)}
                     className='cursor-pointer px-4'
                 >
                         <div className="flex justify-between items-start mb-2">

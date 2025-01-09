@@ -78,6 +78,7 @@ const Navbar = () => {
             });
             router.push('/login');
     };
+    
     const handleClickToGigs = () => {
         router.push('/gigs')
     }
@@ -127,8 +128,11 @@ const Navbar = () => {
 
     // this method check if user is seller or buyer if seller then navigate to order
     const handleOrdersNavigate = () => {
-        if(isSeller) router.push('/seller/orders')
+        if(isSeller){
+            router.push('/seller/orders')
+        }else{
             router.push('/buyer/orders');
+        }
     };
 
     const handleModeSwitch = () => {
@@ -196,7 +200,7 @@ const Navbar = () => {
                                                     className={`${isFixed ? 'text-base' : 'text-white'} font-medium `}
                                                 >
                                                     {type === 'link' && <button 
-                                                        className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
+                                                        className={`${pathName === '/gigs' ? 'text-blue-600' : ''}py-[5px] px-2 rounded-md hover:bg-black/10 transition-all`}
                                                         onClick={handleClickToGigs}
                                                     >
                                                         {linkName}
@@ -222,40 +226,54 @@ const Navbar = () => {
                                         })}
                                     </ul>
                                 ) : (
-                                    <ul className='flex gap-4 items-center' >
+                                    <ul className='flex gap-4  items-center' >
                                         {
                                             isSeller && (
-                                                <li
-                                                    className='py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/10 transition-all'
-                                                    onClick={() => router.push('/seller/gigs/create')}
-                                                >
-                                                    Create Gig
-                                                </li>
+                                                <>
+                                                    <li
+                                                        className={`${pathName === '/seller/gigs/create' ? 'text-blue-600' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
+                                                        onClick={() => router.push('/seller/gigs/create')}
+                                                    >
+                                                        Create Gig
+                                                    </li>
+                                                    <li
+                                                        className={`${pathName === '/seller' ? 'text-blue-600' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
+                                                        onClick={() => router.push('/seller')}
+                                                    >
+                                                        Dashboard
+                                                    </li>
+                                                </>
                                             )
                                         }
                                         <li
-                                            className='py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/10 transition-all'
+                                            className={`${pathName === '/seller/orders' || pathName === '/buyer/orders' ? 'text-blue-600' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
                                             onClick={handleOrdersNavigate}
                                         >
                                             Orders
                                         </li>
                                         <li
-                                            className='py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/10 transition-all'
+                                            className={`${pathName == '/gigs' ? 'text-blue-600' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
+                                            onClick={handleClickToGigs}
+                                        >
+                                            Explore
+                                        </li>
+                                        <li
+                                            className={`py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
                                             onClick={handleModeSwitch}
                                         >
                                                 Switch to {isSeller ? 'Buyer' : 'Seller'}
                                         </li>
-                                        <li
-                                            className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
+                                        {/* <li
+                                            className='py-[5px] px-2 rounded-md hover:bg-black/5 transition-all'
 
                                         >
                                             <button
                                                 onClick={logout}
-                                                className=''
+                                                className='hover:text-red-500 duration-300'
                                             >
                                                 Logout
                                             </button>
-                                        </li>
+                                        </li> */}
                                         <li
                                             className='cursor-pointer'
                                             onClick={(e) => {
@@ -330,6 +348,14 @@ const Navbar = () => {
                                                         >
                                                             EDIT
                                                         </button>
+                                                        <SheetClose>
+                                                            <Button
+                                                                type='button'
+                                                                onClick={logout}
+                                                                >
+                                                                Logout
+                                                            </Button>
+                                                        </SheetClose>
                                                     </SheetFooter>
                                                 </SheetContent>
                                             </Sheet>

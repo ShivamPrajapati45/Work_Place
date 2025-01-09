@@ -280,8 +280,6 @@ export const setUserInfo = async (req,res) => {
 // here i want to use cloudinary for uploading profileImage of user
 export const setUserImage = async (req,res) => {
     try {
-        // console.log(req);
-        // console.log( "first",req?.file);
         if(req?.file){
                 const localFile = req.file;
                 if(!localFile) return res.status(404).json({

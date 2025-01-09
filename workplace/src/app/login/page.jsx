@@ -2,10 +2,19 @@
 import AuthWrapper from '@/components/AuthWrapper';
 import { useStateProvider } from '@/context/StateContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import React from 'react'
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react'
 
 const page = () => {
-    const [{ showLogInModel, showSignUpModel }] = useStateProvider();
+    const [{ showLogInModel,userinfo }] = useStateProvider();
+    const token = Cookies.get('token');
+    const router = useRouter();
+    useEffect(() => {
+        if(token && userinfo){
+            router.push('/');
+        }
+    },[userinfo, token])
     return (
         <div>
             <GoogleOAuthProvider

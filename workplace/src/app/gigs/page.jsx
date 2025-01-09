@@ -13,11 +13,12 @@ const page = () => {
     const [allGigs, setAllGigs] = useState([]);
     const [{userInfo},dispatch] = useStateProvider();
     const [category, setCategory] = useState('');
-    useAuth();
+    // useAuth();
     useEffect(() => {
         const fetchAllGigs = async () => {
             try{
                 const response = await axios.get(`${GET_GIGS}?category=${category === 'All' ? '' : `${category}`}`,{withCredentials: true});
+
                 if(response.data.success){
                     setAllGigs(response?.data?.gigs);
                 }
@@ -27,10 +28,10 @@ const page = () => {
             }
         };
 
-        if(userInfo) fetchAllGigs();
+        // if(userInfo) fetchAllGigs();
+        fetchAllGigs();
 
     },[userInfo,category]);
-    const labelClassName = 'font-medium text-gray-900 text-sm'
 
     return (
         <div className='mx-8 my-4'>
@@ -56,8 +57,8 @@ const page = () => {
                 <div></div>
             </div>
             <hr className='mt-2 border-[1.3px] border-slate-500' />
-            <div className='my-8'>
-                <div className='grid grid-cols-4 px-4 bg-slate-100 gap-5 py-4 rounded-lg'>
+            <div className='my-4'>
+                {/* <div className='grid grid-cols-4 px-4 bg-slate-100 gap-5 py-4 rounded-lg'>
                     {
                         allGigs?.length > 0 ? (
                             allGigs?.map((gig) => {
@@ -66,9 +67,26 @@ const page = () => {
                                 )
                             })
                         ) : (
-                            <div className='w-full flex justify-center items-center'>
-                                <p className='text-xl'>No Services Available for selected category !</p>
+                            <div className="flex items-center justify-center h-[300px] w-full">
+                                <p className='text-xl text-[#212121] font-semibold'>
+                                    No Services Available for selected category..
+                                </p>
                             </div>
+                        )
+                    }
+                </div> */}
+                <div className="flex items-center justify-center h-[700px] overflow-scroll w-full px-4 bg-slate-300 py-4 rounded-lg">
+                    {
+                        allGigs?.length > 0 ? (
+                            <div className="grid grid-cols-4 mt-14 gap-5 w-full">
+                                {allGigs?.map((gig) => (
+                                    <AllGigsCard gig={gig} key={gig?.id} />
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-xl text-[#212121] font-semibold text-center">
+                                No Services Available for selected category..
+                            </p>
                         )
                     }
                 </div>
