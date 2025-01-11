@@ -122,9 +122,9 @@ const AllGigsCard = ({ gig }) => {
                         </div>
                         <div className="flex items-center pt-3 border-t border-gray-100">
                             {
-                                gig?.createdBy?.profileImage ? (
+                                gig?.createdBy ? (
                                     <img
-                                        src={HOST + "/" + gig?.createdBy?.profileImage}
+                                        src={gig?.createdBy?.profileImage}
                                         alt={gig?.createdBy?.username}
                                         className="w-9 h-9 rounded-full mr-2"
                                     />

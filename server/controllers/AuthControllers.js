@@ -289,7 +289,7 @@ export const setUserImage = async (req,res) => {
 
                 const cloud = await uploadOnCloudinary(localFile.path);
                 if(!cloud) return res.status(404).json({
-                    msg: 'Profile Image is required',
+                    msg: 'Image Not Found',
                     success: false
                 })
                 const prisma = new PrismaClient();
@@ -406,10 +406,6 @@ export const editUserProfileImage = async (req,res) => {
                     msg: 'Image not found',
                     success: false
                 })
-
-                // const date =  Date.now();
-                // let fileName = 'uploads/profiles' + date + req.file.originalname;
-                // fs.renameSync(req.file.path, fileName);
                 const prisma = new PrismaClient();
                 const user = await prisma.user.update({
                     where: {id: req?.user?.userId},

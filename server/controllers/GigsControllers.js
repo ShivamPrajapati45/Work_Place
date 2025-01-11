@@ -295,7 +295,7 @@ const createSearchQuery = (searchTerm, category) => {
 export const searchGig = async (req, res) => {
     try {
         // if the search term or category is provided then we will search the gigs
-        console.log('query: ', req.query);
+        // console.log('query: ', req.query);
         if(req?.query?.searchTerm || req?.query?.category){
             const prisma = new PrismaClient();
             const gigs = await prisma.gigs.findMany(
@@ -411,17 +411,77 @@ export const addReview = async (req, res, _) => {
     }
 }
 
+const searchQuery = (searchTerm, category) => {
+    // console.log(searchTerm, category);
+    const query = {
+        where: {
+            OR: [],
+        },
+        include: {
+            createdBy: true,
+            reviews: {
+                include: {
+                    reviewer: true
+                }
+            }
+    },
+}
+    
+    if(searchTerm){
+        query.where.OR.push({
+            title: {
+                contains: searchTerm,
+                mode: 'insensitive'
+            }
+        });
+        query.where.OR.push({
+            category: {
+                contains: searchTerm,
+                mode: 'insensitive'
+            },
+        })
+        query.where.OR.push({
+            shortDesc: {
+                contains: searchTerm,
+                mode: 'insensitive'
+            }
+        });
+        query.where.OR.push({
+            description: {
+                contains: searchTerm,
+                mode: 'insensitive'
+            }
+        });
+    }
+    
+    if(category){
+        query.where.OR.push({
+            category: {
+                contains: category,
+                mode: 'insensitive'
+            },
+        });
+    }
+
+    return query;
+};
+
 export const getAllGigs = async (req,res) => {
     try {
-        const {category} = req.query;
+        const { category,searchTerm } = req.query;
         const prisma = new PrismaClient();
+        if(category || searchTerm){
+            const gigs = await prisma.gigs.findMany(
+                searchQuery(searchTerm, category)
+            );
+
+            return res.status(201).json({
+                gigs,
+                success: true
+            })
+        };
+        
         const gigs = await prisma.gigs.findMany({
-            where: {
-                category: {
-                    contains: category,
-                    mode: 'insensitive'
-                }
-            },
             include: {
                 createdBy: true,  // this will include the user who created the gig
                 reviews: {

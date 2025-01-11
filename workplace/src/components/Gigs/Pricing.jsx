@@ -6,6 +6,7 @@ import { FiClock, FiRefreshCcw } from 'react-icons/fi';
 import {BiRightArrowAlt} from 'react-icons/bi'
 import { BsCheckLg } from 'react-icons/bs';
 
+
 const Pricing = () => {
 
     const router = useRouter();

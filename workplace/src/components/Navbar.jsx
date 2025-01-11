@@ -13,6 +13,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import {Sheet,SheetClose,SheetContent,SheetDescription,SheetFooter,SheetHeader,SheetTitle,SheetTrigger} from '@/components/ui/sheet'
 import { Button } from './ui/button';
+import { CiEdit } from 'react-icons/ci'
 
 const Navbar = () => {
 
@@ -27,9 +28,8 @@ const Navbar = () => {
     const [edit, setEdit] = useState(true);
     const [image, setImage] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
-    const [error, setError] = useState('');
     const [imageHover, setImageHover] = useState(false);
-    const [loader, setLoader] = useState(false);
+    const [change, setChange] = useState(false);
     const [data, setData] = useState({
         fullName: '',
         username: '',
@@ -40,7 +40,7 @@ const Navbar = () => {
     useEffect(() => {
         const handleData = {...data};
         if(userInfo){
-            if(userInfo?.userName) handleData.username = userInfo.username;
+            if(userInfo?.username) handleData.username = userInfo.username;
             if(userInfo?.fullName) handleData.fullName = userInfo.fullName;
             if(userInfo?.description) handleData.description = userInfo.description;
             if(userInfo.email) handleData.email = userInfo.email;
@@ -52,10 +52,37 @@ const Navbar = () => {
     console.log(userInfo)
 
     const handleValueChange = (e) => {
-        setData({
-            ...data,
-            [e.target.name]: e.target.value
+        const {name, value} = e.target;
+        setData((prevData) => {
+            const updatedData = {...prevData, [name]: value};
+
+            const hasChange = Object.keys(updatedData).some(
+                (key) => updatedData[key] !== userInfo[key]
+            );
+
+            setChange(hasChange);
+            return updatedData;
+
         })
+    }
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if(file){
+            const fileType = file.type;
+            const validImageType = ['image/png', 'image/jpeg', 'image/jpg'];
+            if(validImageType.includes(fileType)){
+                const imageUrl = URL.createObjectURL(file);
+                setImage(file);
+                setPreviewImage(imageUrl)
+                setChange(true)
+            }else{
+                console.error('Invalid Image Type !');
+            }
+        }else{
+            console.error('No file Selected !');
+
+        }
     }
 
     useEffect(() => {
@@ -104,24 +131,6 @@ const Navbar = () => {
         { linkName: "Sign In", handler: handleLogin,type: 'button' },
         { linkName: "Join ", handler: handleSignUp,type: 'button2' },
     ];
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if(file){
-            const fileType = file.type;
-            const validImageType = ['image/png', 'image/jpeg', 'image/jpg'];
-            if(validImageType.includes(fileType)){
-                const imageUrl = URL.createObjectURL(file);
-                setImage(file);
-                setPreviewImage(imageUrl)
-            }else{
-                console.error('Invalid Image Type !');
-            }
-        }else{
-            console.error('No file Selected !');
-
-        }
-    }
 
     useEffect(() => {
         // if token rahega and userinfo nahi hoga tab jake ye call hoga
@@ -197,14 +206,33 @@ const Navbar = () => {
 
     const handleEditProfile = async () => {
         try{
-            setLoader(true)
-            const res = await axios.post(EDIT_USER_INFO,{...data},{withCredentials: true});
-            console.log('res : ', res);
-            if(res.data.userNameError){
-                setError(res.data.msg);
-            }else{
-                setError('');
-                if(image){
+            setLoader(true);
+            // object with only updated value
+            const updatedFields = {};
+            Object.keys(data).forEach((key) => {
+                if(data[key] !== userInfo[key]){
+                    updatedFields[key] = data[key];
+                }
+            });
+
+            const shouldUpdateField = Object.keys(updatedFields).length > 0;
+            const shouldUpdateImage = !!image;
+
+            if(shouldUpdateField){
+                const res = await axios.post(EDIT_USER_INFO,updatedFields,{withCredentials: true});
+                if(res.data.success){
+                    dispatch({
+                        type: reducerCases.SET_USER,
+                        userInfo: {
+                            ...userInfo,
+                            ...res.data.user
+                        }
+                    })
+                    setChange(false);
+                }
+            }
+            
+            if(shouldUpdateImage){
                     const formData = new FormData();
                     formData.append('profileImage', image);
                     const {data: {user}} = await axios.post(EDIT_USER_IMAGE, formData, {
@@ -213,9 +241,6 @@ const Navbar = () => {
                             'Content-Type': 'multipart/form-data'
                         }
                     });
-                    console.log('user : ', user)
-                    if(res.data.success){
-                        setLoader(false);
                         dispatch({
                             type: reducerCases.SET_USER,
                             userInfo: {
@@ -223,8 +248,8 @@ const Navbar = () => {
                                 ...user
                             }
                         });
-                    }
-                }
+                        setImage(null);
+                        setChange(false);
             }
             
         }catch(err){
@@ -367,7 +392,14 @@ const Navbar = () => {
                                                 </SheetTrigger>
                                                 <SheetContent>
                                                     <SheetHeader>
-                                                        <SheetTitle>Edit Profile</SheetTitle>
+                                                        <SheetTitle className="flex gap-3 items-center">
+                                                            Edit Profile
+                                                            <CiEdit 
+                                                                className='text-3xl w-8 hover:bg-gray-200 rounded-md hover:scale-110 duration-500 transition-all cursor-pointer' 
+                                                                onClick={() => setEdit(!edit)}
+                                                                title='edit'
+                                                            />
+                                                        </SheetTitle>
                                                         <SheetDescription>
                                                             Make changes to your profile here. Click save when you're done.
                                                         </SheetDescription>
@@ -377,7 +409,6 @@ const Navbar = () => {
                                                         className='flex flex-col items-center'
                                                         
                                                     >
-                                                        <label className='mb-2 text-lg font-medium text-slate-800 dark:text-white'>Select a profile picture</label>
                                                         <div 
                                                             className='h-20 w-20 cursor-pointer flex items-center justify-center rounded-full relative'
                                                             onMouseEnter={() => setImageHover(true)}
@@ -434,7 +465,7 @@ const Navbar = () => {
                                                                 name='fullName'
                                                                 value={data.fullName}
                                                                 onChange={handleValueChange}
-                                                                className="text-black col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400" 
+                                                                className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'}  col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`} 
                                                             />
                                                         </div>
                                                         <div className="grid grid-cols-4 items-center gap-4">
@@ -447,7 +478,7 @@ const Navbar = () => {
                                                                 name='username'
                                                                 value={data.username} 
                                                                 onChange={handleValueChange}
-                                                                className="text-black col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400" 
+                                                                className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'}  col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`} 
                                                             />
                                                         </div>
                                                         <div className="grid grid-cols-4 items-center gap-4">
@@ -460,20 +491,22 @@ const Navbar = () => {
                                                                 name='email'
                                                                 value={data.email}
                                                                 onChange={handleValueChange} 
-                                                                className="text-black col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400" 
+                                                                className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'}  col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`}
                                                             />
                                                         </div>
                                                         <div className="grid grid-cols-4 items-center gap-4">
                                                             <label htmlFor="description" className="text-right font-semibold">
                                                                 Description
                                                             </label>
-                                                            <input 
+                                                            <textarea 
                                                                 disabled={edit} 
                                                                 id="description" 
                                                                 name='description'
                                                                 value={data.description} 
                                                                 onChange={handleValueChange}
-                                                                className="text-black col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400" 
+                                                                minLength={10}
+                                                                maxLength={50}
+                                                                className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'}  col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`}
                                                             />
                                                         </div>
                                                     </div>
@@ -481,17 +514,14 @@ const Navbar = () => {
                                                         <SheetClose asChild>
                                                             <Button 
                                                                 type='submit' 
-                                                                className='font-semibold uppercase'
+                                                                className={`font-semibold uppercase cursor-pointer bg-green-600 hover:bg-green-500`}
                                                                 onClick={handleEditProfile}
-                                                            >Save Changes</Button>
+                                                                disabled={!change || edit}
+                                                            >
+                                                                Save Changes
+                                                                </Button>
                                                         </SheetClose>
-                                                        <button 
-                                                            type='button' 
-                                                            className='border-blue-600 hover:bg-gray-50 border-2 text-blue-600 px-5 transition-all py-1 rounded-md font-semibold' 
-                                                            onClick={() => setEdit(!edit)}
-                                                        >
-                                                            EDIT
-                                                        </button>
+                                                        
                                                         <SheetClose asChild>
                                                             <Button
                                                                 type='button'

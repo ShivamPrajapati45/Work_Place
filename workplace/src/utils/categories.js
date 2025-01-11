@@ -77,3 +77,16 @@ export const allCategories = [
     }
 ]
 
+export const gigsData = [
+    "Web Development",
+    "Graphic Design",
+    "Content Writing",
+    "Digital Marketing",
+    "SEO Optimization",
+    "Mobile App Development",
+    "UI/UX Design",
+    "Video Editing",
+    "Social Media Management",
+    "Virtual Assistant",
+];
+

@@ -6,19 +6,26 @@ import React, { useEffect, useState } from 'react'
 import { FaStar } from 'react-icons/fa';
 import Reviews from './Reviews';
 import AddReview from './AddReview';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 
 const Details = () => {
-    const [{ gigData,userInfo,hasOrdered }] = useStateProvider();
+    const [{ gigData,hasOrdered }] = useStateProvider();
     const [currentImages, setCurrentImages] = useState();
     const [averageRatings, setAverageRatings] = useState("0");
+    const [currentIndex, setCurrentIndex] = useState(0);
     
-    
+    // useEffect(() => {
+    //     if(gigData){
+    //         setCurrentImages(gigData?.images[0]);
+    //     }
+    // },[gigData]);
+
     useEffect(() => {
-        console.log('dataGig',gigData)
-        if(gigData){
-            setCurrentImages(gigData?.images[0]);
+        if (gigData) {
+            setCurrentIndex(0); // Start with the first image
         }
-    },[gigData]);
+    }, [gigData]);
 
     useEffect(() => {
             if(gigData && gigData?.reviews.length){
@@ -26,97 +33,46 @@ const Details = () => {
                 gigData.reviews.forEach(({ rating }) => (avgRating += rating));
                 setAverageRatings((avgRating / gigData.reviews.length).toFixed(1));
             }
-    },[gigData,averageRatings])
+    },[gigData,averageRatings]);
+
+    // const nextImage = () => {
+    //     const currentIndex = gigData.images.indexOf(currentImages);
+    //     const nextIndex = (currentIndex + 1) % gigData.images.length;
+    //     setCurrentImages(gigData.images[nextIndex]);
+    // };
+
+    // const prevImage = () => {
+    //     const currentIndex = gigData.images.indexOf(currentImages);
+    //     const prevIndex =
+    //         (currentIndex - 1 + gigData.images.length) % gigData.images.length;
+    //     setCurrentImages(gigData.images[prevIndex]);
+    // };
+
+    const nextImage = () => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % gigData.images.length);
+    };
+
+    const prevImage = () => {
+        setCurrentIndex((prevIndex) =>
+            prevIndex === 0 ? gigData.images.length - 1 : prevIndex - 1
+        );
+    };
 
     return (
         <>
             {gigData && currentImages !== "" && (
                 <div className='flex flex-col col-span-2 gap-3'>
-                    <h2 className='text-2xl font-bold mb-1 text-green-300'>
-                        {gigData?.title}
-                    </h2>
-                    <div className='flex items-center gap-2'>
-                        <div>
-                            {gigData?.createdBy?.profileImage ? (
-                                <Image
-                                    src={HOST + "/" + gigData?.createdBy?.profileImage}
-                                    alt='profile'
-                                    height={30}
-                                    width={30}
-                                    className='rounded-full'
-                                />
-                            ) : (
-                                <div className='bg-purple-500 h-10 w-10 flex items-center justify-center rounded-full relative'>
-                                    <span className='text-xl text-white'>
-                                        {gigData?.createdBy?.email[0].toUpperCase()}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-                        <div className='flex gap-2 items-center'>
-                            <h4 className='text-white font-bold'>
-                                {gigData?.createdBy?.fullName}
-                            </h4>
-                            <h6 className='text-gray-400'>@{gigData?.createdBy?.username}</h6>
-                        </div>
-                        <div className='flex items-center gap-3'>
-                            <div className='flex items-center'>
-                                {[1,2,3,4,5].map((star) => (
-                                    <FaStar
-                                        key={star}
-                                        className={`cursor-pointer ${Math.ceil(averageRatings) >= star ? 'text-yellow-400' : 'text-gray-200'}`}
-                                    />
-                                ))}
-                            </div>
-                            <span className='text-yellow-400'>
-                                {averageRatings}
-                            </span>
-                        </div>
-                    </div>
-                    <div className='flex flex-col gap-4'>
-                        <div className='max-h-[1000px] max-w-[1000px] overflow-hidden'>
-                            <Image
-                                src={HOST + "/uploads/" + currentImages}
-                                alt='gig'
-                                height={1000}
-                                width={1000}
-                                className='hover:scale-110 transition-all duration-500'
-                            />
-                        </div>
-                        <div className='flex flex-wrap gap-4'>  
-                            {gigData?.images.length > 1 && gigData.images.map((image) => (
-                                <Image
-                                    src={HOST + "/uploads/" + image}
-                                    alt='Gig'
-                                    height={100}
-                                    width={100}
-                                    key={image}
-                                    onClick={() => setCurrentImages(image)}
-                                    className={`${currentImages === image ? "" : 'blur-sm'} cursor-pointer transition-all duration-500`}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                    <div>
-                        <h3>about this gig</h3>
-                        <div>
-                            <p>{gigData?.description}</p>
-                        </div>
-                    </div>
-                    <div className=''>
-                        <h3 className='text-3xl my-5 font-semibold text-gray-400'>
-                            About The Seller
-                        </h3>
-                        <div className='flex gap-4'>
-                            <div>
-                                {gigData?.createdBy?.profileImage ? (
-                                    <Image
-                                        src={HOST + '/' + gigData?.createdBy?.profileImage}
-                                        alt='profile'
-                                        height={120}
-                                        width={120}
-                                        className='rounded-full'
-                                    />
+                    <div className='flex w-full items-center justify-around'>
+                        <div className='flex items-center justify-center gap-3'>
+                            <div className='bg-gray-300 rounded-md'>
+                                {gigData?.createdBy ? (
+                                    <div className='h-14 w-14 overflow-hidden'>
+                                        <img
+                                            src={gigData?.createdBy?.profileImage}
+                                            alt='profile'
+                                            className='rounded-full h-full w-full object-cover'
+                                        />
+                                    </div>
                                 ) : (
                                     <div className='bg-purple-500 h-10 w-10 flex items-center justify-center rounded-full relative'>
                                         <span className='text-xl text-white'>
@@ -125,12 +81,104 @@ const Details = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className='flex flex-col gap-3'>
-                                <div className='flex gap-2 items-center'>
-                                    <h4 className='font-medium text-lg'>
+                            <div className='flex gap-2 items-center'>
+                                <h6 className='text-slate-700'>@{gigData?.createdBy?.username}</h6>
+                            </div>
+                            <div className='flex items-center gap-3'>
+                                <div className='flex items-center'>
+                                    {[1,2,3,4,5].map((star) => (
+                                        <FaStar
+                                            key={star}
+                                            className={`cursor-pointer ${Math.ceil(averageRatings) >= star ? 'text-yellow-400' : 'text-gray-300'}`}
+                                        />
+                                    ))}
+                                </div>
+                                <span className='text-yellow-500 font-semibold underline'>
+                                    {averageRatings}
+                                </span>
+                            </div>
+                            
+                        </div>
+                        <div>
+                            <h2 className='text-2xl text-center font-bold mb-1 text-[#212121]'>
+                                {gigData?.title}
+                            </h2>
+                        </div>
+                    </div>
+                    <div className='flex items-center flex-col gap-4'>
+                        <div 
+                            className='max-h-[350px] border border-slate-400  relative w-[700px] px-10 overflow-hidden rounded-lg'
+                        >
+                                <div
+                                    className="flex h-[350px] gap-10 transition-transform duration-500 ease-in-out"
+                                    style={{
+                                        transform: `translateX(-${currentIndex * 100}%)`,
+                                    }}
+                                >
+                                    {gigData?.images.map((image, index) => (
+                                        <img
+                                            key={index}
+                                            src={HOST + "/uploads/" + image}
+                                            alt="gig"
+                                            className="h-full object-cover w-full flex-shrink-0"
+                                        />
+                                    ))}
+                                </div>
+                            <button
+                                onClick={prevImage}
+                                className='absolute  left-2 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/70 duration-500  text-white rounded-full p-2'>
+                                <ChevronLeft/>
+                            </button>
+                            <button
+                                onClick={nextImage}
+                                className='absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/70 duration-500  text-white rounded-full p-2'>
+                                <ChevronRight/>
+                            </button>
+                        </div>
+                        <div className='flex flex-wrap gap-4'>  
+                            {gigData?.images.length > 0 && gigData.images.map((image,index) => (
+                                <img
+                                    src={HOST + "/uploads/" + image}
+                                    alt='Gig'
+                                    key={image}
+                                    onClick={() => setCurrentIndex(index)}
+                                    className={`${currentIndex === index ? "" : 'blur-sm'} hover:scale-105 cursor-pointer h-16 w-16 transition-all duration-500 rounded-md`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                    <div className=''>
+                        <h3 className='font-semibold text-[#212121] uppercase text-lg'>about this gig</h3>
+                        <div>
+                            <p className='text-slate-600'>{gigData?.description}</p>
+                        </div>
+                    </div>
+                    <div className='flex flex-col'>
+                        <h3 className='text-2xl my-4 font-semibold text-slate-900'>
+                            About The Seller
+                        </h3>
+                        <div className='flex gap-4 items-center rounded-lg p-5 bg-white shadow-lg shadow-black/40 mx-auto w-3/4'>
+                            <div className='h-20 w-24 overflow-hidden'>
+                                {gigData?.createdBy ? (
+                                    <img
+                                        src={gigData?.createdBy?.profileImage}
+                                        alt='profile'
+                                        className='rounded-full h-full w-full object-cover border-2 border-purple-500'
+                                    />
+                                ) : (
+                                    <div className='bg-gradient-to-r from-purple-500 to-pink-500 h-20 w-20 flex items-center justify-center rounded-full'>
+                                        <span className='text-2xl font-semibold text-white'>
+                                            {gigData?.createdBy?.email[0].toUpperCase()}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                            <div className='flex flex-col gap-3 w-full'>
+                                <div className='flex justify-between items-center'>
+                                    <h4 className='font-semibold uppercase text-xl text-gray-800'>
                                         {gigData?.createdBy?.fullName}
                                     </h4>
-                                    <span className='text-gray-400'>
+                                    <span className='text-gray-500 text-sm'>
                                         @{gigData?.createdBy?.username}
                                     </span>
                                 </div>
@@ -142,12 +190,12 @@ const Details = () => {
                                         {[1,2,3,4,5].map((star) => (
                                             <FaStar
                                                 key={star}
-                                                className={`cursor-pointer ${Math.ceil(gigData?.averageRating) >= star ? 'text-yellow-400' : 'text-gray-200'}`}
+                                                className={`cursor-pointer ${Math.ceil(gigData?.averageRating) >= star ? 'text-yellow-400' : 'text-gray-300'}`}
                                             />
                                         ))}
                                     </div>
-                                    <span className='text-yellow-400'>{gigData.averageRating}</span>
-                                    <span className='text-gray-400'>({gigData.totalReviews})</span>
+                                    <span className='text-yellow-500 font-semibold'>{gigData.averageRating}</span>
+                                    <span className='text-gray-500'>({gigData.totalReviews} Reviews)</span>
                                 </div>
                             </div>
                         </div>
