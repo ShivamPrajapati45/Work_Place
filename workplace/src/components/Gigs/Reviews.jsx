@@ -18,7 +18,7 @@ const Reviews = () => {
     return (
         <div>
             {gigData && (
-                <div className='mb-10 bg-gray-50 p-6 rounded-lg shadow-lg'>
+                <div className='mb-10 p-6 rounded-lg '>
                     <h3 className='text-2xl my-6 font-semibold text-green-700'>
                         Reviews
                     </h3>

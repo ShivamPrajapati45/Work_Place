@@ -49,7 +49,7 @@ const Navbar = () => {
 
     },[userInfo])
 
-    console.log(userInfo)
+    // console.log(userInfo)
 
     const handleValueChange = (e) => {
         const {name, value} = e.target;
@@ -206,7 +206,6 @@ const Navbar = () => {
 
     const handleEditProfile = async () => {
         try{
-            setLoader(true);
             // object with only updated value
             const updatedFields = {};
             Object.keys(data).forEach((key) => {
@@ -254,8 +253,6 @@ const Navbar = () => {
             
         }catch(err){
             console.log("Edit : ", err);
-        }finally{
-            setLoader(false);
         }
     }
 

@@ -37,9 +37,9 @@ export default function CheckoutForm() {
         // be redirected to an intermediate site first to authorize the payment, then
         // redirected to the `return_url`.
         if (error.type === "card_error" || error.type === "validation_error") {
-        setMessage(error.message);
+            setMessage(error.message);
         } else {
-        setMessage("An unexpected error occurred.");
+            setMessage("An unexpected error occurred.");
         }
 
         setIsLoading(false);
@@ -50,15 +50,24 @@ export default function CheckoutForm() {
     }
 
     return (
-        <form id="payment-form" onSubmit={handleSubmit}>
-            <PaymentElement id="payment-element" options={paymentElementOptions} />
+        <form 
+            id="payment-form" 
+            onSubmit={handleSubmit}
+            className="bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto"
+        >
+            <div className="border border-gray-300 rounded-md p-4 mb-6">
+                <PaymentElement id="payment-element" options={paymentElementOptions} />
+            </div>
             <button 
                 disabled={isLoading || !stripe || !elements} 
                 id="submit"
-                className="border text-lg font-semibold px-5 py-3 border-green-400 bg-green-300 text-white rounded-md w-full"
+                className={`flex justify-center items-center w-full py-3 text-lg font-semibold rounded-md 
+                    ${isLoading || !stripe || !elements 
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                    : "bg-green-500 hover:bg-green-600 text-white"}`}
             >
                 <span id="button-text">
-                {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+                    {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
                 </span>
             </button>
             {/* Show any error or success messages */}

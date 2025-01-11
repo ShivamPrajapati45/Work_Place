@@ -107,10 +107,10 @@ const Details = () => {
                     </div>
                     <div className='flex items-center flex-col gap-4'>
                         <div 
-                            className='max-h-[350px] border border-slate-400  relative w-[700px] px-10 overflow-hidden rounded-lg'
+                            className='max-h-[350px] border-[1.7px] border-slate-400 relative w-full overflow-hidden rounded-lg'
                         >
                                 <div
-                                    className="flex h-[350px] gap-10 transition-transform duration-500 ease-in-out"
+                                    className="flex h-[350px]  items-center transition-transform duration-500 ease-in-out"
                                     style={{
                                         transform: `translateX(-${currentIndex * 100}%)`,
                                     }}
@@ -120,7 +120,7 @@ const Details = () => {
                                             key={index}
                                             src={HOST + "/uploads/" + image}
                                             alt="gig"
-                                            className="h-full object-cover w-full flex-shrink-0"
+                                            className="h-full hover:scale-105 duration-500 backdrop-blur-md object-contain w-full flex-shrink-0"
                                         />
                                     ))}
                                 </div>
@@ -157,7 +157,7 @@ const Details = () => {
                         <h3 className='text-2xl my-4 font-semibold text-slate-900'>
                             About The Seller
                         </h3>
-                        <div className='flex gap-4 items-center rounded-lg p-5 bg-white shadow-lg shadow-black/40 mx-auto w-3/4'>
+                        <div className='flex gap-4 items-center rounded-lg p-5 bg-white border-[1.7px] border-slate-400 shadow-lg transition-all duration-500 mx-auto w-3/4'>
                             <div className='h-20 w-24 overflow-hidden'>
                                 {gigData?.createdBy ? (
                                     <img
@@ -178,7 +178,7 @@ const Details = () => {
                                     <h4 className='font-semibold uppercase text-xl text-gray-800'>
                                         {gigData?.createdBy?.fullName}
                                     </h4>
-                                    <span className='text-gray-500 text-sm'>
+                                    <span className='text-gray-500 font-semibold text-lg '>
                                         @{gigData?.createdBy?.username}
                                     </span>
                                 </div>
@@ -194,7 +194,7 @@ const Details = () => {
                                             />
                                         ))}
                                     </div>
-                                    <span className='text-yellow-500 font-semibold'>{gigData.averageRating}</span>
+                                    <span className='text-yellow-500 font-semibold'>{gigData?.averageRating ? gigData.averageRating : 0}</span>
                                     <span className='text-gray-500'>({gigData.totalReviews} Reviews)</span>
                                 </div>
                             </div>

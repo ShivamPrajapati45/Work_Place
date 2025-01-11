@@ -46,8 +46,8 @@ const page = () => {
     console.log('secret', clientSecret);
     return (
         <div className='min-h-[80vh] max-w-full mx-20 flex flex-col gap-1 items-center'>
-            <h3 className='text-3xl'>
-                Please the complete the payment to place the Order
+            <h3 className='text-2xl'>
+                Please complete the payment to place the Order
             </h3>
             {clientSecret && (
                 <Elements options={options} stripe={stripePromise}>
