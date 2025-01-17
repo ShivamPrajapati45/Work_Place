@@ -1,35 +1,36 @@
 import React, { useState } from "react";
 import {
-    PaymentElement,
     useStripe,
-    useElements
+    useElements,
+    PaymentElement,
 } from "@stripe/react-stripe-js";
 
-export default function CheckoutForm() {
+export default function CheckoutForm({ amount,clientSecret }) {
     const stripe = useStripe();
     const elements = useElements();
-
     const [message, setMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    console.log(clientSecret)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        setIsLoading(true);
         if (!stripe || !elements) {
         // Stripe.js hasn't yet loaded.
         // Make sure to disable form submission until Stripe.js has loaded.
         return;
         }
 
-        setIsLoading(true);
 
         const { error } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-            // Make sure to change this to your payment completion page
-            return_url: `${window.location.origin}/success`
-        },
-        });
+            elements,
+            clientSecret,
+            confirmParams: {
+                // Make sure to change this to your payment completion page
+                return_url: `${window.location.origin}/success`
+            },
+        }); 
 
         // This point will only be reached if there is an immediate error when
         // confirming the payment. Otherwise, your customer will be redirected to
@@ -45,33 +46,31 @@ export default function CheckoutForm() {
         setIsLoading(false);
     };
 
-    const paymentElementOptions = {
-        layout: "accordion"
+    if(!clientSecret || !stripe || !elements){
+        console.log({clientSecret, stripe, elements})
+        return (
+            <div className="flex items-center justify-center">
+                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                role="status"
+            >
+                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                    loading...
+                </span>
+            </div>
+            </div>
+        )
     }
 
     return (
-        <form 
-            id="payment-form" 
-            onSubmit={handleSubmit}
-            className="bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto"
-        >
-            <div className="border border-gray-300 rounded-md p-4 mb-6">
-                <PaymentElement id="payment-element" options={paymentElementOptions} />
-            </div>
-            <button 
-                disabled={isLoading || !stripe || !elements} 
-                id="submit"
-                className={`flex justify-center items-center w-full py-3 text-lg font-semibold rounded-md 
-                    ${isLoading || !stripe || !elements 
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
-                    : "bg-green-500 hover:bg-green-600 text-white"}`}
+        <form onSubmit={handleSubmit} >
+            {clientSecret && <PaymentElement/>}
+            {message && <div>{message}</div>}
+            <button
+                disabled={!stripe || isLoading}
+                className="text-white w-full p-5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse"
             >
-                <span id="button-text">
-                    {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
-                </span>
+                {!isLoading ? `Pay $${amount}` : 'processing...'}
             </button>
-            {/* Show any error or success messages */}
-            {message && <div id="payment-message">{message}</div>}
         </form>
-    );
+    ); 
     }

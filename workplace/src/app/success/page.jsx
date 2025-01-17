@@ -9,29 +9,14 @@ const page = () => {
     const router = useRouter();
     const query = useSearchParams();
     const [cookies] = useCookies();
-    const paymentIntent = query.get('payment_intent');
+    const orderId = query.get('orderId');
 
     useEffect(() => {
-        const changeOrderStatus = async () => {
-            try {
-                await axios.post(ORDER_SUCCESS_ROUTE, {paymentIntent},{withCredentials: true});
-
-            } catch (error) {
-                console.log(error)
-            }
-        };
-
-        if(paymentIntent){
-            changeOrderStatus();
-            setTimeout(() => {
-                router.push('/buyer/orders')
-            }, 5000);
+        if(orderId){
+            router.push('/buyer/orders')
         }
-        // else{
-        //     router.push('/')
-        // }
 
-    },[paymentIntent])
+    },[orderId, query])
 
     return (
         <div className='flex items-center px-20 pt-10 flex-col h-[80vh]'>

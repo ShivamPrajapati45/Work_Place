@@ -200,8 +200,8 @@ const Details = () => {
                             </div>
                         </div>
                     </div>
-                    <Reviews/>
                     {hasOrdered && <AddReview/>}
+                    <Reviews/>
                 </div>
             )}
         </>

@@ -224,14 +224,16 @@ export const getUserInfo = async (req,res) => {
 
 export const setUserInfo = async (req,res) => {
     try {
-        // console.log(req)
-            const {userName, fullName, description} = req.body;
+        // console.log("Profile: ",req.body)
+            const {userName, fullName, description, skills, socialLinks,location,portfolioLink} = req.body;
+            const prisma = new PrismaClient();
+
             if(userName && fullName && description){
-                const prisma = new PrismaClient();
                 const existUser = await prisma.user.findUnique({
-                    where:{username:userName}
+                    where: {username:userName}
                 });
-                if(existUser){
+
+                if(existUser && existUser.id !== req.user.userId){
                     return res.status(201).json({
                         msg: 'User Name Already Exists',
                         userNameError: true
@@ -244,6 +246,10 @@ export const setUserInfo = async (req,res) => {
                         username: userName,
                         fullName,
                         description,
+                        skills: skills || [],
+                        socialLinks: socialLinks || [],
+                        portfolioLink: portfolioLink,
+                        location: location,
                         isProfileInfoSet: true
                     },
                 })

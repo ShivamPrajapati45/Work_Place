@@ -107,6 +107,12 @@ export const getGigData = async (req, res) => {
                         include: {
                             reviewer: true
                         }
+                    },
+                    orders: {
+                        where: {
+                            gigId: parseInt(req?.params.gigId),
+                            buyerId: req.user.userId
+                        }
                     }
                 }
             });

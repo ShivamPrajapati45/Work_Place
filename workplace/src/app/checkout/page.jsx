@@ -1,59 +1,49 @@
 'use client'
-import CheckoutForm from '@/components/CheckOutForm';
-import { CREATE_ORDER } from '@/utils/constant';
+import CheckOutPage from '@/components/CheckOutPage';
+import { GET_GIG_DATA } from '@/utils/constant';
+import convertToSubCurrency from '@/utils/convertToSubCurrency';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
-import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie';
 
-const stripePromise = loadStripe("pk_test_51QbRQjGdqwTyou2eZMVq67IqXoW4sU9bHCiF1ISx63aFmXfMjOiQ73DHzCVEX1dNyiqh8xhZFxjMyMluiex6yzAU00PVldU9Pq");
+if(!process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY){
+    throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined")
+};
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
 const page = () => {
-    const router = useRouter();
-    const [cookies] = useCookies();
-    const [clientSecret, setClientSecret] = useState('');
-    const query = useSearchParams();
-    // console.log(query.get('gigId'))
-    const gigId = query.get('gigId');
-    // console.log(gigId);
+    const param = useSearchParams();
+    const gigId = param.get('gigId');
+    const [gig, setGig] = useState(null);
+
     useEffect(() => {
-        const createOrder = async () => {
-            try {
-                const {data: {clientSecret}} = await axios.post(CREATE_ORDER,{gigId},{withCredentials: true});
-                setClientSecret(clientSecret);
-                // console.log(data);
-                
-            } catch (error) {
-                console.log(error);
+        const getGigData = async () => {
+            const res = await axios.get(`${GET_GIG_DATA}/${gigId}`,{withCredentials: true});
+            if(res.data.success){
+                setGig(res.data.gig);
             }
-        };
-        if(gigId) createOrder();
-    },[query,gigId]);
+        }
+        getGigData();
 
-    // this two variable for Stripe
-    const appearance = {
-        theme: "stripe"
-    };
-    const options = {
-        clientSecret,
-        appearance
-    };
-    
+    },[param, gigId]);
+    console.log('GigData: ',gig);
 
-
-    console.log('secret', clientSecret);
+    const amount = 50;
     return (
         <div className='min-h-[80vh] max-w-full mx-20 flex flex-col gap-1 items-center'>
-            <h3 className='text-2xl'>
-                Please complete the payment to place the Order
-            </h3>
-            {clientSecret && (
-                <Elements options={options} stripe={stripePromise}>
-                    <CheckoutForm/>
-                </Elements>
-            )}
+            <h1>Payment Amount {gig?.price/2}</h1>
+            <Elements 
+                stripe={stripePromise}
+                options={{
+                    mode: 'payment',
+                    amount: convertToSubCurrency(gig?.price) || 5000,
+                    currency: 'usd',
+                }}
+            >
+                <CheckOutPage amount={gig?.price/2} />
+            </Elements>
         </div>
     )
 }

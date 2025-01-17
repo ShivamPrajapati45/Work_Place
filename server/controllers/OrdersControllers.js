@@ -2,87 +2,163 @@ import { PrismaClient } from "@prisma/client";
 import Stripe from "stripe";
 
 const stripe = new Stripe(
-    "sk_test_51QbRQjGdqwTyou2eUVVfw1iEH4EeQNvp9r7ih6mAk2hVyItMZwJP3Sy0PlWDz64XoNSehUC4b3acUKMZRIJyHUW200LNcKYUQq"
+    process.env.STRIPE_SECRET_KEY
 );
 
 
-export const addOrder = async (req, res) => {
-    try {
-        const prisma = new PrismaClient();
-        if(req.body.gigId){
-            const {gigId} = req.body;
-            const gig = await prisma.gigs.findUnique({
-                where: {id: parseInt(gigId)}
-            });
+// export const addOrder = async (req, res) => {
+//     try {
+//         const prisma = new PrismaClient();
+//         if(req.body.gigId){
+//             const {gigId} = req.body;
+            
+//             // fetch the gig details
+//             const gig = await prisma.gigs.findUnique({
+//                 where: {id: parseInt(gigId)}
+//             });
 
-            const paymentIntent = await stripe.paymentIntents.create({
-                amount: gig?.price * 100,
-                currency: "usd",
-                // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-                automatic_payment_methods: {
-                    enabled: true,
-                },
-            });
-            await prisma.orders.create({
-                data: {
-                    paymentIntent: paymentIntent.id,
-                    price: gig?.price,
-                    buyer: {connect: {id: req?.user?.userId}},
-                    gig: {connect: {id: parseInt(gigId)}}
-                }
-            });
+//             if(!gig){
+//                 return res.status(404).json({
+//                     msg: 'Gig Not Found',
+//                     success: false
+//                 })
+//             };
+//             const {orderId} = req.body;
+//             const halfPrice = Math.max(Math.floor(gig?.price / 2), 50);
+
+//             if(orderId){
+//                 const existsOrder = await prisma.orders.findFirst({
+//                     where: {
+//                         id: parseInt(orderId)
+//                     }
+//                 });
+//                 // console.log("Exist: ", existsOrder)
+//                 if(existsOrder){
+//                     // console.log('Exist: ',existsOrder);
+//                     const paymentIntent = await stripe.paymentIntents.create({
+//                         amount: halfPrice * 100,
+//                         currency: 'usd',
+//                         automatic_payment_methods: {
+//                             enabled: true
+//                         }
+//                     });
+//                     return res.status(201).json({
+//                         clientSecret: paymentIntent.client_secret,
+//                         success: true
+//                     })
+//                 }
+//             }
+
+//             const paymentIntent = await stripe.paymentIntents.create({
+//                 amount: halfPrice * 100,
+//                 currency: "usd",
+//                 automatic_payment_methods: {
+//                     enabled: true,
+//                 },
+//             });
+//             const order = await prisma.orders.create({
+//                 data: {
+//                     paymentIntent: paymentIntent.id,
+//                     price: gig?.price,
+//                     paidAmount: 0,
+//                     buyer: {connect: {id: req?.user?.userId}},
+//                     gig: {connect: {id: parseInt(gigId)}},
+//                     status: 'Pending',
+//                     inCompleted: true
+//                 }
+//             });
 
 
-            return res.status(201).json({
-                clientSecret: paymentIntent.client_secret,
-                success: true
-            })
-        };
+//             return res.status(201).json({
+//                 clientSecret: paymentIntent.client_secret,
+//                 orderId: order.id,
+//                 success: true
+//             })
+//         };
 
-        return res.status(404).json({
-            msg: "GigId is required",
-            success: false
-        })
+//         return res.status(404).json({
+//             msg: "GigId is required",
+//             success: false
+//         })
 
-    } catch (error) {
-        console.log('err', error);
-        return res.status(501).json({
-            msg: 'Internal Server Error',
-            success: false
-        });
-    }
-};
+//     } catch (error) {
+//         console.log('err', error);
+//         return res.status(501).json({
+//             msg: 'Internal Server Error',
+//             success: false
+//         });
+//     }
+// };
 
-export const confirmOrder = async (req, res) => {
-    try {
-        if(req.body.paymentIntent){
-            const prisma = new PrismaClient();
-            await prisma.orders.update({
-                where: {paymentIntent: req.body.paymentIntent},
-                data: { inCompleted: true }
-            });
+// export const confirmOrder = async (req, res) => {
+//     const prisma = new PrismaClient();
+//     try {
+//         const {orderId} = req.params;
 
-            return res.status(201).json({
-                msg: "Order Success",
-                success: true
-            })
-        }
+//         // Fetch the order by paymentIntent
+//         if(!orderId){
+//             return res.status(400).json({
+//                 msg: "OrderId is required",
+//                 success: false,
+//             });
+//         }
+//         const order = await prisma.orders.findUnique({
+//             where: { id: parseInt(orderId) },
+//         });
 
-        return res.status(404).json({
-            msg: "Intent is found",
-            success: false
-        })
-        
-    } catch (error) {
-        console.log('err', error);
-        return res.status(501).json({
-            msg: 'Internal Server Error',
-            success: false
-        });
-    }
-};
 
-// this is for getting all seller orders matlab user ne kitne gig order kiye he
+//         console.log("order: ",order)
+
+//         if (!order) {
+//             return res.status(404).json({
+//                 msg: "Order not found",
+//                 success: false,
+//             });
+//         }
+
+//         // Check if the order is already fully paid
+//         if (order.paidAmount >= order.price) {
+//             return res.status(400).json({
+//                 msg: "Order is already fully paid",
+//                 success: false,
+//             });
+//         }
+
+//         // Determine the payment amount (50% of the total price or the remaining balance)
+//         const halfPrice = Math.floor(order.price / 2); // Half of the price
+//         const remainingAmount = order.price - order.paidAmount;
+//         const paymentAmount = Math.min(halfPrice, remainingAmount);
+
+//         // Update the order with the calculated payment amount
+//         const newPaidAmount = order.paidAmount + paymentAmount;
+
+//         const updatedOrder = await prisma.orders.update({
+//             where: { id: parseInt(orderId) },
+//             data: {
+//                 paidAmount: newPaidAmount,
+//                 status: newPaidAmount === order.price ? "Completed" : "Partial Payment",
+//                 inCompleted: newPaidAmount !== order.price, // Set to false only if fully paid
+//             },
+//         });
+
+//         return res.status(200).json({
+//             msg: newPaidAmount === order.price ? "Order completed successfully" : "Partial payment received",
+//             updatedOrder,
+//             success: true,
+//         });
+
+//     } catch (error) {
+//         console.error("Error confirming order:", error);
+//         return res.status(500).json({
+//             msg: "Internal Server Error",
+//             success: false,
+//         });
+//     }
+// };
+
+// Custom Payment Implementation by me
+
+
 export const getSellerOrders = async (req, res) => {
     try {
         if(req?.user?.userId){
@@ -119,7 +195,6 @@ export const getSellerOrders = async (req, res) => {
         })
     }
 }
-
 // jisne gig banaya he uske gig ko kitne orders aaye he
 export const getBuyerOrders = async (req, res) => {
     try {
@@ -147,3 +222,141 @@ export const getBuyerOrders = async (req, res) => {
         })
     }
 }
+
+
+// Create an Order
+export const createOrder = async (req, res) => {
+
+    const {gigId,price,upfrontPayment,remainingAmount} = req.body;
+    console.log("Body",req.body)
+    const {userId} = req.user;
+    const prisma = new PrismaClient();
+    try{
+        const newOrder = await prisma.orders.create({
+            data: {
+                gigId,
+                buyerId: parseInt(userId),
+                price,
+                inCompleted: false,
+                status: 'Pending',
+                upfrontPayment,
+                remainingAmount,
+                paidAmount: upfrontPayment,
+                inDispute: false
+            }
+        });
+
+        return res.status(201).json({
+            order: newOrder,
+            success: true
+        });
+        
+
+    }catch(error){
+        console.log('Create Order: ', error)
+        return res.status(501).json({
+            msg: "Internal Server Error",
+            success: false
+        })
+    }
+};
+
+// Update an Order
+export const updateOrder = async (req, res) => {
+    const { orderId } = req.params;
+    const { remainingAmount } = req.body;
+    const prisma = new PrismaClient(); 
+    try {
+        const existingOrder = await prisma.orders.findUnique({
+            where: {id: parseInt(orderId)},
+        });
+
+        if(!existingOrder){
+            return res.status(404).json({
+                msg: 'Order Not Found',
+                success: false
+            })
+        };
+
+        const updatePaidAmount = existingOrder.paidAmount + parseInt(remainingAmount);
+        const updateRemainingAmount = existingOrder.price - updatePaidAmount;
+
+
+        const updatedOrder = await prisma.orders.update({
+            where: {id: parseInt(orderId)},
+            data: {
+                inCompleted: true,
+                inDispute: true,
+                status: "Paid",
+                paidAmount: updatePaidAmount,
+                remainingAmount: updateRemainingAmount
+            }
+        });
+
+        return res.status(201).json({
+            order: updatedOrder,
+            success: true
+        })
+        
+    } catch (error) {
+        console.log('Update Order: ', error)
+        return res.status(501).json({
+            msg: "Internal Server Error",
+            success: false
+        });
+    }
+};
+
+// Delete an Order
+export const deleteOrder = async (req, res) => {
+    const {orderId} = req.params;
+    const prisma = new PrismaClient();
+    try {
+        await prisma.orders.delete({
+            where: {id: parseInt(orderId)}
+        });
+
+        return res.status(201).json({
+            msg: "Order Deleted Successfully",
+            success: true
+        })
+
+        
+    } catch (error) {
+        console.log('Delete Order: ', error)
+        return res.status(501).json({
+            msg: "Internal Server Error",
+            success: false
+        })
+    }
+}
+
+export const getOrderDetail = async (req, res) => {
+    const { orderId } = req.params;
+    const prisma = new PrismaClient();
+    try {
+        const order = await prisma.orders.findUnique({
+            where: {id: parseInt(orderId)}
+        });
+
+        if(!order){
+            return res.status(404).json({
+                msg: 'Something Went Wrong',
+                success: false
+            })
+        };
+
+        return res.status(201).json({
+            order,
+            success: true
+        })
+        
+    } catch (error) {
+        console.log('Error: ', error)
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: false
+        });
+    }
+}
+

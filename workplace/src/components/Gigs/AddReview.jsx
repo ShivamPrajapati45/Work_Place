@@ -40,7 +40,7 @@ const AddReview = () => {
         }
     }
     return (
-        <div className='mb-10'>
+        <div className=''>
             <h3 className='text-2xl my-5 font-semibold text-gray-500'>
                 give review
             </h3>
@@ -48,6 +48,8 @@ const AddReview = () => {
                     <textarea 
                         name="reviewText"
                         id="reviewText"
+                        minLength={0}
+                        maxLength={40}
                         value={data.reviewText}
                         onChange={(e) => setData({...data, reviewText: e.target.value})}
                         placeholder='Add review'

@@ -19,7 +19,7 @@ const Reviews = () => {
         <div>
             {gigData && (
                 <div className='mb-10 p-6 rounded-lg '>
-                    <h3 className='text-2xl my-6 font-semibold text-green-700'>
+                    <h3 className='text-2xl my-4 font-semibold text-green-700'>
                         Reviews
                     </h3>
                     <div className='flex justify-between items-center mb-5 border-b pb-4'>
@@ -38,8 +38,9 @@ const Reviews = () => {
                     </div>
                     <div className='flex flex-col gap-6'>
                         <h1 className='text-xl font-medium text-gray-800'>All Reviews</h1>
+                        <div className=' rounded-lg max-h-[20rem] overflow-scroll'>
                         {gigData.reviews.map((review) => (
-                            <div className='flex gap-4 border-b pb-4 mb-4 items-start' key={review?.id}>
+                            <div className='flex gap-4  border-b pb-4 mb-4 items-start' key={review?.id}>
                                 <div className='h-16 w-16 rounded-full'>
                                     {review.reviewer ? (
                                         <img
@@ -71,6 +72,7 @@ const Reviews = () => {
                                 </div>
                             </div>
                         ))}
+                        </div>
                     </div>
                 </div>
             ) }

@@ -12,9 +12,9 @@ export const LOGIN_ROUTES = `${AUTH_ROUTES}/login`;
 export const GET_USER_INFO = `${AUTH_ROUTES}/get-user-info`;
 export const SET_USER_INFO = `${AUTH_ROUTES}/set-user-info`;
 export const SET_USER_IMAGE = `${AUTH_ROUTES}/set-user-image`;
-export const LOGOUT_ROUTES = `${AUTH_ROUTES}/logout`
-export const EDIT_USER_INFO = `${AUTH_ROUTES}/edit-profile`
-export const EDIT_USER_IMAGE = `${AUTH_ROUTES}/edit-profile-image`
+export const LOGOUT_ROUTES = `${AUTH_ROUTES}/logout`;
+export const EDIT_USER_INFO = `${AUTH_ROUTES}/edit-profile`;
+export const EDIT_USER_IMAGE = `${AUTH_ROUTES}/edit-profile-image`;
 
 // Gigs Routes
 export const ADD_GIG_ROUTE = `${GIG_ROUTES}/add`;
@@ -23,20 +23,22 @@ export const GET_GIG_DATA = `${GIG_ROUTES}/get-gig-data`;
 export const EDIT_GIG = `${GIG_ROUTES}/edit-gig`;
 export const SEARCH_GIGS_ROUTE = `${GIG_ROUTES}/search`;
 export const CHECK_USER_ORDERED_GIG_ROUTE = `${GIG_ROUTES}/check-gig-order`;
-export const ADD_REVIEW = `${GIG_ROUTES}/add-review`
+export const ADD_REVIEW = `${GIG_ROUTES}/add-review`;
 export const GET_GIGS = `${GIG_ROUTES}/get-gigs`;
 
 // Orders Routes
 export const CREATE_ORDER = `${ORDER_ROUTES}/create`;
-export const ORDER_SUCCESS_ROUTE = `${ORDER_ROUTES}/success`;
+export const ORDER_UPDATE_ROUTE = `${ORDER_ROUTES}/update`;
+export const ORDER_DELETE_ROUTE = `${ORDER_ROUTES}/delete`;
 export const GET_BUYER_ORDERS_ROUTE = `${ORDER_ROUTES}/get-buyer-orders`;
 export const GET_SELLER_ORDERS_ROUTE = `${ORDER_ROUTES}/get-seller-orders`;
+export const GET_ORDER = `${ORDER_ROUTES}/get`
 
 // Messages Routes
 export const GET_MESSAGES = `${MESSAGE_ROUTES}/get-messages`;
-export const ADD_MESSAGES = `${MESSAGE_ROUTES}/add-messages`
-export const GET_UNREAD_MESSAGES = `${MESSAGE_ROUTES}/unread-messages`
-export const MARK_AS_READ = `${MESSAGE_ROUTES}/mark-as-read`
+export const ADD_MESSAGES = `${MESSAGE_ROUTES}/add-messages`;
+export const GET_UNREAD_MESSAGES = `${MESSAGE_ROUTES}/unread-messages`;
+export const MARK_AS_READ = `${MESSAGE_ROUTES}/mark-as-read`;
 
 // Dashboard Routes
-export const GET_SELLER_DASHBOARD_DATA = `${DASHBOARD_ROUTES}/seller`
+export const GET_SELLER_DASHBOARD_DATA = `${DASHBOARD_ROUTES}/seller`;

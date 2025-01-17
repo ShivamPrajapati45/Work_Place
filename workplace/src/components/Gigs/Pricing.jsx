@@ -10,7 +10,7 @@ import { BsCheckLg } from 'react-icons/bs';
 const Pricing = () => {
 
     const router = useRouter();
-    const [{ gigData,userInfo }, dispatch] = useStateProvider();
+    const [{ gigData,userInfo }] = useStateProvider();
 
     return (
         <>
@@ -60,7 +60,7 @@ const Pricing = () => {
                             ) : (
                                 <button
                                     className='relative flex items-center justify-center py-2 px-4 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600'
-                                    onClick={() => router.push(`/checkout?gigId=${gigData?.id}`)}
+                                    onClick={() => router.push(`/paymentForm?gigId=${gigData?.id}`)}
                                 >
                                     <span>CONTINUE</span>
                                     <BiRightArrowAlt className='text-2xl absolute right-4' />

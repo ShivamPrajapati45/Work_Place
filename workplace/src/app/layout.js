@@ -5,8 +5,8 @@ import { StateProvider } from "@/context/StateContext";
 import { initialState } from "@/context/StateReducers";
 import Navbar from "@/components/Navbar";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
 import Cookies from "js-cookie";
+import Script from "next/script";
 
 export default function RootLayout({ children }) {
 
@@ -21,7 +21,10 @@ export default function RootLayout({ children }) {
     // },[token])
   return (
     <html lang="en">
-      <body>
+        <Script
+          src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/datepicker.min.js"
+        />
+        <body>
         <StateProvider initialState={initialState} >
           <div className="relative h-screen flex flex-col justify-between">
             <Navbar/>
