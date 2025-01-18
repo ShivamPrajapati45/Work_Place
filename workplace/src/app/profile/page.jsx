@@ -46,10 +46,6 @@ const page = () => {
         setIsLoaded(true);
     },[userInfo]);
 
-    useEffect(() => {
-
-    },[userInfo])
-
     const handleFileChange = (e) => {
         const file = e.target.files[0];  // single file selection
         if(file){
@@ -120,6 +116,7 @@ const page = () => {
             setStep(step + 1);
             setIsLoading(false)
         }, 3000);
+
     }
 
     const setProfile = async () => {
@@ -302,6 +299,8 @@ const page = () => {
                                             
                                         </>
                                     )}
+
+                                    {/* step 2 */}
                                     {
                                         step === 2 && (
                                             <div className='grid relative grid-cols-2 gap-5 py-20'>
