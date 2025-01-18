@@ -15,8 +15,8 @@ const page = () => {
     const [previewImage, setPreviewImage] = useState(null);
     const [errorMsg, setErrorMsg] = useState("");
     const [step, setStep] = useState(1);
-    const [skills, setSkills] = useState([]);
     const [socialLinkInput, setSocialLinkInput] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState({
         userName: '',
         fullName: '',
@@ -46,6 +46,10 @@ const page = () => {
         setIsLoaded(true);
     },[userInfo]);
 
+    useEffect(() => {
+
+    },[userInfo])
+
     const handleFileChange = (e) => {
         const file = e.target.files[0];  // single file selection
         if(file){
@@ -66,6 +70,7 @@ const page = () => {
     };
 
     const handleChange = (e) => {
+        setErrorMsg('')
         setData({
             ...data,
             [e.target.name]: e.target.value
@@ -100,17 +105,21 @@ const page = () => {
         }));
     };
 
-
-
     const handleNextStep = () => {
-        // if(step === 1){
-        //     if(!data.userName || !data.fullName || !image){
-        //         setErrorMsg('Username, Full Name and Image are required.');
-        //         return;
-        //     }
-        // }
-        // setErrorMsg('');
-        setStep(step + 1);
+        setErrorMsg('');
+        if(step === 1){
+            if(!data.userName || !data.fullName || !image){
+                setErrorMsg('Username, Full Name and Image are required.');
+                return;
+            }
+        }
+
+        setIsLoading(true);
+        setErrorMsg('');
+        setTimeout(() => {
+            setStep(step + 1);
+            setIsLoading(false)
+        }, 3000);
     }
 
     const setProfile = async () => {
@@ -163,26 +172,20 @@ const page = () => {
         <>
                     {
                         isLoaded && (
-                            <div className='border border-black rounded-lg mb-5 mx-auto flex items-center gap-4 justify-between max-w-[90vw] h-[100%] min-h-[100%]'>
-                                {
-                                    errorMsg && (
-                                        <div>
-                                            <span className='text-red-500 font-semibold text-sm'>{errorMsg}</span>
-                                        </div>
-                                    )
-                                }
+                            <div className='rounded-lg shadow-lg shadow-gray-400 mx-auto border-t-2 border-gray-300 my-10 flex items-center gap-4 justify-between max-w-[90vw] h-[100%] min-h-[100%] duration-500 transition-all'>
 
-                                <div className="relative h-full flex items-center justify-center bg-gradient-to-r from-black via-gray-300 to-black px-3">
-                                    <div className="absolute inset-0">
+                                {/* Left side Welcome Banner */}
+                                <div className="relative h-full flex rounded-l-lg items-center justify-center bg-gradient-to-r from-black via-gray-500 to-gray-300 px-10 group">
+                                    <div className="absolute inset-1">
                                         <img 
                                             src="./images/profile2.jpg" 
                                             alt="Welcome Illustration" 
-                                            className="w-full h-full object-cover opacity-60"
+                                            className="w-full h-full rounded-l-lg object-cover opacity-60"
                                         />
                                     </div>
 
                                     <div className="relative bg-black/5 mx-auto py-2 z-10 text-center rounded-lg text-white px-6 md:px-12">
-                                        <h2 className="text-5xl font-extrabold mb-4 text-shadow-md text-white">Welcome!</h2>
+                                        <h2 className="text-5xl font-extrabold mb-4 text-shadow-md text-white transition-transform duration-500 group-hover:scale-110 group-hover:text-gray-200 group-hover:rotate-2">Welcome!</h2>
                                     </div>
                                 </div>
 
@@ -237,6 +240,11 @@ const page = () => {
                                                         </div>
                                                 </div>
                                             </div>
+                                            {
+                                                errorMsg && (
+                                                        <span className='text-red-500 p-0 m-0 text-sm'>{errorMsg}</span>
+                                                )
+                                            }
                                             <div className='grid grid-cols-2 gap-8 px-16'>
                                                 <div>
                                                     <label className=' text-base uppercase text-gray-900 dark:text-white' htmlFor='username'>enter username</label>
@@ -261,6 +269,7 @@ const page = () => {
                                                     />
                                                 </div>
                                             </div>
+                                            
                                             <div className='w-full px-16 flex flex-col'>
                                                 <textarea 
                                                     id='description'
@@ -274,19 +283,33 @@ const page = () => {
                                                 />
                                             </div>
                                             <button 
-                                                    className='border text-lg font-semibold px-5 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600'
+                                                    className='relative border text-lg font-semibold px-5 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2 disabled:opacity-70'
                                                     onClick={handleNextStep}
                                                     type='button'
+                                                    disabled={isLoading}
                                                 >
-                                                    Continue
+                                                    {
+                                                        isLoading ? (
+                                                            <div className='flex gap-1.5 items-center justify-center px-5 py-2'>
+                                                                <div className='h-2.5 w-2.5 bg-[#212121] rounded-full animate-[bounce_1s_infinite] [animation-delay:-0.1s]'></div>
+                                                                <div className='h-2.5 w-2.5 bg-[#212121] rounded-full animate-[bounce_1s_infinite] [animation-delay:-0.20s]'></div>
+                                                                <div className='h-2.5 w-2.5 bg-[#212121] rounded-full animate-[bounce_1s_infinite]'></div>
+                                                            </div>
+                                                        ) : ('Continue')
+                                                    }
+                                                    
                                             </button>
+                                            
                                         </>
                                     )}
                                     {
                                         step === 2 && (
                                             <div className='grid relative grid-cols-2 gap-5 py-20'>
                                                 <button 
-                                                    onClick={() => setStep(1)}
+                                                    onClick={() => {
+                                                        setStep(1)
+                                                        setIsLoading(false)
+                                                    }}
                                                     className='absolute top-5 left-0 hover:bg-gray-200 p-1 duration-500 transition-all rounded-full text-2xl text-gray-700 hover:text-gray-900'
                                                 >
                                                     <IoArrowBack/>
@@ -335,7 +358,7 @@ const page = () => {
                                                     {/* Selected Skills List */}
                                                     <ul 
                                                         className="flex flex-wrap gap-3 rounded-lg p-2 overflow-y-auto"
-                                                        style={{ maxHeight: '60px', border: '1px solid #e5e7eb', backgroundColor: '#f9fafb' }}
+                                                        style={{ maxHeight: '60px', maxWidth: '250px', border: '1px solid #e5e7eb', backgroundColor: '#f9fafb' }}
                                                     >
                                                         {data.skills.map((skill, index) => (
                                                             <li
@@ -381,7 +404,7 @@ const page = () => {
                                                     {/* Added Links List */}
                                                     <ul 
                                                         className="flex flex-wrap gap-3 rounded-lg p-2 overflow-y-auto"
-                                                        style={{ maxHeight: '60px', border: '1px solid #e5e7eb', backgroundColor: '#f9fafb' }}
+                                                        style={{ maxHeight: '60px', maxWidth: '250px', border: '1px solid #e5e7eb', backgroundColor: '#f9fafb' }}
                                                     >
                                                         {data.socialMediaLinks.map((link, index) => (
                                                             <li

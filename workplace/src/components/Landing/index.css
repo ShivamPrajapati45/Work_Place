@@ -1,21 +1,21 @@
-.carousel-container {
-    width: 100%; /* Adjust as needed */
+/* .carousel-container {
+    width: 100%; 
     position: relative;
-}
+} */
 
-.carousel {
+/* .carousel {
     animation: slide 15s linear infinite;
-}
+} */
 
-.carousel:hover {
+/* .carousel:hover {
     animation-play-state: paused;
-}
+} */
 
-@keyframes slide {
+/* @keyframes slide {
     0% {
         transform: translateX(0%);
     }
     100% {
         transform: translateX(-50%);
     }
-}
+}; */
