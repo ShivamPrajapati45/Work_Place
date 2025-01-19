@@ -19,7 +19,7 @@ const imageUpload = ({ files, setFile }) => {
             }
         }
     };
-    console.log('files: ', files)
+    // console.log('files: ', files)
     const removeImage = (fileName) => {
         setFile(files.filter((x) => x.name !== fileName));
     }
@@ -35,11 +35,11 @@ const imageUpload = ({ files, setFile }) => {
                             </span>
                     )}
                         <div className='flex items-center justify-center w-full'>
-                            <label htmlFor="" className='flex cursor-pointer flex-col w-full h-32 border-2 rounded-md border-dashed hover:bg-gray-100 hover:border-gray-300'>
+                            <label htmlFor="" className='flex cursor-pointer flex-col w-full h-28 border-2 rounded-md border-dashed hover:bg-gray-100 hover:border-gray-300'>
                                 <div className='flex flex-col items-center justify-center pt-7'>
                                     <svg 
                                         xmlns="http://www.w3.org/2000/svg" 
-                                        className='h-12 w-12 text-gray-400 group-hover:text-gray-600' 
+                                        className='h-10 w-10 text-gray-400 group-hover:text-gray-600' 
                                         fill="currentColor" 
                                         viewBox="0 0 24 24" 
                                         stroke="currentColor"
