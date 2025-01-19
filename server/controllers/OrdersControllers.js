@@ -228,8 +228,8 @@ export const getBuyerOrders = async (req, res) => {
 export const createOrder = async (req, res) => {
 
     const {gigId,price,upfrontPayment,remainingAmount} = req.body;
-    console.log("Body",req.body)
-    const {userId} = req.user;
+    // console.log("Body",req.body)
+    const {userId} = req.user;  //Buyer Id
     const prisma = new PrismaClient();
     try{
         const newOrder = await prisma.orders.create({
@@ -246,6 +246,24 @@ export const createOrder = async (req, res) => {
             }
         });
 
+        const buyer = await prisma.user.findUnique({
+            where: {id: parseInt(userId)}
+        })
+        //
+        const gig = await prisma.gigs.findUnique({
+            where: {id: parseInt(gigId)},
+            include: {createdBy: true}
+        });
+        const sellerId = gig.userId;  // seller id
+
+        // Create notification for the seller
+        await prisma.notifications.create({
+            data: {
+                message: `Your gig "${gig?.title}" has been purchased! by "${buyer?.fullName}"`,
+                sellerId: sellerId
+            }
+        })
+
         return res.status(201).json({
             order: newOrder,
             success: true
@@ -260,6 +278,74 @@ export const createOrder = async (req, res) => {
         })
     }
 };
+
+// Notifications Controllers
+export const markNotificationsAsRead = async (req, res) => {
+    const {userId} = req.user;
+    const prisma = new PrismaClient();
+    try {
+        await prisma.notifications.updateMany({
+            where: {sellerId: parseInt(userId),read: false},
+            data: {
+                read: true
+            }
+        })
+        
+    } catch (error) {
+        console.log('Mark Notifications: ', error);
+        return res.status(500).json({ success: false, msg: "Internal Server Error" });
+    }
+}
+
+export const unreadMessages = async (req, res) => {
+    const { userId } = req.user;
+    const prisma = new PrismaClient();
+    try {
+        const unreadCount = await prisma.notifications.count({
+            where: {sellerId: parseInt(userId),read: false}
+        });
+
+        const notifications = await prisma.notifications.findMany({
+            where: {sellerId: parseInt(userId),read: false}
+        })
+
+        if(!notifications || !unreadCount === 0) return res.status(404).json({
+            success: false
+        });
+
+        return res.status(202).json({
+            unreadCount,
+            notifications,
+            success: true
+        });
+        
+    } catch (error) {
+        console.log('Mark Notifications: ', error);
+        return res.status(500).json({ success: false, msg: "Internal Server Error" });
+    }
+}
+export const readMessages = async (req, res) => {
+    const { userId } = req.user;
+    const prisma = new PrismaClient();
+    try {
+        const notifications = await prisma.notifications.findMany({
+            where: {sellerId: parseInt(userId),read: true}
+        });
+
+        if(!notifications) return res.status(404).json({
+            success: false
+        })
+
+        return res.status(202).json({
+            notifications,
+            success: true
+        });
+        
+    } catch (error) {
+        console.log('Mark Notifications: ', error);
+        return res.status(500).json({ success: false, msg: "Internal Server Error" });
+    }
+}
 
 // Update an Order
 export const updateOrder = async (req, res) => {

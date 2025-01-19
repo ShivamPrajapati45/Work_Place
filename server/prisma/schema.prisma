@@ -26,6 +26,7 @@ model User {
   gigs Gigs[]
   orders Orders[]
   reviews Reviews[]
+  notifications Notifications[]
   messagesSent Messages[] @relation("sentMessages")
   messagesReceived Messages[] @relation("receivedMessages")
 }
@@ -88,4 +89,14 @@ model Messages {
   recipientId Int
   order Orders @relation(fields: [orderId], references: [id])
   orderId Int
+}
+
+model Notifications {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  message String
+  sellerId Int 
+  user User @relation(fields: [sellerId], references: [id])
+  read Boolean @default(false) // Tracks notification read or not
+
 }

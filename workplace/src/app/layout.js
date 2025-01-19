@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
         <StateProvider initialState={initialState} >
           <div className="relative h-screen flex flex-col justify-between">
             <Navbar/>
-            <div className={`h-screen w-screen  ${pathName !== '/' ? 'mt-16':''} `}>
+            <div className={` ${pathName !== '/' ? 'mt-16':''} `}>
               {children}
             </div>
             <Footer/>

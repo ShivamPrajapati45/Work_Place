@@ -7,13 +7,12 @@ import { ADD_GIG_ROUTE } from '@/utils/constant';
 import { useRouter } from 'next/navigation';
 import { FaAngleRight,FaAngleLeft } from 'react-icons/fa'
 import Button from '@/components/seller/Button';
-import './Multistepform.css'
 
 const page = () => {
     const router = useRouter();
     const [files, setFiles] = useState([]);
     const [features, setFeatures] = useState([]);
-    const [step, setStep] = useState(3);
+    const [step, setStep] = useState(0);
     const [isValid, setIsValid] = useState(false);
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -133,11 +132,11 @@ const page = () => {
         }
     }
 
-    const inputClassName = 'block px-4 text-xl mt-2 py-4 w-full text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-400 focus:border-blue-400';
-    const labelClassName = 'text-xl  text-[#212121]'
+    const inputClassName = 'block px-2 text-base mt-2 py-2 w-full text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-400 focus:border-blue-400';
+    const labelClassName = 'text-lg  text-[#212121]'
 
     return (
-        <div className='w-[140vw] flex min-h-[100vh] mx-8'>
+        <div className='w-full flex min-h-[100vh] mx-4 '>
             <div className=''>
 
                 {/* content part */}
@@ -163,7 +162,7 @@ const page = () => {
                 <div className='flex flex-col gap-10 mt-5'>
                     {/* step 0 Title and Category*/}
                     {step === 0 && (
-                        <div className={`grid grid-cols-1 gap-6 animate-in slide-in-from-left duration-500 transition-all `}>
+                        <div className={`grid grid-cols-1 gap-4 animate-in slide-in-from-left duration-500 transition-all `}>
                             <div className=''>
                                 <label htmlFor="title" className={labelClassName}>
                                     Title
@@ -187,7 +186,7 @@ const page = () => {
                                 <select 
                                     name="category" 
                                     id="category"
-                                    className='text-[#212121] text-lg mt-2 w-full rounded-md focus:ring-blue-400 focus:border-blue-400 block p-4'
+                                    className='text-[#212121] text-base mt-2 w-full rounded-md focus:ring-blue-400 focus:border-blue-400 block '
                                     onChange={handleChange}
                                 >
                                     {categories.map(({ name }) => (
@@ -278,7 +277,7 @@ const page = () => {
                                     />
                                     <button
                                         type='button'
-                                        className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'
+                                        className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'
                                         onClick={addFeature}
                                     >
                                         ADD
@@ -309,7 +308,7 @@ const page = () => {
                                     <label htmlFor="image" className={labelClassName}>
                                         Gig Images
                                     </label>
-                                    <div className='mt-2'>
+                                    <div className='mt-1'>
                                         <ImageUpload files={files} setFile={setFiles} />
                                     </div>
                                 </div>
@@ -371,7 +370,7 @@ const page = () => {
                                 onclick={nextStep}
                                 isLoading={isLoading}
                                 isDisabled={!isValid || isLoading}
-                                className={`${isValid ? 'bg-blue-500' : 'bg-gray-300 cursor-not-allowed'} text-white`}
+                                className={`${isValid ? 'bg-blue-500' : 'bg-gray-300 text-slate-500 cursor-not-allowed'} text-white`}
                             >
                                 Continue
                                 <FaAngleRight className='text-2xl'/>
@@ -383,7 +382,7 @@ const page = () => {
                                 onclick={addGig}
                                 isLoading={isLoading}
                                 isDisabled={isLoading}
-                                className={`${isValid ? 'bg-blue-500' : 'bg-gray-300 cursor-not-allowed'} text-white`}
+                                className={`${isValid ? 'bg-blue-500' : 'bg-gray-300 text-slate-500 cursor-not-allowed'} text-white`}
                             >
                                 Submit
                             </Button>

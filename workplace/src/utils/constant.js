@@ -32,7 +32,10 @@ export const ORDER_UPDATE_ROUTE = `${ORDER_ROUTES}/update`;
 export const ORDER_DELETE_ROUTE = `${ORDER_ROUTES}/delete`;
 export const GET_BUYER_ORDERS_ROUTE = `${ORDER_ROUTES}/get-buyer-orders`;
 export const GET_SELLER_ORDERS_ROUTE = `${ORDER_ROUTES}/get-seller-orders`;
-export const GET_ORDER = `${ORDER_ROUTES}/get`
+export const GET_ORDER = `${ORDER_ROUTES}/get`;
+export const GET_NOTIFICATIONS = `${ORDER_ROUTES}/unread-messages`;
+export const GET_READ_NOTIFICATIONS = `${ORDER_ROUTES}/read-messages`;
+export const MARK_READ = `${ORDER_ROUTES}/mark-read`;
 
 // Messages Routes
 export const GET_MESSAGES = `${MESSAGE_ROUTES}/get-messages`;

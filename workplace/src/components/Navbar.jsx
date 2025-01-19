@@ -3,10 +3,10 @@ import { useStateProvider } from '@/context/StateContext';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import Logo from './Logo';
-import {IoSearchOutline} from 'react-icons/io5'
+import {IoNotificationsOutline, IoSearchOutline} from 'react-icons/io5'
 import {useCookies} from 'react-cookie'
 import axios from 'axios';
-import { EDIT_USER_IMAGE, EDIT_USER_INFO, GET_USER_INFO, HOST, LOGOUT_ROUTES } from '@/utils/constant';
+import { EDIT_USER_IMAGE, EDIT_USER_INFO, GET_NOTIFICATIONS, GET_USER_INFO, HOST, LOGOUT_ROUTES } from '@/utils/constant';
 import { reducerCases } from '@/context/constants';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
@@ -30,12 +30,30 @@ const Navbar = () => {
     const [previewImage, setPreviewImage] = useState(null);
     const [imageHover, setImageHover] = useState(false);
     const [change, setChange] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+
     const [data, setData] = useState({
         fullName: '',
         username: '',
         email: '',
         description: ''
     });
+
+    // Fetching UnreadCount
+    useEffect(() => {
+        const fetchUnreadCount = async () => {
+            try {
+                const {data} = await axios.get(GET_NOTIFICATIONS,{withCredentials: true});
+                if(data.success){
+                    setUnreadCount(data.notifications);
+                }
+                
+            } catch (error) {
+                console.log(error)
+            }
+        };
+        if(userInfo) fetchUnreadCount();
+    },[userInfo])
 
     useEffect(() => {
         const handleData = {...data};
@@ -47,7 +65,9 @@ const Navbar = () => {
         };
         setData(handleData);
 
-    },[userInfo])
+    },[userInfo]);
+
+
 
     // console.log(userInfo)
 
@@ -357,6 +377,18 @@ const Navbar = () => {
                                             onClick={handleModeSwitch}
                                         >
                                                 Switch to {isSeller ? 'Buyer' : 'Seller'}
+                                        </li>
+                                        <li className='relative'>
+                                            <button
+                                                onClick={() => router.push("/seller/notifications")}
+                                            >
+                                                <IoNotificationsOutline className='text-2xl' />
+                                                {unreadCount > 0 && (
+                                                    <span className='absolute top-0 right-0 text-xs bg-red-500 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center'>
+                                                        {unreadCount}
+                                                    </span>
+                                                )}
+                                            </button>
                                         </li>
                                         <li
                                             className='cursor-pointer'
