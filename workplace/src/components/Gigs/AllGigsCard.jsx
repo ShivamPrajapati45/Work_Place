@@ -40,9 +40,7 @@ const AllGigsCard = ({ gig }) => {
     }
 
     return (
-        <div
-
-        >
+        <>
             <div
                 className={`w-[280px] h-[350px] bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300 ease-in-out ${
                     isHovered ? "shadow-lg shadow-gray-500 duration-500" : ""
@@ -122,7 +120,7 @@ const AllGigsCard = ({ gig }) => {
                         </div>
                         <div className="flex items-center pt-3 border-t border-gray-100">
                             {
-                                gig?.createdBy ? (
+                                gig?.createdBy?.isProfileInfoSet ? (
                                     <img
                                         src={gig?.createdBy?.profileImage}
                                         alt={gig?.createdBy?.username}
@@ -145,7 +143,7 @@ const AllGigsCard = ({ gig }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

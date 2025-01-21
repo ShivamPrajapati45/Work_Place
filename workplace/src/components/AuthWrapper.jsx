@@ -22,11 +22,12 @@ const AuthWrapper = ({ type }) => {
             if(response['code']){
                 const res = await googleAuth(response['code']);
                 if(res.data.user){
-                    dispatch({type: reducerCases.CLOSE_AUTH_MODEL});
+                    // dispatch({type: reducerCases.CLOSE_AUTH_MODEL});
                     dispatch({type: reducerCases.SET_USER, userInfo: res.data.user});
+                    router.push('/');
                     window.location.reload();
                 }
-                console.log('google: ',res);
+                // console.log('google: ',res);
             }
 
         } catch (error) {

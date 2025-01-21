@@ -6,13 +6,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie'
 
 const page = () => {
     const [{userInfo}] = useStateProvider();
     const router = useRouter();
     const [dashboardData, setDashboardData] = useState(undefined);
-    console.log("User: ", userInfo)
+    // console.log("User: ", userInfo)
     useEffect(() => {
         const getSellerDashboardData = async () => {
             try {

@@ -21,16 +21,18 @@ export default function RootLayout({ children }) {
     // },[token])
   return (
     <html lang="en">
-        <Script
-          src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/datepicker.min.js"
-        />
-        <body>
+      <head>
+        <title>WorkPlace</title>
+      </head>
+        <body className="min-h-screen flex flex-col p-0 m-0 box-border">
         <StateProvider initialState={initialState} >
-          <div className="relative h-screen flex flex-col justify-between">
-            <Navbar/>
-            <div className={` ${pathName !== '/' ? 'mt-16':''} `}>
+          <div className="flex flex-col flex-grow">
+            <header>
+              <Navbar/>
+            </header>
+            <main className={` ${pathName !== '/' ? 'mt-16':''} `}>
               {children}
-            </div>
+            </main>
             <Footer/>
           </div>
         </StateProvider>

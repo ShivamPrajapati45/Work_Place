@@ -30,16 +30,30 @@ const page = () => {
                 setData({...gig, time: gig?.revisions});
                 setFeatures(gig?.features);
 
-                gig.images.forEach((image) => {
+                // gig.images.forEach((image) => {
+                //     const url = HOST + '/uploads/' + image;
+                //     const fileName = image;
+                //     fetch(url).then(async (res) => {
+                //         const contentType = res.headers.get('content-type');
+                //         const blob = await res.blob();
+                //         const file = new File([blob], fileName, {contentType});
+                //         setFiles((prevFiles) => [...prevFiles, file])
+                //         // setFiles([file]);
+                //     });
+                // });
+                // console.log('gig: ', gig)
+
+                const filePromises = gig.images.map(async (image) => {
                     const url = HOST + '/uploads/' + image;
                     const fileName = image;
-                    fetch(url).then(async (res) => {
-                        const contentType = res.headers.get('content-type');
-                        const blob = await res.blob();
-                        const files = new File([blob], fileName, {contentType});
-                        setFiles([files]);
-                    });
-                })
+                    const res = await fetch(url);
+                    const contentType = res.headers.get('content-type');
+                    const blob = await res.blob();
+                    return new File([blob], fileName, { contentType });
+                });
+
+                const allFiles = await Promise.all(filePromises);
+                setFiles(allFiles)
             } catch (error) {
                 console.log('err', error);
             }
@@ -233,18 +247,18 @@ const page = () => {
                                         </li>
                                     ))}
                                 </ul>
-                        </div>
+                    </div>
+                    <div>
+                        <label htmlFor="image" className={labelClassName}>
+                            Gig Images
+                        </label>
                         <div>
-                            <label htmlFor="image" className={labelClassName}>
-                                Gig Images
-                            </label>
-                            <div>
-                                <ImageUpload 
-                                    files={files} 
-                                    setFile={setFiles} 
-                                />
-                            </div>
+                            <ImageUpload 
+                                files={files} 
+                                setFile={setFiles} 
+                            />
                         </div>
+                    </div>
                 </div>
                 <div className='grid grid-cols-2 gap-10'>
                     <div>
@@ -283,7 +297,7 @@ const page = () => {
                     className='border text-lg font-semibold px-5 py-3 text-white bg-blue-500 rounded-lg hover:bg-blue-600'
                     onClick={editGig}
                     type='button'
-                    >
+                >
                     UPDATE
                 </button>
                 </div>

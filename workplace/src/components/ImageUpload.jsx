@@ -5,10 +5,12 @@ import React, { useState } from 'react'
 const imageUpload = ({ files, setFile }) => {
 
     const [msg, setMsg] = useState('');
-
+    console.log('files',files)
+    
     const handleFile = (e) => {
         setMsg('');
         let file = e.target.files;
+
         for(let i=0; i < file.length; i++){
             const fileType = file[i].type;
             const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
@@ -56,16 +58,16 @@ const imageUpload = ({ files, setFile }) => {
                                 </div>
                                 <input 
                                     type="file" 
+                                    onChange={handleFile}
                                     multiple={true}
                                     className='opacity-0' 
-                                    onChange={handleFile}
                                     name='files[]'
                                 />
                             </label>
                         </div>
                         <div className='flex flex-wrap gap-2 mt-2'>
                             {files?.map((file, key) => (
-                                    <div key={key} className='relative overflow-hidden'>
+                                    <div key={key} className='relative overflow-hidden border border-black'>
                                         <i
                                             onClick={() => {
                                                 removeImage(file.name);
@@ -75,9 +77,9 @@ const imageUpload = ({ files, setFile }) => {
                                             X
                                         </i>
                                         <div className='relative h-20 w-20 rounded-md'>
-                                            <Image
+                                            <img
                                                 src={URL.createObjectURL(file)}
-                                                fill
+                                                className='h-full w-full object-cover rounded-md'
                                                 alt='Gigs'
                                             />
                                         </div>

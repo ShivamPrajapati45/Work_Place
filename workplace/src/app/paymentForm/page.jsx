@@ -25,7 +25,7 @@ const page = () => {
                 const res = await axios.get(`${GET_GIG_DATA}/${gigId}`,{withCredentials: true});
                 if(res.data.success){
                     setGig(res.data.gig);
-                    route.push(`/success?orderId=${res?.data?.order?.id}`);
+                    // route.push(`/success?orderId=${res?.data?.order?.id}`);
                 }
             }catch(err){
                 setErr(err)
@@ -79,7 +79,7 @@ const page = () => {
                 const response = await axios.post(CREATE_ORDER, payload,{ withCredentials: true })
                 if(response.data.success){
                     route.push('/success?payment_status=success')
-                    resetForm();
+                    // resetForm();
                 }
 
             }catch(err){
@@ -127,7 +127,6 @@ const page = () => {
                                 id="cardNumber" 
                                 {...formIk.getFieldProps('cardNumber')}
                                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pe-10 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="xxxx-xxxx-xxxx-xxxx" 
-                                // pattern="^4[0-9]{12}(?:[0-9]{3})?$" 
                                 required />
                                 {formIk.touched.cardNumber && formIk.errors.cardNumber && (
                                     <p className='text-red-400 text-sm'>{formIk.errors.cardNumber}</p>
@@ -202,11 +201,6 @@ const page = () => {
                                     <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Upfront Payment</dt>
                                     <dd className="text-base font-medium text-gray-900 dark:text-white">${gig?.price/2}</dd>
                                 </dl>
-
-                                {/* <dl className="flex items-center justify-between gap-4">
-                                    <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Tax</dt>
-                                    <dd className="text-base font-medium text-gray-900 dark:text-white">$799</dd>
-                                </dl> */}
                             </div>
 
                             <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">

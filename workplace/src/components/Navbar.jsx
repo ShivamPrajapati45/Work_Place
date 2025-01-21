@@ -3,17 +3,14 @@ import { useStateProvider } from '@/context/StateContext';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import Logo from './Logo';
-import {IoNotificationsOutline, IoSearchOutline} from 'react-icons/io5'
+import {IoMenuOutline, IoNotificationsOutline, IoSearchOutline} from 'react-icons/io5'
 import {useCookies} from 'react-cookie'
 import axios from 'axios';
 import { EDIT_USER_IMAGE, EDIT_USER_INFO, GET_NOTIFICATIONS, GET_USER_INFO, HOST, LOGOUT_ROUTES } from '@/utils/constant';
 import { reducerCases } from '@/context/constants';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import Image from 'next/image';
-import {Sheet,SheetClose,SheetContent,SheetDescription,SheetFooter,SheetHeader,SheetTitle,SheetTrigger} from '@/components/ui/sheet'
-import { Button } from './ui/button';
-import { CiEdit } from 'react-icons/ci'
+import EditProfile from './EditProfile';
 
 const Navbar = () => {
 
@@ -31,6 +28,7 @@ const Navbar = () => {
     const [imageHover, setImageHover] = useState(false);
     const [change, setChange] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [showMenu, setShowMenu] = useState(false);
 
     const [data, setData] = useState({
         fullName: '',
@@ -66,7 +64,6 @@ const Navbar = () => {
         setData(handleData);
 
     },[userInfo]);
-
 
 
     // console.log(userInfo)
@@ -280,292 +277,284 @@ const Navbar = () => {
         <>
             {
                 isLoaded && (
-                    <nav className={`flex w-screen px-24 justify-between h-14 items-center py-6 top-0 z-30 transition-all duration-300
-                        ${isFixed || userInfo ? 'fixed bg-white border-b border-gray-200' : 'absolute  bg-transparent border-transparent'}`}>
-                            <div className=''>
+                    <nav className={`flex w-full px-6 md:px-12 lg:px-24 justify-between items-center h-14 py-6 top-0 z-30 transition-all duration-300
+                        ${isFixed || userInfo 
+                        ? 'fixed bg-white border-b border-gray-200' 
+                        : 'absolute bg-transparent border-transparent'}`}
+                    >
+
+                            <div className='flex-shrink-0'>
                                 <Link href={'/'}>
                                     <Logo fillColor={!isFixed && userInfo ? '#fff' : '#404145'} />
                                 </Link>
                             </div>
-                            <div className={`flex ${showInput ? 'opacity-100' : 'opacity-0'}`}>
+
+                            {/* Mobile Menu toggle */}
+                            <div className='md:hidden'>
+                                <button
+                                    onClick={() => setShowMenu((e) => !e)}
+                                    className='text-gray-700 hover:text-gray-900 focus:outline-none'
+                                >
+                                    <IoMenuOutline className='text-4xl'/>
+                                </button>
+                            </div>
+
+                            {/* screen Input */}
+                            <div 
+                                className={`hidden md:flex items-center ${
+                                    showInput ? 'opacity-100' : 'opacity-0'
+                                }`}
+                            >
                                 <input 
                                     type="text" 
-                                    className='w-[20rem] text-black py-2 px-4 border'
+                                    className='w-full rounded-l-lg md:w-[20rem] text-black py-2 px-4 border'
                                     placeholder='search services are you looking for ?'
                                     value={searchData}
                                     onChange={(e) => setSearchData(e.target.value)}
                                 />
                                 <button 
-                                    className='bg-gray-900 py-1 text-white w-16 flex justify-center items-center'
+                                    className='bg-gray-900 h-11 rounded-l-sm text-white w-12 md:w-16 flex justify-center items-center'
                                     onClick={() => {
                                         setSearchData("");
                                         router.push(`/search?q=${searchData}`)
                                     }}
                                 >
-                                    <IoSearchOutline className='fill-white text-2xl  text-white ' />
+                                    <IoSearchOutline className='fill-white text-xl md:text-2xl text-white ' />
                                 </button>
                             </div>
-                            {
-                                !userInfo ? (
-                                    <ul className='flex gap-4 items-center'>
-                                        {links.map(({ linkName,handler,type }) => {
-                                            return(
-                                                <li
-                                                    key={linkName}
-                                                    className={`${isFixed ? 'text-base' : 'text-white'} font-medium `}
-                                                >
-                                                    {type === 'link' && <button 
-                                                        className={`${pathName === '/gigs' ? 'text-blue-600' : ''}py-[5px] px-2 rounded-md hover:bg-black/10 transition-all`}
-                                                        onClick={handleClickToGigs}
+
+                            {/* User desktop section */}
+                            <div className='hidden md:flex  items-center'>
+                                {
+                                    !userInfo ? (
+                                        <ul className='flex gap-4 items-center text-sm md:text-base'>
+                                            {links.map(({ linkName,handler,type }) => {
+                                                return(
+                                                    <li
+                                                        key={linkName}
+                                                        className={`${isFixed ? 'text-base' : 'text-white'} font-medium `}
                                                     >
-                                                        {linkName}
-                                                    </button>}
-                                                    {type === 'button' && (
-                                                        <button 
-                                                            className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
-                                                            onClick={handler}
+                                                        {type === 'link' && <button 
+                                                            className={`${pathName === '/gigs' ? 'text-blue-600' : ''}py-[5px] px-2 rounded-md hover:bg-black/10 transition-all`}
+                                                            onClick={handleClickToGigs}
                                                         >
                                                             {linkName}
-                                                        </button>
-                                                    )}
-                                                    {type === 'button2' && (
-                                                        <button
-                                                            onClick={handler}
-                                                            className={`border uppercase text-lg font-semibold py-[2px] px-4 rounded-sm ${ isFixed ? 'bg-[#34A853] outline-none border-none text-white' : 'border-white text-white'} hover:bg-[#66ba7d] hover:text-white transition-all duration-500`}
-                                                        >
-                                                            {linkName}
-                                                        </button>
-                                                    )}
-                                                </li>
-                                            )
-                                        })}
-                                    </ul>
-                                ) : (
-                                    <ul className='flex gap-4  items-center' >
-                                        {
-                                            isSeller && (
-                                                <>
-                                                    <li
-                                                        className={`${pathName === '/seller/gigs/create' ? 'text-blue-600' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
-                                                        onClick={() => router.push('/seller/gigs/create')}
-                                                    >
-                                                        Create Gig
-                                                    </li>
-                                                    <li
-                                                        className={`${pathName === '/seller' ? 'text-blue-600' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
-                                                        onClick={() => router.push('/seller')}
-                                                    >
-                                                        Dashboard
-                                                    </li>
-                                                </>
-                                            )
-                                        }
-                                        <li
-                                            className={`${pathName === '/seller/orders' || pathName === '/buyer/orders' ? 'text-blue-600' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
-                                            onClick={handleOrdersNavigate}
-                                        >
-                                            Orders
-                                        </li>
-                                        <li
-                                            className={`${pathName == '/gigs' ? 'text-blue-600' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
-                                            onClick={handleClickToGigs}
-                                        >
-                                            Explore
-                                        </li>
-                                        <li
-                                            className={`py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
-                                            onClick={handleModeSwitch}
-                                        >
-                                                Switch to {isSeller ? 'Buyer' : 'Seller'}
-                                        </li>
-                                        <li className='relative'>
-                                            <button
-                                                onClick={() => router.push("/seller/notifications")}
-                                            >
-                                                <IoNotificationsOutline className='text-2xl' />
-                                                {unreadCount > 0 && (
-                                                    <span className='absolute top-0 right-0 text-xs bg-red-500 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center'>
-                                                        {unreadCount}
-                                                    </span>
-                                                )}
-                                            </button>
-                                        </li>
-                                        <li
-                                            className='cursor-pointer'
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                            }}
-                                            title='profile'
-                                        >
-                                            <Sheet>
-                                                <SheetTrigger asChild>
-                                                    {
-                                                        userInfo?.isProfileInfoSet ? (
-                                                            <Image
-                                                                src={userInfo?.profileImage}
-                                                                alt='Profile'
-                                                                width={40}
-                                                                height={40}
-                                                                className='rounded-full'
-                                                                unoptimized
-                                                                
-                                                            />
-                                                        ) : (
-                                                            <div className='bg-purple-500 flex items-center justify-center h-10 w-10 rounded-full relative'>
-                                                                <span className='text-xl text-white'>
-                                                                    {userInfo?.email[0].toUpperCase()}
-                                                                </span>
-                                                            </div>
-                                                        )
-                                                    }
-                                                </SheetTrigger>
-                                                <SheetContent>
-                                                    <SheetHeader>
-                                                        <SheetTitle className="flex gap-3 items-center">
-                                                            Edit Profile
-                                                            <CiEdit 
-                                                                className='text-3xl w-8 hover:bg-gray-200 rounded-md hover:scale-110 duration-500 transition-all cursor-pointer' 
-                                                                onClick={() => setEdit(!edit)}
-                                                                title='edit'
-                                                            />
-                                                        </SheetTitle>
-                                                        <SheetDescription>
-                                                            Make changes to your profile here. Click save when you're done.
-                                                        </SheetDescription>
-                                                    </SheetHeader>
-                                                        
-                                                    <div 
-                                                        className='flex flex-col items-center'
-                                                        
-                                                    >
-                                                        <div 
-                                                            className='h-20 w-20 cursor-pointer flex items-center justify-center rounded-full relative'
-                                                            onMouseEnter={() => setImageHover(true)}
-                                                            onMouseLeave={() => setImageHover(false)}
-                                                        >
-                                                            {
-                                                                previewImage ?  (
-                                                                    <img
-                                                                        src={previewImage}
-                                                                        alt='Profile'
-                                                                        className='rounded-full h-full w-full object-contain'
-                                                                    />
-                                                                ) : (
-                                                                    <img
-                                                                        src={`${userInfo?.profileImage ? userInfo.profileImage : '/images/avatar.png'}`}
-                                                                        alt='Profile'
-                                                                        className='rounded-full h-full w-full object-contain'
-                                                                    />
-                                                                )
-                                                            }
-                                                            <div className={`absolute bg-slate-400 h-20 w-20 rounded-full flex items-center justify-center transition-all duration-500 ${imageHover ? 'opacity-100' : 'opacity-0'}`}>
-                                                                <span className={'flex items-center justify-center relative cursor-pointer'}>
-                                                                    <svg
-                                                                        xmlns='http://www.w1.org/2000/svg'
-                                                                        className='w-12 h-12 text-white absolute cursor-pointer'
-                                                                        fill='currentColor'
-                                                                        viewBox='0 0 20 20'
-                                                                    >
-                                                                        <path
-                                                                            fillRule='evenodd'
-                                                                            clipRule='evenodd'
-                                                                            d='M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z'
-                                                                        />
-                                                                    </svg>
-                                                                    <input 
-                                                                        type="file" 
-                                                                        onChange={handleFileChange}
-                                                                        className='opacity-0 cursor-pointer'
-                                                                        name='profileImage'
-                                                                        multiple={true}
-                                                                    />
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="grid gap-4 py-4">
-                                                        <div className="grid grid-cols-4 items-center gap-4">
-                                                            <label htmlFor="fullName" className="text-right font-semibold">
-                                                                Name
-                                                            </label>
-                                                            <input 
-                                                                disabled={edit} 
-                                                                id="fullName" 
-                                                                name='fullName'
-                                                                value={data.fullName}
-                                                                onChange={handleValueChange}
-                                                                className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'}  col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`} 
-                                                            />
-                                                        </div>
-                                                        <div className="grid grid-cols-4 items-center gap-4">
-                                                            <label htmlFor="username" className="text-right font-semibold">
-                                                                Username
-                                                            </label>
-                                                            <input 
-                                                                disabled={edit} 
-                                                                id="username" 
-                                                                name='username'
-                                                                value={data.username} 
-                                                                onChange={handleValueChange}
-                                                                className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'}  col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`} 
-                                                            />
-                                                        </div>
-                                                        <div className="grid grid-cols-4 items-center gap-4">
-                                                            <label htmlFor="email" className="text-right font-semibold">
-                                                                Email
-                                                            </label>
-                                                            <input 
-                                                                disabled={edit} 
-                                                                id="email" 
-                                                                name='email'
-                                                                value={data.email}
-                                                                onChange={handleValueChange} 
-                                                                className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'}  col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`}
-                                                            />
-                                                        </div>
-                                                        <div className="grid grid-cols-4 items-center gap-4">
-                                                            <label htmlFor="description" className="text-right font-semibold">
-                                                                Description
-                                                            </label>
-                                                            <textarea 
-                                                                disabled={edit} 
-                                                                id="description" 
-                                                                name='description'
-                                                                value={data.description} 
-                                                                onChange={handleValueChange}
-                                                                minLength={10}
-                                                                maxLength={50}
-                                                                className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'}  col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <SheetFooter>
-                                                        <SheetClose asChild>
-                                                            <Button 
-                                                                type='submit' 
-                                                                className={`font-semibold uppercase cursor-pointer bg-green-600 hover:bg-green-500`}
-                                                                onClick={handleEditProfile}
-                                                                disabled={!change || edit}
+                                                        </button>}
+                                                        {type === 'button' && (
+                                                            <button 
+                                                                className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
+                                                                onClick={handler}
                                                             >
-                                                                Save Changes
-                                                                </Button>
-                                                        </SheetClose>
-                                                        
-                                                        <SheetClose asChild>
-                                                            <Button
-                                                                type='button'
-                                                                onClick={logout}
-                                                                >
-                                                                Logout
-                                                            </Button>
-                                                        </SheetClose>
-                                                    </SheetFooter>
-                                                </SheetContent>
-                                            </Sheet>
-                                        </li>
-                                    </ul>
-                                )
-                            }
+                                                                {linkName}
+                                                            </button>
+                                                        )}
+                                                        {type === 'button2' && (
+                                                            <button
+                                                                onClick={handler}
+                                                                className={`border uppercase text-sm md:text-lg font-semibold py-[2px] px-4 rounded-sm ${ isFixed ? 'bg-[#34A853] outline-none border-none text-white' : 'border-white text-white'} hover:bg-[#66ba7d] hover:text-white transition-all duration-500`}
+                                                            >
+                                                                {linkName}
+                                                            </button>
+                                                        )}
+                                                    </li>
+                                                )
+                                            })}
+                                        </ul>
+                                    ) : (
+                                        <ul className='flex gap-4 items-center lg:gap-2 text-sm md:text-base'>
+                                            {
+                                                isSeller && (
+                                                    <>
+                                                        <li
+                                                            className={`${pathName === '/seller/gigs/create' ? 'text-blue-600' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
+                                                            onClick={() => router.push('/seller/gigs/create')}
+                                                        >
+                                                            Create Gig
+                                                        </li>
+                                                        <li
+                                                            className={`${pathName === '/seller' ? 'text-blue-600' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
+                                                            onClick={() => router.push('/seller')}
+                                                        >
+                                                            Dashboard
+                                                        </li>
+                                                    </>
+                                                )
+                                            }
+                                            <li
+                                                className={`${pathName === '/seller/orders' || pathName === '/buyer/orders' ? 'text-blue-600' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
+                                                onClick={handleOrdersNavigate}
+                                            >
+                                                Orders
+                                            </li>
+                                            <li
+                                                className={`${pathName == '/gigs' ? 'text-blue-600' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
+                                                onClick={handleClickToGigs}
+                                            >
+                                                Explore
+                                            </li>
+                                            <li
+                                                className={`py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
+                                                onClick={handleModeSwitch}
+                                            >
+                                                    Switch to {isSeller ? 'Buyer' : 'Seller'}
+                                            </li>
+                                            <li className='relative'>
+                                                <button
+                                                    onClick={() => router.push("/seller/notifications")}
+                                                >
+                                                    <IoNotificationsOutline className='text-2xl' />
+                                                    {unreadCount > 0 && (
+                                                        <span className='absolute top-0 right-0 text-xs bg-red-500 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center'>
+                                                            {unreadCount}
+                                                        </span>
+                                                    )}
+                                                </button>
+                                            </li>
+                                            <li
+                                                className='cursor-pointer'
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}
+                                                title='profile'
+                                            >
+                                                <EditProfile
+                                                    change={change}
+                                                    data={data}
+                                                    edit={edit}
+                                                    handleEditProfile={handleEditProfile}
+                                                    handleFileChange={handleFileChange}
+                                                    handleValueChange={handleValueChange}
+                                                    imageHover={imageHover}
+                                                    logout={logout}
+                                                    previewImage={previewImage}
+                                                    setEdit={setEdit}
+                                                    setImageHover={setImageHover}
+                                                    userInfo={userInfo}
+
+                                                />
+                                            </li>
+                                        </ul>
+                                    )
+                                }
+                            </div>
+
+                            {/* Mobile Navbar */}
+                            {showMenu && (
+                                <div className='absolute flex justify-center items-center top-14 left-0 w-full bg-white shadow-lg md:hidden transition-all duration-500 ease-in-out'>
+                                    <div className='space-y-2 p-4'>
+                                    {
+                                    !userInfo ? (
+                                        <ul className='flex gap-10 border border-black items-center md:text-base'>
+                                            {links.map(({ linkName,handler,type }) => {
+                                                return(
+                                                    <li
+                                                        key={linkName}
+                                                        className={`${isFixed ? 'text-base' : 'text-white'} font-medium `}
+                                                    >
+                                                        {type === 'link' && <button 
+                                                            className={`${pathName === '/gigs' ? 'text-blue-600' : ''}py-[5px] px-2 rounded-md hover:bg-black/10 transition-all`}
+                                                            onClick={handleClickToGigs}
+                                                        >
+                                                            {linkName}
+                                                        </button>}
+                                                        {type === 'button' && (
+                                                            <button 
+                                                                className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
+                                                                onClick={handler}
+                                                            >
+                                                                {linkName}
+                                                            </button>
+                                                        )}
+                                                        {type === 'button2' && (
+                                                            <button
+                                                                onClick={handler}
+                                                                className={`border uppercase text-sm md:text-lg font-semibold py-[2px] px-4 rounded-sm ${ isFixed ? 'bg-[#34A853] outline-none border-none text-white' : 'border-white text-white'} hover:bg-[#66ba7d] hover:text-white transition-all duration-500`}
+                                                            >
+                                                                {linkName}
+                                                            </button>
+                                                        )}
+                                                    </li>
+                                                )
+                                            })}
+                                        </ul>
+                                    ) : (
+                                        <ul className='flex gap-6 items-center text-base font-semibold md:text-base'>
+                                            {
+                                                isSeller && (
+                                                    <>
+                                                        <li
+                                                            className={`${pathName === '/seller/gigs/create' ? 'text-blue-600' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
+                                                            onClick={() => router.push('/seller/gigs/create')}
+                                                        >
+                                                            Create Gig
+                                                        </li>
+                                                        <li
+                                                            className={`${pathName === '/seller' ? 'text-blue-600' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
+                                                            onClick={() => router.push('/seller')}
+                                                        >
+                                                            Dashboard
+                                                        </li>
+                                                    </>
+                                                )
+                                            }
+                                            <li
+                                                className={`${pathName === '/seller/orders' || pathName === '/buyer/orders' ? 'text-blue-600' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
+                                                onClick={handleOrdersNavigate}
+                                            >
+                                                Orders
+                                            </li>
+                                            <li
+                                                className={`${pathName == '/gigs' ? 'text-blue-600' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
+                                                onClick={handleClickToGigs}
+                                            >
+                                                Explore
+                                            </li>
+                                            <li
+                                                className={`py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
+                                                onClick={handleModeSwitch}
+                                            >
+                                                    Switch to {isSeller ? 'Buyer' : 'Seller'}
+                                            </li>
+                                            <li className='relative'>
+                                                <button
+                                                    onClick={() => router.push("/seller/notifications")}
+                                                >
+                                                    <IoNotificationsOutline className='text-2xl' />
+                                                    {unreadCount > 0 && (
+                                                        <span className='absolute top-0 right-0 text-xs bg-red-500 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center'>
+                                                            {unreadCount}
+                                                        </span>
+                                                    )}
+                                                </button>
+                                            </li>
+                                            <li
+                                                className='cursor-pointer'
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}
+                                                title='profile'
+                                            >
+                                                <EditProfile
+                                                    userInfo={userInfo}
+                                                    edit={edit}
+                                                    setEdit={setEdit}
+                                                    imageHover={imageHover}
+                                                    setImageHover={setImageHover}
+                                                    previewImage={previewImage}
+                                                    handleFileChange={handleFileChange}
+                                                    handleValueChange={handleValueChange}
+                                                    data={data}
+                                                    handleEditProfile={handleEditProfile}
+                                                    logout={logout}
+                                                    change={change}
+                                                />
+                                            </li>
+                                        </ul>
+                                    )
+                                }
+                                    </div>
+                                </div>
+                            )}
                         </nav>
                 )
             }

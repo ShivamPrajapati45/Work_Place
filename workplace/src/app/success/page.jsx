@@ -12,9 +12,11 @@ const page = () => {
     const orderId = query.get('orderId');
 
     useEffect(() => {
-        if(orderId){
-            router.push('/buyer/orders')
-        }
+        // if(orderId){
+            setTimeout(() => {
+                router.push('/buyer/orders')
+            }, 3000);
+        // }
 
     },[orderId, query])
 

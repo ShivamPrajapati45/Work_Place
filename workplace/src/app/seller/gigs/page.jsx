@@ -7,7 +7,6 @@ import Link from 'next/link';
 const page = () => {
 
     const [gigs, setGigs] = useState([]);
-    
 
     useEffect(() => {
         const getUserGigs = async () => {

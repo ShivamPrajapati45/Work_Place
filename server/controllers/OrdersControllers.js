@@ -201,7 +201,7 @@ export const getBuyerOrders = async (req, res) => {
         if(req?.user?.userId){
             const prisma = new PrismaClient();
             const orders = await prisma.orders.findMany({
-                where: {buyerId: req?.user?.userId, inCompleted: true},
+                where: {buyerId: parseInt(req?.user?.userId)},
                 include: {gig: true}
             });
 
@@ -232,7 +232,7 @@ export const createOrder = async (req, res) => {
     const {userId} = req.user;  //Buyer Id
     const prisma = new PrismaClient();
     try{
-        const newOrder = await prisma.orders.create({
+        const order = await prisma.orders.create({
             data: {
                 gigId,
                 buyerId: parseInt(userId),
@@ -265,7 +265,7 @@ export const createOrder = async (req, res) => {
         })
 
         return res.status(201).json({
-            order: newOrder,
+            order,
             success: true
         });
         
