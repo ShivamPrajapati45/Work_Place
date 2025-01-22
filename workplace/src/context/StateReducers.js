@@ -59,7 +59,7 @@ const reducer = (state, action) => {
         case reducerCases.ADD_REVIEW:
             return{
                 ...state,
-                reviews: [...state.gigData.reviews, action.newReview]
+                reviews: [...state.gigData.reviews || [], action.newReview]
             }
 
         default:

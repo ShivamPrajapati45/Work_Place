@@ -3,35 +3,41 @@ import { useStateProvider } from '@/context/StateContext';
 import { ADD_MESSAGES, GET_MESSAGES } from '@/utils/constant';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie'
+import React, { useEffect, useRef, useState } from 'react'
 import { BsCheckAll } from 'react-icons/bs';
 import { FaRegPaperPlane } from 'react-icons/fa';
 
 const MessageContainer = () => {
 
-    const [cookies] = useCookies();
-    const router = useRouter();
     const { orderId } = useParams();
     const [{ userInfo }] = useStateProvider();
     const [recipientId, setRecipientId] = useState(undefined);
     const [messages, setMessages] = useState([]);
     const [messageText, setMessageText] = useState("");
+    const intervalRef = useRef(null);
+
+    const getMessages = async () => {
+        try {
+            const {data} = await axios.get(`${GET_MESSAGES}/${orderId}`,{withCredentials: true})
+            
+            setMessages(data?.messages);
+            setRecipientId(data.recipientId);
+        } catch (error) {
+            console.log(error)
+        }
+    };
 
     useEffect(() => {
-        const getMessages = async () => {
-            try {
-                const {data} = await axios.get(`${GET_MESSAGES}/${orderId}`,{withCredentials: true})
-                
-                setMessages(data?.messages);
-                setRecipientId(data.recipientId);
-
-            } catch (error) {
-                console.log(error)
-            }
+        if(orderId && userInfo){
+            intervalRef.current = setInterval(() => {
+                getMessages();
+            }, 3000);
         };
-        if(orderId && userInfo) getMessages();
-    },[orderId, userInfo]);
+
+        return () => {
+            clearInterval(intervalRef.current);
+        };
+    },[orderId, userInfo,messageText,messages])
 
     const formatTime = (timeStamp) => {
         const date = new Date(timeStamp);

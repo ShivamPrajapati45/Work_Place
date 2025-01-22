@@ -51,7 +51,8 @@ const Navbar = () => {
             }
         };
         if(userInfo) fetchUnreadCount();
-    },[userInfo])
+    },[userInfo]);
+    console.log('Count: ',unreadCount)
 
     useEffect(() => {
         const handleData = {...data};
@@ -118,20 +119,12 @@ const Navbar = () => {
 
     const handleSignUp = () => {
             dispatch({
-                type: reducerCases.TOGGLE_LOGIN_MODEL,
-                showLogInModel: false
-            });
-            dispatch({
                 type: reducerCases.TOGGLE_SIGNUP_MODEL,
                 showSignUpModel: true
             });
             router.push('/login');
     };
     const handleLogin = () => {
-            dispatch({
-                type: reducerCases.TOGGLE_SIGNUP_MODEL,
-                showSignUpModel: false
-            });
             dispatch({
                 type: reducerCases.TOGGLE_LOGIN_MODEL,
                 showLogInModel: true
@@ -145,8 +138,8 @@ const Navbar = () => {
 
     const links = [
         { linkName: "Explore", handler: handleClickToGigs,type: 'link' },
-        { linkName: "Sign In", handler: handleLogin,type: 'button' },
-        { linkName: "Join ", handler: handleSignUp,type: 'button2' },
+        { linkName: "Sign In", handler: handleLogin,type: 'login' },
+        { linkName: "Join ", handler: handleSignUp,type: 'signup' },
     ];
 
     useEffect(() => {
@@ -340,7 +333,7 @@ const Navbar = () => {
                                                         >
                                                             {linkName}
                                                         </button>}
-                                                        {type === 'button' && (
+                                                        {type === 'login' && (
                                                             <button 
                                                                 className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
                                                                 onClick={handler}
@@ -348,7 +341,7 @@ const Navbar = () => {
                                                                 {linkName}
                                                             </button>
                                                         )}
-                                                        {type === 'button2' && (
+                                                        {type === 'signup' && (
                                                             <button
                                                                 onClick={handler}
                                                                 className={`border uppercase text-sm md:text-lg font-semibold py-[2px] px-4 rounded-sm ${ isFixed ? 'bg-[#34A853] outline-none border-none text-white' : 'border-white text-white'} hover:bg-[#66ba7d] hover:text-white transition-all duration-500`}

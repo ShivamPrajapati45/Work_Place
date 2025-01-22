@@ -223,7 +223,6 @@ export const getBuyerOrders = async (req, res) => {
     }
 }
 
-
 // Create an Order
 export const createOrder = async (req, res) => {
 
@@ -302,11 +301,11 @@ export const unreadMessages = async (req, res) => {
     const prisma = new PrismaClient();
     try {
         const unreadCount = await prisma.notifications.count({
-            where: {sellerId: parseInt(userId),read: false}
+            where: {sellerId: parseInt(userId)}
         });
 
         const notifications = await prisma.notifications.findMany({
-            where: {sellerId: parseInt(userId),read: false}
+            where: {sellerId: parseInt(userId)}
         })
 
         if(!notifications || !unreadCount === 0) return res.status(404).json({

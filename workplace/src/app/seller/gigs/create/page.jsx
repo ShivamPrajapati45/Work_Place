@@ -136,7 +136,7 @@ const page = () => {
     const labelClassName = 'text-lg  text-[#212121]'
 
     return (
-        <div className='w-full flex min-h-[100vh] mx-4 '>
+        <div className='w-full flex min-h-[100vh] mx-4  justify-center '>
             <div className=''>
 
                 {/* content part */}
@@ -145,9 +145,9 @@ const page = () => {
                     <h3 className="text-base mt-3  text-[#212121]">
                         Step <strong className='text-blue-600'>{step + 1}</strong> of 4:&nbsp;
                         <span className=''>
-                            {step === 0 && "Provide the Title and Category for Your Gig"}
-                            {step === 1 && "Describe Your Gig, Set Time, and Define Revisions"}
-                            {step === 2 && "Add Features and Upload Gig Images"}
+                            {step === 0 && "Provide the Title and Category for Your Service"}
+                            {step === 1 && "Describe Your Service, Set Time, and Define Revisions"}
+                            {step === 2 && "Add Features and Upload Service Images"}
                             {step === 3 && "Set the Price and Provide a Short Description"}
                         </span>
                     </h3>
@@ -159,10 +159,10 @@ const page = () => {
                     </div>
                 </div>
                 
-                <div className='flex flex-col gap-10 mt-5'>
+                <div className='flex flex-col min-w-full gap-10 h-full'>
                     {/* step 0 Title and Category*/}
                     {step === 0 && (
-                        <div className={`grid grid-cols-1 gap-4 animate-in slide-in-from-left duration-500 transition-all `}>
+                        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-4 animate-in slide-in-from-left duration-500 transition-all `}>
                             <div className=''>
                                 <label htmlFor="title" className={labelClassName}>
                                     Title
@@ -177,6 +177,9 @@ const page = () => {
                                     required
                                     placeholder='Enter title..'
                                 />
+                                <p className='text-sm text-gray-500 mt-1'>
+                                    Write a catchy and descriptive title that highlights your service.
+                                </p>
                                 {errors.title && <p className='text-red-500'>{errors.title}</p> }
                             </div>
                             <div>
@@ -197,6 +200,9 @@ const page = () => {
                                         >{name}</option>
                                     ))}
                                 </select>
+                                <p className='text-sm text-gray-500 mt-1'>
+                                    Select the category that best fits your service.
+                                </p>
                                 {errors.category && <p className='text-red-500'>{errors.category}</p> }
                             </div>
                         </div>
@@ -208,7 +214,7 @@ const page = () => {
                             <div className='flex items-center w-full gap-4'>
                                 <div>
                                     <label htmlFor="delivery" className={labelClassName}>
-                                        Gig Delivery
+                                        Gig Delivery Time (In Days)
                                     </label>
                                     <input 
                                         type="number" 
@@ -220,6 +226,9 @@ const page = () => {
                                         required
                                         placeholder='Minimum delivery time'
                                     />
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Specify how many days it will take you to deliver the service. Be realistic to build trust.
+                                    </p>
                                     {errors.time && <p className='text-red-500'>{errors.time}</p> }
                                 </div>
                                 <div>
@@ -234,8 +243,11 @@ const page = () => {
                                         onChange={handleChange}
                                         className={inputClassName}
                                         required
-                                        placeholder='max number of revisions'
+                                        placeholder='E.g., 3 (maximum revisions allowed)'
                                     />
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        How many times can the buyer ask for changes? Enter a number.
+                                    </p>
                                     {errors.revisions && <p className='text-red-500'>{errors.revisions}</p> }
                                 </div>
                             </div>
@@ -252,6 +264,9 @@ const page = () => {
                                     value={data.description}
                                     onChange={handleChange}
                                 />
+                                <p className="text-sm text-gray-500 mt-1">
+                                    Write a detailed description of your service. Mention what you offer, your process, and what makes your service unique. Maximum 1500 characters.
+                                </p>
                                 {errors.description && <p className='text-red-500'>{errors.description}</p> }
                             </div>
                         </div>
@@ -259,10 +274,10 @@ const page = () => {
 
                     {/* step 2  Features, Images */}
                     {step === 2 && (
-                        <div className={`grid grid-cols-1 gap-6 animate-in slide-in-from-right duration-500 transition-all`}>
+                        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in slide-in-from-right duration-500 transition-all`}>
                             <div>
                                 <label htmlFor="features" className={labelClassName}>
-                                    Gig Features
+                                    Service Features
                                 </label>
                                 <div className='flex w-full gap-3 items-center mb-5'>
                                     <input 
@@ -302,15 +317,21 @@ const page = () => {
                                                 </li>
                                             ))}
                                         </ul>
+                                        <p className="text-sm text-gray-500 mt-3">
+                                            Add key features that make your Service stand out. Be specific.
+                                        </p>
                                         {errors.features && <p className='text-red-500'>{errors.features}</p> }
                                 </div>
                                 <div>
                                     <label htmlFor="image" className={labelClassName}>
-                                        Gig Images
+                                        Service Images
                                     </label>
                                     <div className='mt-1'>
                                         <ImageUpload files={files} setFile={setFiles} />
                                     </div>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Upload images that showcase your work. Add clear images to attract buyers.
+                                    </p>
                                 </div>
                         </div>
                     )}
@@ -332,6 +353,9 @@ const page = () => {
                                     id='shortDesc'
                                     required
                                     />
+                                    <p className="text-sm text-gray-500 mt-3">
+                                        Write a concise description (e.g., key points or highlights). This helps potential buyers quickly understand what you offer.
+                                    </p>
                                     {errors.shortDesc && <p className='text-red-500'>{errors.shortDesc}</p> }
                             </div>
                             <div>
@@ -348,6 +372,9 @@ const page = () => {
                                     id='price'
                                     required
                                 />
+                                <p className="text-sm text-gray-500 mt-3">
+                                    Set a price that reflects the value of your service. Make sure it's competitive for your market.
+                                </p>
                                 {errors.price && <p className='text-red-500'>{errors.price}</p> }
                             </div>
                         </div>

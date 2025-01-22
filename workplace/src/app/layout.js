@@ -2,11 +2,10 @@
 import Footer from "@/components/Footer";
 import "./globals.css";
 import { StateProvider } from "@/context/StateContext";
-import { initialState } from "@/context/StateReducers";
+import reducer,{initialState} from "@/context/StateReducers";
 import Navbar from "@/components/Navbar";
 import { usePathname, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import Script from "next/script";
 
 export default function RootLayout({ children }) {
 
@@ -25,7 +24,7 @@ export default function RootLayout({ children }) {
         <title>WorkPlace</title>
       </head>
         <body className="min-h-screen flex flex-col p-0 m-0 box-border">
-        <StateProvider initialState={initialState} >
+        <StateProvider initialState={initialState} reducer={reducer} >
           <div className="flex flex-col flex-grow">
             <header>
               <Navbar/>
