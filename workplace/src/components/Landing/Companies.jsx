@@ -14,7 +14,7 @@ const Companies = () => {
                     src={`/images/trusted${num}.png`}
                     fill
                     alt="trusted brands"
-                    className="rounded-lg object-contain hover:scale-110 cursor-pointer transition-all"
+                    className="rounded-lg object-contain transition-all"
                     />
                 </li>
                 ))}

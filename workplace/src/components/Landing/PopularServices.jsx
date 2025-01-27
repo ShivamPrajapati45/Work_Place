@@ -51,8 +51,8 @@ const PopularServices = () => {
 
     return (
         <div className='mt-3 text-white'>
-        <h2 className='text-4xl mb-5  text-[#212121] text-center font-bold ml-4'>Popular Services</h2>
-        <ul className='flex flex-wrap gap-10 justify-center bg-[#000] py-10'>
+        <h2 className='text-4xl mb-3 text-[#212121] text-center font-semibold uppercase'>Popular Services</h2>
+        <ul className='flex flex-wrap gap-16 justify-center bg-gradient-to-r from-gray-800 to-gray-600 py-10'>
             {popularServices.map(({name,label,image})=>{
                 const [isHovered, setIsHovered] = useState(false);
                 return(
@@ -60,9 +60,9 @@ const PopularServices = () => {
                         className='relative cursor-pointer' 
                         onClick={()=> router.push(`/search?q=${name.toLowerCase()}`)} 
                     >
-                        <div className='absolute z-10  left-5 top-4'>
+                        <div className='absolute z-10 left-5 top-4'>
                             <span>{label}</span>
-                            <h6 className={`font-extrabold text-2xl relative`}>
+                            <h6 className={`font-extrabold text-xl relative`}>
                                 {name}
                                 <span
                                     className={`absolute left-0 bottom-0 h-1 w-full bg-white transition-all duration-300 transform ${
@@ -71,14 +71,13 @@ const PopularServices = () => {
                                 ></span>
                             </h6>
                         </div>
-                        <div className='h-60 w-60 overflow-hidden '>
-                            <Image  
+                        <div className='h-60 w-60 overflow-hidden rounded-xl'>
+                            <img  
                                 alt='service' 
                                 src={image} 
-                                fill
                                 onMouseEnter={()=>setIsHovered(true)}
                                 onMouseLeave={()=>setIsHovered(false)}
-                                className='rounded-xl w-full hover:shadow-md h-full object-cover hover:scale-105 transition-all hover:shadow-blue-300' 
+                                className='rounded-xl w-full hover:shadow-md hover:rounded-xl h-full object-cover hover:scale-105 transition-all hover:shadow-blue-300' 
                             />
                         </div>
                     </li>

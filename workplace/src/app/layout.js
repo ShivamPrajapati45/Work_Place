@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
       <head>
         <title>WorkPlace</title>
       </head>
-        <body className="min-h-screen flex flex-col p-0 m-0 box-border">
+        <body className="min-h-screen w-full overflow-x-hidden p-0 m-0 box-border">
         <StateProvider initialState={initialState} reducer={reducer} >
           <div className="flex flex-col flex-grow">
             <header>

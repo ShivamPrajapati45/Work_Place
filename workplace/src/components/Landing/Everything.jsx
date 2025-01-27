@@ -5,7 +5,9 @@ import Aos from 'aos'
 
 const Everything = () => {
 
-
+    useEffect(() => {
+            Aos.init({ duration: 1200, once:false }); // Initialize AOS
+    }, []);
 
 
     const everyThingData = [
@@ -28,10 +30,17 @@ const Everything = () => {
     ];
 
     return (
-        <div className='bg-white py-12 px-6 md:px-16 lg:px-6 flex flex-col lg:flex-row items-center gap-20'>
-            <div className='flex flex-col items-start bg-gray-100 p-6 rounded-lg shadow-xl transform transition duration-500 hover:scale-105 hover:shadow-2xl'>
-                <h2 className='text-4xl mb-5 font-bold text-[#212121] text-center lg:text-left'>
-                    The Best Part? Everything.
+        <div 
+            className='bg-white bg-gradient-to-t from-gray-500 to-gray-600 py-12 px-6 md:px-16 lg:px-6 flex w-full gap-5 lg:flex-row items-center'
+
+        >
+            <div 
+                className='flex flex-col p-4 items-start bg-gray-200 rounded-lg shadow-xl transform transition duration-500 hover:shadow-2xl'
+                data-aos='fade-right'
+                data-aos-delay='200'
+            >
+                <h2 className='text-2xl mb-5 font-semibold text-[#212121] text-center lg:text-left'>
+                    Know About.
                 </h2>
                 <ul className='flex flex-col gap-7'>
                     {everyThingData.map(({ title, subtitle }) => {
@@ -47,12 +56,14 @@ const Everything = () => {
                     })}
                 </ul>
             </div>
-            <div className='relative h-96 w-full lg:w-2/4 overflow-hidden rounded-lg shadow-xl transform transition duration-500 hover:scale-105'>
-                <Image
+            <div 
+                className='relative h-screen py-8 w-full lg:w-2/4 overflow-hidden rounded-lg transform transition duration-500'
+                data-aos='fade-left'
+                data-aos-delay='200'
+            >
+                <img
                     src="/images/everything.webp"
                     alt='everything'
-                    layout='fill'
-                    objectFit='cover'
                     className='w-full h-full object-cover rounded-lg shadow-lg'
                 />
             </div>

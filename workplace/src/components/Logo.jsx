@@ -5,9 +5,9 @@ const Logo = ({fillColor}) => {
     return (
         <div>
         <svg 
-            width="120" 
+            width="160" 
             height="40" 
-            viewBox="0 0 120 40" 
+            viewBox="0 0 160 40" 
             xmlns="http://www.w3.org/2000/svg"
             fill='none' 
         >
@@ -15,7 +15,7 @@ const Logo = ({fillColor}) => {
                 x={20}
                 y={25}
                 fill='#40bf1d'
-                fontSize={18}
+                fontSize={22}
                 fontFamily='Arial, sans-serif'
                 fontWeight='bold'
             >

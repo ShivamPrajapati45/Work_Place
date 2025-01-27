@@ -58,7 +58,16 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
-			}
+			},
+			animation: {
+				'bounce-once': 'bounce-once 0.6s ease-out', // Bounce ek baar chalega
+			},
+			keyframes: {
+					'bounce-once': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(100px)' },
+				},
+			},
 		},
 		fontFamily: {
 			'body': [

@@ -27,7 +27,7 @@ export default function Home() {
 
 
   return (
-    <div>
+    <div className="relative overflow-auto box-border p-0 m-0">
       <HeroBanner/>
       <PopularServices/>
       <Companies/>

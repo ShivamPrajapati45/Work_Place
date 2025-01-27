@@ -306,7 +306,7 @@ const Navbar = () => {
                                     onChange={(e) => setSearchData(e.target.value)}
                                 />
                                 <button 
-                                    className='bg-gray-900 h-11 rounded-l-sm text-white w-12 md:w-16 flex justify-center items-center'
+                                    className='bg-gray-900 h-11 rounded-r-lg hover:bg-gray-800 text-white w-12 md:w-16 flex justify-center items-center'
                                     onClick={() => {
                                         setSearchData("");
                                         router.push(`/search?q=${searchData}`)
@@ -328,14 +328,14 @@ const Navbar = () => {
                                                         className={`${isFixed ? 'text-base' : 'text-white'} font-medium `}
                                                     >
                                                         {type === 'link' && <button 
-                                                            className={`${pathName === '/gigs' ? 'text-blue-600' : ''}py-[5px] px-2 rounded-md hover:bg-black/10 transition-all`}
+                                                            className={`${pathName === '/gigs' ? 'text-blue-600' : ''}py-[5px] px-2 rounded-md hover:bg-black/5 transition-all`}
                                                             onClick={handleClickToGigs}
                                                         >
                                                             {linkName}
                                                         </button>}
                                                         {type === 'login' && (
                                                             <button 
-                                                                className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
+                                                                className='py-[5px] px-2 rounded-md hover:bg-black/5 transition-all'
                                                                 onClick={handler}
                                                             >
                                                                 {linkName}
@@ -344,7 +344,7 @@ const Navbar = () => {
                                                         {type === 'signup' && (
                                                             <button
                                                                 onClick={handler}
-                                                                className={`border uppercase text-sm md:text-lg font-semibold py-[2px] px-4 rounded-sm ${ isFixed ? 'bg-[#34A853] outline-none border-none text-white' : 'border-white text-white'} hover:bg-[#66ba7d] hover:text-white transition-all duration-500`}
+                                                                className='uppercase text-sm md:text-lg font-semibold py-[2px] px-4 rounded-sm bg-[#34A853] hover:bg-[#66ba7d]  c?>, mntext-white transition-all duration-500'
                                                             >
                                                                 {linkName}
                                                             </button>
