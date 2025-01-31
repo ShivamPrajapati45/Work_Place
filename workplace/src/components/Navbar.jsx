@@ -300,7 +300,7 @@ const Navbar = () => {
                             >
                                 <input 
                                     type="text" 
-                                    className='w-full rounded-l-lg md:w-[20rem] text-black py-2 px-4 border'
+                                    className='w-full rounded-l-lg md:w-[20rem] text-black py-2 px-4 border-2'
                                     placeholder='search services are you looking for ?'
                                     value={searchData}
                                     onChange={(e) => setSearchData(e.target.value)}
@@ -325,7 +325,7 @@ const Navbar = () => {
                                                 return(
                                                     <li
                                                         key={linkName}
-                                                        className={`${isFixed ? 'text-base' : 'text-white'} font-medium `}
+                                                        className={`${isFixed ? 'text-base' : 'text-black'} font-medium `}
                                                     >
                                                         {type === 'link' && <button 
                                                             className={`${pathName === '/gigs' ? 'text-blue-600' : ''}py-[5px] px-2 rounded-md hover:bg-black/5 transition-all`}
@@ -344,7 +344,7 @@ const Navbar = () => {
                                                         {type === 'signup' && (
                                                             <button
                                                                 onClick={handler}
-                                                                className='uppercase text-sm md:text-lg font-semibold py-[2px] px-4 rounded-sm bg-[#34A853] hover:bg-[#66ba7d]  c?>, mntext-white transition-all duration-500'
+                                                                className='uppercase text-sm md:text-lg font-semibold py-[2px] px-4 rounded-sm bg-[#34A853] hover:bg-[#66ba7d] text-white transition-all duration-500'
                                                             >
                                                                 {linkName}
                                                             </button>

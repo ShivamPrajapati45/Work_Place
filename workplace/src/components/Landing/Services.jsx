@@ -20,7 +20,7 @@ const Services = () => {
     };
 
     return (
-        <div className='py-20 w-full flex items-center justify-center border border-black bg-gradient-to-l from-white to-gray-200 space-normal px-10 h-full'>
+        <div className='py-20 w-full flex items-center justify-center  bg-gradient-to-l from-white to-gray-200 space-normal px-10 h-full'>
             <div>
                 <h2 className='text-4xl mb-10 ml-10 font-bold text-blue-600'>You need it, we&apos;ve got it</h2>
                 <ul className='grid grid-cols-5 gap-10'>

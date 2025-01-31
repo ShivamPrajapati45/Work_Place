@@ -1,9 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import Stripe from "stripe";
-
-const stripe = new Stripe(
-    process.env.STRIPE_SECRET_KEY
-);
+import { v4 as uuidV4 } from 'uuid'
 
 
 // export const addOrder = async (req, res) => {
@@ -226,16 +222,19 @@ export const getBuyerOrders = async (req, res) => {
 // Create an Order
 export const createOrder = async (req, res) => {
 
-    const {gigId,price,upfrontPayment,remainingAmount} = req.body;
+    const {gigId,price,upfrontPayment,remainingAmount,paymentDetails} = req.body;
     // console.log("Body",req.body)
     const {userId} = req.user;  //Buyer Id
     const prisma = new PrismaClient();
+    let transactionId = uuidV4();
     try{
         const order = await prisma.orders.create({
             data: {
                 gigId,
                 buyerId: parseInt(userId),
                 price,
+                fullName: paymentDetails.fullName,
+                transactionId,
                 inCompleted: false,
                 status: 'Pending',
                 upfrontPayment,
@@ -245,10 +244,11 @@ export const createOrder = async (req, res) => {
             }
         });
 
+        
         const buyer = await prisma.user.findUnique({
             where: {id: parseInt(userId)}
         })
-        //
+        
         const gig = await prisma.gigs.findUnique({
             where: {id: parseInt(gigId)},
             include: {createdBy: true}
@@ -260,6 +260,16 @@ export const createOrder = async (req, res) => {
             data: {
                 message: `Your gig "${gig?.title}" has been purchased! by "${buyer?.fullName}"`,
                 sellerId: sellerId
+            }
+        });
+
+        // Creating Payment Details
+        await prisma.payments.create({
+            data: {
+                transactionId,
+                amount: upfrontPayment,
+                status: 'Success',
+                orderId: order.id
             }
         })
 
@@ -351,6 +361,7 @@ export const updateOrder = async (req, res) => {
     const { orderId } = req.params;
     const { remainingAmount } = req.body;
     const prisma = new PrismaClient(); 
+    
     try {
         const existingOrder = await prisma.orders.findUnique({
             where: {id: parseInt(orderId)},
@@ -366,17 +377,27 @@ export const updateOrder = async (req, res) => {
         const updatePaidAmount = existingOrder.paidAmount + parseInt(remainingAmount);
         const updateRemainingAmount = existingOrder.price - updatePaidAmount;
 
-
+        let transactionId = uuidV4();
         const updatedOrder = await prisma.orders.update({
             where: {id: parseInt(orderId)},
             data: {
                 inCompleted: true,
                 inDispute: true,
+                transactionId,
                 status: "Paid",
                 paidAmount: updatePaidAmount,
                 remainingAmount: updateRemainingAmount
             }
         });
+
+        await prisma.payments.create({
+            data: {
+                transactionId,
+                amount: remainingAmount,
+                status: 'Success',
+                orderId: updatedOrder.id
+            }
+        })
 
         return res.status(201).json({
             order: updatedOrder,

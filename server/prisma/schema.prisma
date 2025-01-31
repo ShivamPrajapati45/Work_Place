@@ -52,19 +52,33 @@ model Gigs {
 
 model Orders {
   id Int @id @default(autoincrement())
+  fullName String? // buyer full name
+  transactionId String?
   createdAt DateTime @default(now())
   buyer User @relation(fields: [buyerId],references: [id])
   buyerId Int
   gig Gigs @relation(fields: [gigId],references: [id])
   gigId Int
-  price Int // total price of the gig
+  price Int                           // total price of the gig
   upfrontPayment Float @default(0)
   remainingAmount Float @default(0)
-  paidAmount Int @default(0) // Tracks how much has been paid so far
+  paidAmount Int @default(0)           // Tracks how much has been paid so far
   status String @default("Pending")
   inCompleted Boolean @default(false)  // this is isCompleted but by typing error it become inCompleted
   inDispute Boolean @default(false)    // tracks if the order is in dispute
   messages Messages[]
+  payments payments[]
+}
+
+model payments{
+  id Int @id @default(autoincrement())
+  transactionId String?
+  order Orders @relation(fields: [orderId], references: [id])
+  orderId Int
+  amount Float
+  paymentDate DateTime @default(now())
+  paymentMethod String @default("Card")
+  status String
 }
 
 model Reviews {

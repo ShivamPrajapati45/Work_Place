@@ -86,7 +86,7 @@ const page = () => {
     },[userInfo,category]);
     
     return (
-        <div className='mx-8 my-3 h-screen'>
+        <div className='mx-8 bottom-10 my-3 h-[100vh] mb-20'>
             <div className='grid-cols-2 grid w-full items-center'>
                 <div className='flex flex-col'>
                     <Select  
@@ -141,7 +141,7 @@ const page = () => {
             <hr className='mt-2 border-[1.3px] border-slate-500' />
 
             <div className=''>
-                <div className="flex h-screen w-full overflow-auto px-4 my-4 rounded-lg">
+                <div className="flex h-[80vh] w-full overflow-auto px-4 my-4 rounded-lg">
                 {isLoading ? (
                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 w-full'>
                         {Array.from({length: 16}).map((_, index) => (

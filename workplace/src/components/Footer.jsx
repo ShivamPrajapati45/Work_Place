@@ -85,15 +85,15 @@ const Footer = () => {
     ]
 
     return (
-        <footer className='w-full bottom-0 mt-28 mx-auto py-10 h-max border-t border-gray-200 bg-gray-100'>
-            <ul className='flex justify-between px-3'>
+        <footer className='w-full z-40 bottom-0 mx-auto py-10 h-max border-t border-gray-200 bg-gray-100'>
+            <ul className='flex justify-between px-10'>
                 {data.map(({headerName,links})=>{
                 return (
                     <li key={headerName} className='flex flex-col  gap-2'>
                     <span className='font-bold text-black uppercase'>{headerName}</span>
-                    <ul  className='flex text-[15px] flex-col gap-2'>
+                    <ul  className='flex text-sm  flex-col gap-2'>
                         {links.map(({name,link})=>(
-                        <li key={name} className='text-[#404145]'>
+                        <li key={name} className='text-[#525357] hover:text-black'>
                             <Link href={link}>{name}</Link>
                         </li>
                         ))}
@@ -103,8 +103,8 @@ const Footer = () => {
                 })}
             </ul>
             
-            <div className='mt-8 flex items-center bg-[#000] py-3 px-4 rounded-lg justify-between'>
-                {/* <Logo/> */}
+            <div className='mt-4 mx-10 rounded-md flex h-12 items-center bg-black px-10 justify-between'>
+                <Logo/>
                 <ul className='flex gap-5'>
                     {socialLinks.map(({name,icon,link})=>{
                         return (
@@ -112,13 +112,15 @@ const Footer = () => {
                                 <Link 
                                     href={link}
                                     className='text-blue-500 text-xl'
-                                >{icon}</Link>
+                                >
+                                    {icon}
+                                </Link>
                             </li>
                         )
                     })}
                 </ul>
             </div>
-                <p className='text-black text-sm text-center w-full'>@Copyright Reserve || 2025</p>
+                <p className='text-black mt-4 text-sm text-center w-full'>@Copyright Reserve || 2025</p>
 
         </footer>
     )

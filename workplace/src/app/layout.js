@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
             <header>
               <Navbar/>
             </header>
-            <main className={` ${pathName !== '/' ? 'mt-16':''} `}>
+            <main className={` ${pathName !== '/' ? 'mt-16':''}`}>
               {children}
             </main>
             <Footer/>
