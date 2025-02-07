@@ -169,15 +169,15 @@ const page = () => {
         <>
                     {
                         isLoaded && (
-                            <div className='rounded-lg shadow-lg shadow-gray-400 mx-auto border-t-2 border-gray-300 my-10 flex items-center gap-4 justify-between max-w-[90vw] h-[100%] min-h-[100%] duration-500 transition-all'>
+                            <div className='rounded-lg shadow-lg shadow-gray-400 mx-auto border-t-2 my-10 flex items-center gap-4 justify-between max-w-[90vw] h-[70vh] min-h-[100%] duration-500 transition-all'>
 
                                 {/* Left side Welcome Banner */}
-                                <div className="relative h-full flex rounded-l-lg items-center justify-center bg-gradient-to-r from-black via-gray-500 to-gray-300 px-10 group">
-                                    <div className="absolute inset-1">
+                                <div className="relative h-[22rem] flex rounded-l-lg items-center justify-center px-10 group">
+                                    <div className="absolute h-full w-full bg-black rounded-l-lg">
                                         <img 
-                                            src="./images/profile2.jpg" 
+                                            src="./images/profile1.jpg" 
                                             alt="Welcome Illustration" 
-                                            className="w-full h-full rounded-l-lg object-cover opacity-60"
+                                            className="w-full h-full rounded-l-lg object-cover opacity-90"
                                         />
                                     </div>
 

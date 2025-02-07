@@ -42,13 +42,13 @@ const AllGigsCard = ({ gig }) => {
     return (
         <>
             <div
-                className={`w-[280px] h-[350px] bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300 ease-in-out ${
+                className={`w-[250px] h-[320px] bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300 ease-in-out ${
                     isHovered ? "shadow-lg shadow-gray-500 duration-500" : ""
                 }`}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                <div className="relative h-[170px] overflow-hidden">
+                <div className="relative h-[160px] overflow-hidden">
                     <div 
                         className='flex transition-transform duration-500 ease-in-out' 
                         style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
@@ -88,7 +88,7 @@ const AllGigsCard = ({ gig }) => {
                         {gig?.images.map((_, index) => (
                             <div
                                 key={index}
-                                className={`w-1.5 h-1.5 rounded-full transition-colors ${index === currentImageIndex ? "bg-white" : "bg-white/50"}`}
+                                className={`w-2 h-2 rounded-full transition-colors ${index === currentImageIndex ? "bg-blue-600" : "bg-black/40"}`}
                             />
                         ))}
                     </div>
@@ -99,16 +99,16 @@ const AllGigsCard = ({ gig }) => {
                     onClick={() => handleAuthUser(gig?.id)}
                     className='cursor-pointer px-4'
                 >
-                        <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-semibold text-lg truncate">{gig?.title}</h3>
-                            <span className="font-bold text-lg">${gig?.price}</span>
+                        <div className="flex justify-between items-start mb-1">
+                            <h3 className="font-semibold text-base truncate">{gig?.title}</h3>
+                            <span className="font-bold text-base">${gig?.price}</span>
                         </div>
-                        <p className="text-sm text-gray-600 mb-2 line-clamp-2">{gig?.shortDesc}</p>
+                        <p className="text-xs text-gray-600 mb-2 line-clamp-2">{gig?.shortDesc}</p>
                         <div className="flex flex-wrap gap-1 mb-2">
                             {gig?.features.slice(0, 3).map((feature, index) => (
                                 <span
                                     key={index}
-                                    className="bg-gray-200 uppercase font-semibold text-xs px-2 py-1 rounded-full"
+                                    className="bg-gray-200 text-xs px-2 py-0.5 rounded-full"
                                 >
                                     {feature}
                                 </span>

@@ -4,32 +4,33 @@ import "./globals.css";
 import { StateProvider } from "@/context/StateContext";
 import reducer,{initialState} from "@/context/StateReducers";
 import Navbar from "@/components/Navbar";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 
 export default function RootLayout({ children }) {
 
   const pathName = usePathname();
-  const token = Cookies.get('token');
-  const router = useRouter();
+  // const token = Cookies.get('token');
 
     // useEffect(() => {
     //   if(!token && pathName !== '/'){
     //     router.push('/login');
     //   }
     // },[token])
+
+
   return (
     <html lang="en">
       <head>
         <title>WorkPlace</title>
       </head>
         <body className="min-h-screen w-full overflow-x-hidden p-0 m-0 box-border">
-        <StateProvider initialState={initialState} reducer={reducer} >
-          <div className="flex flex-col flex-grow">
+        <StateProvider initialState={initialState} reducer={reducer}>
+          <div className="flex flex-col min-h-screen">
             <header>
               <Navbar/>
             </header>
-            <main className={` ${pathName !== '/' ? 'mt-16':''}`}>
+            <main className={`flex-grow ${pathName !== '/' ? 'mt-16':''}`}>
               {children}
             </main>
             <Footer/>

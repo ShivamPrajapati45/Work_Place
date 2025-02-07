@@ -2,171 +2,21 @@ import { PrismaClient } from "@prisma/client";
 import { v4 as uuidV4 } from 'uuid'
 
 
-// export const addOrder = async (req, res) => {
-//     try {
-//         const prisma = new PrismaClient();
-//         if(req.body.gigId){
-//             const {gigId} = req.body;
-            
-//             // fetch the gig details
-//             const gig = await prisma.gigs.findUnique({
-//                 where: {id: parseInt(gigId)}
-//             });
-
-//             if(!gig){
-//                 return res.status(404).json({
-//                     msg: 'Gig Not Found',
-//                     success: false
-//                 })
-//             };
-//             const {orderId} = req.body;
-//             const halfPrice = Math.max(Math.floor(gig?.price / 2), 50);
-
-//             if(orderId){
-//                 const existsOrder = await prisma.orders.findFirst({
-//                     where: {
-//                         id: parseInt(orderId)
-//                     }
-//                 });
-//                 // console.log("Exist: ", existsOrder)
-//                 if(existsOrder){
-//                     // console.log('Exist: ',existsOrder);
-//                     const paymentIntent = await stripe.paymentIntents.create({
-//                         amount: halfPrice * 100,
-//                         currency: 'usd',
-//                         automatic_payment_methods: {
-//                             enabled: true
-//                         }
-//                     });
-//                     return res.status(201).json({
-//                         clientSecret: paymentIntent.client_secret,
-//                         success: true
-//                     })
-//                 }
-//             }
-
-//             const paymentIntent = await stripe.paymentIntents.create({
-//                 amount: halfPrice * 100,
-//                 currency: "usd",
-//                 automatic_payment_methods: {
-//                     enabled: true,
-//                 },
-//             });
-//             const order = await prisma.orders.create({
-//                 data: {
-//                     paymentIntent: paymentIntent.id,
-//                     price: gig?.price,
-//                     paidAmount: 0,
-//                     buyer: {connect: {id: req?.user?.userId}},
-//                     gig: {connect: {id: parseInt(gigId)}},
-//                     status: 'Pending',
-//                     inCompleted: true
-//                 }
-//             });
-
-
-//             return res.status(201).json({
-//                 clientSecret: paymentIntent.client_secret,
-//                 orderId: order.id,
-//                 success: true
-//             })
-//         };
-
-//         return res.status(404).json({
-//             msg: "GigId is required",
-//             success: false
-//         })
-
-//     } catch (error) {
-//         console.log('err', error);
-//         return res.status(501).json({
-//             msg: 'Internal Server Error',
-//             success: false
-//         });
-//     }
-// };
-
-// export const confirmOrder = async (req, res) => {
-//     const prisma = new PrismaClient();
-//     try {
-//         const {orderId} = req.params;
-
-//         // Fetch the order by paymentIntent
-//         if(!orderId){
-//             return res.status(400).json({
-//                 msg: "OrderId is required",
-//                 success: false,
-//             });
-//         }
-//         const order = await prisma.orders.findUnique({
-//             where: { id: parseInt(orderId) },
-//         });
-
-
-//         console.log("order: ",order)
-
-//         if (!order) {
-//             return res.status(404).json({
-//                 msg: "Order not found",
-//                 success: false,
-//             });
-//         }
-
-//         // Check if the order is already fully paid
-//         if (order.paidAmount >= order.price) {
-//             return res.status(400).json({
-//                 msg: "Order is already fully paid",
-//                 success: false,
-//             });
-//         }
-
-//         // Determine the payment amount (50% of the total price or the remaining balance)
-//         const halfPrice = Math.floor(order.price / 2); // Half of the price
-//         const remainingAmount = order.price - order.paidAmount;
-//         const paymentAmount = Math.min(halfPrice, remainingAmount);
-
-//         // Update the order with the calculated payment amount
-//         const newPaidAmount = order.paidAmount + paymentAmount;
-
-//         const updatedOrder = await prisma.orders.update({
-//             where: { id: parseInt(orderId) },
-//             data: {
-//                 paidAmount: newPaidAmount,
-//                 status: newPaidAmount === order.price ? "Completed" : "Partial Payment",
-//                 inCompleted: newPaidAmount !== order.price, // Set to false only if fully paid
-//             },
-//         });
-
-//         return res.status(200).json({
-//             msg: newPaidAmount === order.price ? "Order completed successfully" : "Partial payment received",
-//             updatedOrder,
-//             success: true,
-//         });
-
-//     } catch (error) {
-//         console.error("Error confirming order:", error);
-//         return res.status(500).json({
-//             msg: "Internal Server Error",
-//             success: false,
-//         });
-//     }
-// };
-
-// Custom Payment Implementation by me
-
-
+// aur ye wo orders he jis user ne service banaya he uske service pe kitne order aaye he
 export const getSellerOrders = async (req, res) => {
     try {
-        if(req?.user?.userId){
-            const prisma = new PrismaClient();
+        const {userId} = req?.user;
+        const prisma = new PrismaClient();
+        console.log(userId);
+        if(userId){
             const orders = await prisma.orders.findMany({
                 where: {
                     gig: {
                         createdBy: {
-                            id: parseInt(req?.user?.userId)
+                            id: parseInt(userId)
                         },
                     },
-                    inCompleted: true
+                    inCompleted: false
                 },
                 include: {
                     gig: true,
@@ -191,14 +41,29 @@ export const getSellerOrders = async (req, res) => {
         })
     }
 }
-// jisne gig banaya he uske gig ko kitne orders aaye he
+
+// ye wo orders he jo buyer ne kiye he matlab buyer ne kitne service purchase kiye he
 export const getBuyerOrders = async (req, res) => {
     try {
         if(req?.user?.userId){
             const prisma = new PrismaClient();
             const orders = await prisma.orders.findMany({
                 where: {buyerId: parseInt(req?.user?.userId)},
-                include: {gig: true}
+                include: {
+                    gig: {
+                        include: {
+                            createdBy: {
+                                select: {
+                                    id: true,
+                                    fullName: true,
+                                    isProfileInfoSet: true,
+                                    email: true,
+                                    profileImage: true,
+                                }
+                            } 
+                        }
+                    }
+                },
             });
 
             return res.status(201).json({
@@ -290,7 +155,7 @@ export const createOrder = async (req, res) => {
 
 // Notifications Controllers
 export const markNotificationsAsRead = async (req, res) => {
-    const {userId} = req.user;
+    const { userId } = req.user;
     const prisma = new PrismaClient();
     try {
         await prisma.notifications.updateMany({
@@ -299,10 +164,37 @@ export const markNotificationsAsRead = async (req, res) => {
                 read: true
             }
         })
-        
+        return res.status(201).json({
+            msg: 'Read',
+            success: true
+        })
     } catch (error) {
         console.log('Mark Notifications: ', error);
         return res.status(500).json({ success: false, msg: "Internal Server Error" });
+    }
+};
+
+export const markAsReadSingleNotification = async (req, res) => {
+    const prisma = new PrismaClient();
+    const {id} = req.params;
+    try {
+        await prisma.notifications.update({
+            where: {id: parseInt(id),read: false},
+            data: {
+                read: true
+            }
+        });
+
+        return res.status(201).json({
+            msg: 'Read',
+            success: true
+        })
+        
+    } catch (error) {
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: false
+        })
     }
 }
 
@@ -311,11 +203,11 @@ export const unreadMessages = async (req, res) => {
     const prisma = new PrismaClient();
     try {
         const unreadCount = await prisma.notifications.count({
-            where: {sellerId: parseInt(userId)}
+            where: {sellerId: parseInt(userId),read:false}
         });
 
         const notifications = await prisma.notifications.findMany({
-            where: {sellerId: parseInt(userId)}
+            where: {sellerId: parseInt(userId),read: false}
         })
 
         if(!notifications || !unreadCount === 0) return res.status(404).json({

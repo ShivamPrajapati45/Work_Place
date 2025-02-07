@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { verifyToken } from '../middlewares/AuthMiddleware.js';
-import { createOrder, deleteOrder, getBuyerOrders, getOrderDetail, getSellerOrders, markNotificationsAsRead, readMessages, unreadMessages, updateOrder } from '../controllers/OrdersControllers.js';
+import { createOrder, deleteOrder, getBuyerOrders, getOrderDetail, getSellerOrders, markAsReadSingleNotification, markNotificationsAsRead, readMessages, unreadMessages, updateOrder } from '../controllers/OrdersControllers.js';
 const orderRoutes = Router();
 
 orderRoutes.post('/create',verifyToken,createOrder);
@@ -18,6 +18,7 @@ orderRoutes.get('/get-seller-orders',verifyToken,getSellerOrders);
 orderRoutes.get('/unread-messages',verifyToken,unreadMessages);
 orderRoutes.get('/read-messages',verifyToken,readMessages);
 orderRoutes.put('/mark-read',verifyToken,markNotificationsAsRead);
+orderRoutes.patch('/mark-read-single-notification/:id',markAsReadSingleNotification);
 
 
 

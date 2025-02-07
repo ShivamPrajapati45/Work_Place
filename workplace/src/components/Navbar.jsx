@@ -17,7 +17,7 @@ const Navbar = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isFixed, setIsFixed] = useState(false);
     const [searchData, setSearchData] = useState("");
-    const [{ userInfo,isSeller }, dispatch] = useStateProvider();
+    const [{ userInfo,isSeller,socket,onlineUsers }, dispatch] = useStateProvider();
     const router = useRouter();
     const [cookies] = useCookies();
     const pathName = usePathname();
@@ -41,10 +41,10 @@ const Navbar = () => {
     useEffect(() => {
         const fetchUnreadCount = async () => {
             try {
-                const {data} = await axios.get(GET_NOTIFICATIONS,{withCredentials: true});
-                if(data.success){
-                    setUnreadCount(data.notifications);
-                }
+                const res = await axios.get(GET_NOTIFICATIONS,{withCredentials: true});
+                if(res.data.success){
+                    setUnreadCount(res.data.unreadCount);
+                };
                 
             } catch (error) {
                 console.log(error)
@@ -52,7 +52,6 @@ const Navbar = () => {
         };
         if(userInfo) fetchUnreadCount();
     },[userInfo]);
-    console.log('Count: ',unreadCount)
 
     useEffect(() => {
         const handleData = {...data};
@@ -67,7 +66,7 @@ const Navbar = () => {
     },[userInfo]);
 
 
-    // console.log(userInfo)
+    console.log(socket, onlineUsers);
 
     const handleValueChange = (e) => {
         const {name, value} = e.target;
@@ -139,7 +138,7 @@ const Navbar = () => {
     const links = [
         { linkName: "Explore", handler: handleClickToGigs,type: 'link' },
         { linkName: "Sign In", handler: handleLogin,type: 'login' },
-        { linkName: "Join ", handler: handleSignUp,type: 'signup' },
+        { linkName: "JOIN ", handler: handleSignUp,type: 'signup' },
     ];
 
     useEffect(() => {
@@ -164,9 +163,9 @@ const Navbar = () => {
                         userInfo: projectedUserInfo
                     });
                     setIsLoaded(true);
-                    if(user?.isProfileInfoSet === false){
-                        router.push('/profile');
-                    }
+                    // if(user?.isProfileInfoSet === false){
+                    //     router.push('/profile');
+                    // }
 
                 } catch (error) {
                     console.log("GetUserInfo: ",error)
@@ -300,13 +299,13 @@ const Navbar = () => {
                             >
                                 <input 
                                     type="text" 
-                                    className='w-full rounded-l-lg md:w-[20rem] text-black py-2 px-4 border-2'
+                                    className='w-full rounded-l-lg md:w-[20rem] text-black py-1.5 px-4 border-1.5 border-gray-400'
                                     placeholder='search services are you looking for ?'
                                     value={searchData}
                                     onChange={(e) => setSearchData(e.target.value)}
                                 />
                                 <button 
-                                    className='bg-gray-900 h-11 rounded-r-lg hover:bg-gray-800 text-white w-12 md:w-16 flex justify-center items-center'
+                                    className='bg-gray-900 py-2 rounded-r-lg hover:bg-gray-800 text-white w-12 md:w-16 flex justify-center items-center'
                                     onClick={() => {
                                         setSearchData("");
                                         router.push(`/search?q=${searchData}`)
@@ -380,7 +379,7 @@ const Navbar = () => {
                                                 Orders
                                             </li>
                                             <li
-                                                className={`${pathName == '/gigs' ? 'text-blue-600' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
+                                                className={`${pathName == '/gigs' ? 'text-blue-600' : ''} ${isSeller ? 'hidden' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
                                                 onClick={handleClickToGigs}
                                             >
                                                 Explore
@@ -434,34 +433,34 @@ const Navbar = () => {
                             {/* Mobile Navbar */}
                             {showMenu && (
                                 <div className='absolute flex justify-center items-center top-14 left-0 w-full bg-white shadow-lg md:hidden transition-all duration-500 ease-in-out'>
-                                    <div className='space-y-2 p-4'>
+                                    <div className='p-2 flex items-center justify-center w-full border'>
                                     {
                                     !userInfo ? (
-                                        <ul className='flex gap-10 border border-black items-center md:text-base'>
+                                        <ul className='flex gap-10 items-center md:text-base'>
                                             {links.map(({ linkName,handler,type }) => {
                                                 return(
                                                     <li
                                                         key={linkName}
-                                                        className={`${isFixed ? 'text-base' : 'text-white'} font-medium `}
+                                                        className={`${isFixed ? 'text-base' : 'text-black'} font-medium `}
                                                     >
                                                         {type === 'link' && <button 
-                                                            className={`${pathName === '/gigs' ? 'text-blue-600' : ''}py-[5px] px-2 rounded-md hover:bg-black/10 transition-all`}
+                                                            className={`${pathName === '/gigs' ? 'text-blue-600' : ''} px-3 rounded-md hover:bg-black/10 transition-all`}
                                                             onClick={handleClickToGigs}
                                                         >
                                                             {linkName}
                                                         </button>}
-                                                        {type === 'button' && (
+                                                        {type === 'signup' && (
                                                             <button 
-                                                                className='py-[5px] px-2 rounded-md hover:bg-black/10 transition-all'
+                                                                className='px-3 rounded-md hover:bg-black/10 transition-all'
                                                                 onClick={handler}
                                                             >
                                                                 {linkName}
                                                             </button>
                                                         )}
-                                                        {type === 'button2' && (
+                                                        {type === 'login' && (
                                                             <button
                                                                 onClick={handler}
-                                                                className={`border uppercase text-sm md:text-lg font-semibold py-[2px] px-4 rounded-sm ${ isFixed ? 'bg-[#34A853] outline-none border-none text-white' : 'border-white text-white'} hover:bg-[#66ba7d] hover:text-white transition-all duration-500`}
+                                                                className={`border uppercase md:text-lg py-[2px] px-4 rounded-sm ${ !isFixed ? 'bg-[#34A853] outline-none border-none text-white' : 'border-white text-black'} hover:bg-[#66ba7d] hover:text-white transition-all duration-500`}
                                                             >
                                                                 {linkName}
                                                             </button>

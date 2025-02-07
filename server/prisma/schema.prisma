@@ -18,17 +18,18 @@ model User {
   isProfileInfoSet Boolean? @default(false)
   createdAt        DateTime @default(now())
 
-  location String?
-  portfolioLink String?
-  skills String[]
-  socialLinks String[]
+  location         String?
+  portfolioLink    String?
+  skills           String[]
+  socialLinks      String[]
 
-  gigs Gigs[]
-  orders Orders[]
-  reviews Reviews[]
-  notifications Notifications[]
-  messagesSent Messages[] @relation("sentMessages")
+  gigs             Gigs[]
+  reviews          Reviews[]
+  orders           Orders[]
+  notifications    Notifications[]
+  messagesSent     Messages[] @relation("sentMessages")
   messagesReceived Messages[] @relation("receivedMessages")
+  conversations    Conversation[] @relation("ConversationParticipants")
 }
 
 model Gigs {
@@ -97,12 +98,21 @@ model Messages {
   text String
   createdAt DateTime @default(now())
   isRead Boolean @default(false)
-  sender User @relation("sentMessages", fields: [senderId],references: [id])
   senderId Int
-  recipient User @relation("receivedMessages",fields: [recipientId],references: [id])
   recipientId Int
-  order Orders @relation(fields: [orderId], references: [id])
   orderId Int
+  conversationId Int
+  sender User @relation("sentMessages", fields: [senderId],references: [id])
+  recipient User @relation("receivedMessages",fields: [recipientId],references: [id])
+  order Orders @relation(fields: [orderId], references: [id])
+  conversation Conversation @relation("ConversationMessages",fields: [conversationId], references: [id])
+}
+
+model Conversation {
+  id Int @id @default(autoincrement())
+  participants User[] @relation("ConversationParticipants")
+  messages Messages[] @relation("ConversationMessages")
+  createdAt DateTime @default(now())
 }
 
 model Notifications {

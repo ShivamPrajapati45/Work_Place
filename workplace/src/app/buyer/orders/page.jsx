@@ -7,13 +7,13 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie'
 
 const page = () => {
     useAuth();
     const [orders, setOrders] = useState([]);
-    const [{userInfo}] = useStateProvider();
+    const [{userInfo,onlineUsers}] = useStateProvider();
     const router = useRouter();
+    const online = true;
 
     useEffect(() => {
         const getBuyerOrders = async () => {
@@ -22,13 +22,13 @@ const page = () => {
                 setOrders(orders);
                 console.log("orders",orders);
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
         };
 
         if(userInfo) getBuyerOrders();
     },[userInfo])
-
+    console.log('Online: ', onlineUsers);
     return (
         <div className="min-h-[88vh] my-10 mt-0 px-28">
             {
@@ -41,8 +41,9 @@ const page = () => {
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead className="text-sm text-slate-800 uppercase bg-gray-300 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th scope="col" className="px-6 py-3">Order ID</th>
-                                <th scope="col" className="px-6 py-3">Name</th>
+                                {/* <th scope="col" className="px-6 py-3">Order ID</th> */}
+                                <th scope="col" className="px-6 py-3">Freelancer</th>
+                                <th scope="col" className="px-6 py-3">Title</th>
                                 <th scope="col" className="px-6 py-3">Category</th>
                                 <th scope="col" className="px-6 py-3">Price</th>
                                 <th scope="col" className="px-6 py-3">Delivery time</th>
@@ -52,17 +53,23 @@ const page = () => {
                             </tr>
                         </thead>
                         <tbody className=''>
-                            {orders.map((order) => (
+                            {orders.map((order,index) => (
                                 <tr
                                     key={order?.id}
                                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                                 >
-                                    <th
-                                        scope="row"
-                                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                    >
-                                        {order?.id}
-                                    </th>
+                                    <td className="px-6 py-4">
+                                        <div className='relative h-14 w-14'>
+                                        <img 
+                                            src={order?.gig?.createdBy?.isProfileInfoSet ? order?.gig?.createdBy?.profileImage : order?.gig?.createdBy?.email[0].toUpperCase()} 
+                                            className='h-full w-full object-cover rounded-full border border-gray-300'
+                                            alt={`profile${index}`}
+                                        />
+                                        {onlineUsers?.includes(order?.gig?.createdBy?.id?.toString()) && (
+                                            <span className='absolute bottom-0 right-10 h-4 w-4 bg-green-500 border-2 border-white rounded-full'></span>
+                                        )}
+                                        </div>
+                                    </td>
                                     <td className="px-6 py-4">{order?.gig?.title}</td>
                                     <td className="px-6 py-4">{order?.gig?.category}</td>
                                     <td className="px-6 py-4 text-center">{order?.gig?.price}</td>
@@ -73,7 +80,7 @@ const page = () => {
                                     <td className="px-6 text-center py-4">
                                         <Link
                                             className="font-medium text-blue-600 dark:text-blue-300 hover:underline"
-                                            href={`/buyer/orders/messages/${order?.id}`}
+                                            href={`/buyer/orders/messages/${order?.id}?second=${order.gig.userId}`}
                                         >
                                             Send
                                         </Link>

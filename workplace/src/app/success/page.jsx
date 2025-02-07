@@ -3,12 +3,10 @@ import { ORDER_SUCCESS_ROUTE } from '@/utils/constant';
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
-import { useCookies } from 'react-cookie';
 
 const page = () => {
     const router = useRouter();
     const query = useSearchParams();
-    const [cookies] = useCookies();
     const orderId = query.get('orderId');
 
     useEffect(() => {

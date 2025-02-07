@@ -59,9 +59,9 @@ const page = () => {
                         </tr>
                     </thead>    
                     <tbody>
-                        {messages?.map(( msg ) => {
+                        {messages?.map(( msg,index ) => {
                             return (
-                                <tr key={msg?.text} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <th scope="row" className="px-6 py-4 ">
                                         {msg?.text}
                                     </th>

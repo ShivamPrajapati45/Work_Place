@@ -36,12 +36,14 @@ export const GET_ORDER = `${ORDER_ROUTES}/get`;
 export const GET_NOTIFICATIONS = `${ORDER_ROUTES}/unread-messages`;
 export const GET_READ_NOTIFICATIONS = `${ORDER_ROUTES}/read-messages`;
 export const MARK_READ = `${ORDER_ROUTES}/mark-read`;
+export const MARK_READ_SINGLE_NOTIFICATION = `${ORDER_ROUTES}/mark-read-single-notification`;
 
 // Messages Routes
-export const GET_MESSAGES = `${MESSAGE_ROUTES}/get-messages`;
-export const ADD_MESSAGES = `${MESSAGE_ROUTES}/add-messages`;
 export const GET_UNREAD_MESSAGES = `${MESSAGE_ROUTES}/unread-messages`;
 export const MARK_AS_READ = `${MESSAGE_ROUTES}/mark-as-read`;
+// socket parts
+export const SEND = `${MESSAGE_ROUTES}/send`;
+export const RECEIVE = `${MESSAGE_ROUTES}/receive`;
 
 // Dashboard Routes
 export const GET_SELLER_DASHBOARD_DATA = `${DASHBOARD_ROUTES}/seller`;

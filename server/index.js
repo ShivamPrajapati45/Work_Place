@@ -7,14 +7,15 @@ import gigsRoutes from './routes/GigsRoutes.js';
 import orderRoutes from './routes/OrdersRoutes.js';
 import messageRoutes from './routes/MessagesRoute.js'
 import dashBoardRoutes from './routes/DashBoardRoutes.js';
+import {app, server} from './socket/socket.js'
 
 dotenv.config();
-const app = express();
+// const app = express();
 const port = process.env.PORT || 3001
 
 app.use(cors({
     origin: ['http://localhost:3000'],
-    methods: ['GET','POST','PUT','DELETE'],
+    methods: ['GET','POST','PUT','DELETE','PATCH'],
     credentials: true
 }));
 
@@ -30,6 +31,6 @@ app.use('/api/message',messageRoutes);
 app.use('/api/dashboard',dashBoardRoutes)
 
 
-app.listen(port,()=> {
+server.listen(port,()=> {
     console.log(`server is running on port:${port}`)
 });

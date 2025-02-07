@@ -1,100 +1,6 @@
 import { PrismaClient } from '@prisma/client'
+import { getReceiverSocketId, io, userSocketMap } from '../socket/socket.js';
 
-export const addMessage = async (req, res) => {
-    try {
-        const prisma = new PrismaClient();
-        if(req.body.recipientId && req.params.orderId && req.body.message){
-            const message = await prisma.messages.create({
-                data: {
-                    sender: {
-                        connect: {id: parseInt(req?.user.userId)}
-                    },
-                    recipient: {
-                        connect: {id: parseInt(req.body.recipientId)}
-                    },
-                    order: {
-                        connect: {id: parseInt(req.params.orderId)}
-                    },
-                    text: req.body.message
-                },
-            });
-            return res.status(201).json({
-                message,
-                success: true
-            })
-        }
-
-        return res.status(400).json({
-            msg: 'Msg is Required',
-            success: false
-        })
-
-        
-    } catch (error) {
-        console.log(error);
-        return res.status(501).json({
-            msg: 'Internal Server Error',
-            success: true
-        })
-    }
-}
-
-export const getMessages = async (req, res) => {
-    try {
-        const prisma = new PrismaClient();
-        if(req.params.orderId && req.user.userId){
-            const messages = await prisma.messages.findMany({
-                where: {
-                    order: {
-                        id: parseInt(req.params.orderId)
-                    },
-                },
-                orderBy: {
-                    createdAt: "asc"
-                },
-            });
-
-            await prisma.messages.updateMany({
-                where: {
-                    orderId: parseInt(req.params.orderId),
-                    recipientId: parseInt(req.user.userId)
-                },
-                data: {
-                    isRead: true
-                },
-            });
-
-            const order = await prisma.orders.findUnique({
-                where: { id: parseInt(req.params.orderId)},
-                include: {gig: true}
-            });
-            let recipientId;
-            if(order.buyerId === req.user.userId){
-                recipientId = order.gig.userId;
-            } else if(order.gig.userId === req.user.userId){
-                recipientId = order.buyerId
-            };
-
-            return res.status(201).json({
-                messages,
-                recipientId,
-                success: true
-            })
-        }
-
-        return res.status(201).json({
-            msg: 'Order id is required',
-            success: false
-        })
-        
-    } catch (error) {
-        console.log(error);
-        return res.status(501).json({
-            msg: 'Internal Server Error',
-            success: true
-        })
-    }
-}
 
 export const getUnreadMessages = async (req, res) => {
     try {
@@ -157,5 +63,122 @@ export const markAsRead = async (req, res) => {
             msg: 'Internal Server Error',
             success: true
         })
+    }
+}
+
+// Sockets Parts Execution and implementation ✓✓✓✓
+
+export const sendMessage = async (req, res) => {
+    const prisma = new PrismaClient();
+    try {
+        const senderId = req.user.userId;  // This is the sender ID who is sending msg
+        const {receiverId, orderId} = req.params;  // this is receiver ID the person jisko msg send kiya sender ne
+        const {message} = req.body;
+
+        let gotConversation = await prisma.conversation.findFirst({
+            where: {
+                AND: [
+                    {participants: {some: {id: parseInt(senderId)}}},
+                    {participants: {some: {id: parseInt(receiverId)}}},
+                ]
+            },
+            include: {
+                messages: true,
+                participants: true
+            }
+        });
+
+        if(!gotConversation){
+            gotConversation = await prisma.conversation.create({
+                data: {
+                    participants: {
+                        connect: [
+                            { id: parseInt(senderId) },
+                            { id: parseInt(receiverId) }
+                        ]
+                    }
+                },
+                include: {
+                    participants: true
+                }
+            })
+        };
+
+        const newMessage = await prisma.messages.create({
+            data: {
+                text: message,
+                sender: {
+                    connect: {id: parseInt(senderId)}
+                },
+                recipient: {
+                    connect: {id: parseInt(receiverId)}
+                },
+                order: {
+                    connect: {id: parseInt(orderId)}
+                },
+                conversation: {
+                    connect: {id: parseInt(gotConversation.id)}
+                }
+            },
+        });
+
+        if(newMessage){
+            gotConversation.messages.push(newMessage.id);
+        };
+        
+        // Here Socket IO Part will start
+        const receiverSocketId = getReceiverSocketId(receiverId);
+        if(receiverSocketId){
+            io.to(receiverSocketId).emit('newMessage',newMessage);
+        }else {
+            console.log('Receiver not online:', receiverId);
+        }
+
+        return res.status(201).json({
+            msg: 'Message Sent',
+            newMessage,
+            success: true
+        })
+
+    } catch (error) {
+        console.log('Sent Error: ', error)
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: false
+        });
+    }
+};
+
+export const receiveMessage = async (req, res) => {
+    const prisma = new PrismaClient();
+    try {
+        const {receiverId} = req.params;
+        const senderId = req.user.userId;
+        const conversation = await prisma.conversation.findFirst({
+            where: {
+                AND: [
+                    { participants: {some : {id: parseInt(senderId)}} },
+                    { participants: {some : {id: parseInt(receiverId)}} },
+                ]
+            },
+            include: {
+                messages: true,
+                participants: true
+            }
+        });
+
+        // console.log('conversation: ', conversation);
+        return res.status(201).json({
+            msg: 'Receive Successfully !!',
+            conversation,
+            success: true
+        });
+        
+    } catch (error) {
+        console.log('Receive Error: ', error)
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: false
+        });
     }
 }

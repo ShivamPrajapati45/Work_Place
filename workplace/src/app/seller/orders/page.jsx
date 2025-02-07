@@ -1,20 +1,19 @@
 'use client'
 import { useStateProvider } from '@/context/StateContext';
-import { GET_BUYER_ORDERS_ROUTE, GET_SELLER_ORDERS_ROUTE } from '@/utils/constant';
+import { GET_SELLER_ORDERS_ROUTE } from '@/utils/constant';
 import axios from 'axios';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie'
 
 const page = () => {
-    const [cookie] = useCookies();
     const [orders, setOrders] = useState([]);
     const [{userInfo}] = useStateProvider();
 
     useEffect(() => {
         const getBuyerOrders = async () => {
             try {
-                const {data: {orders}} = await axios.get(GET_SELLER_ORDERS_ROUTE,{withCredentials: true});
+                const {data: { orders }} = await axios.get(GET_SELLER_ORDERS_ROUTE,{withCredentials: true});
+                // console.log('Orders seller : ', res)
                 setOrders(orders);
                 // console.log("orders",orders);
             } catch (error) {
@@ -55,8 +54,9 @@ const page = () => {
                             </th>
                         </tr>
                     </thead>    
+
                     <tbody>
-                        {orders?.map(( order ) => {
+                        {orders.length > 0 && orders?.map(( order ) => {
                             return (
                                 <tr key={order?.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -75,12 +75,12 @@ const page = () => {
                                         {order?.gig?.deliveryTime}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {order?.createdAt?.split("Y")[0]}
+                                        {order?.createdAt?.split("T")[0]}
                                     </td>
                                     <td className="px-6 py-4">
                                         <Link 
                                             className='font-medium text-blue-600 dark:text-blue-300 hover:underline'
-                                            href={`/buyer/orders/messages/${order?.id}`}
+                                            href={`/buyer/orders/messages/${order?.id}?second=${order?.buyer?.id}`}
                                         >
                                             Send
                                         </Link>

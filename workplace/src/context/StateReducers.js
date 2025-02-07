@@ -7,7 +7,9 @@ export const initialState = {
     isSeller: false,
     gigData: undefined,
     hasOrdered: false,
-    reloadReviews: false
+    reloadReviews: false,
+    socket: null,
+    onlineUsers: null
 };
 
 const reducer = (state, action) => {
@@ -18,6 +20,18 @@ const reducer = (state, action) => {
                 ...state,
                 showLogInModel: action.showLogInModel, 
             };
+        
+        case reducerCases.SOCKET:
+            return {
+                ...state,
+                socket: action.socket
+            };
+        
+        case reducerCases.ONLINE_USERS:
+            return {
+                ...state,
+                onlineUsers: action.onlineUsers
+            }
 
         case reducerCases.TOGGLE_SIGNUP_MODEL:
             return{

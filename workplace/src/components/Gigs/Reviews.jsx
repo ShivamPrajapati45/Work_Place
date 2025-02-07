@@ -1,19 +1,54 @@
 import { useStateProvider } from '@/context/StateContext'
-import { HOST } from '@/utils/constant';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import { FaStar } from 'react-icons/fa';
 
-const Reviews = () => {
+const Reviews = ({addReview, data, setData}) => {
     const [{gigData}] = useStateProvider();
-    const [averageRatings, setAverageRatings] = useState("0");
+    const [averageRatings, setAverageRatings] = useState(0);
     useEffect(() => {
         if(gigData && gigData?.reviews.length){
             let avgRating  = 0;
             gigData.reviews.forEach(({ rating }) => (avgRating += rating));
             setAverageRatings((avgRating / gigData.reviews.length).toFixed(1));
         }
-    },[gigData,averageRatings])
+    },[gigData,averageRatings,data]);
+
+    function formatDate(date, relative = false) {
+        const now = new Date();
+        const createdAt = new Date(date);
+    
+        if (relative) {
+            const seconds = Math.floor((now - createdAt) / 1000);
+            const intervals = {
+                year: 31536000,
+                month: 2592000,
+                week: 604800,
+                day: 86400,
+                hour: 3600,
+                minute: 60,
+                second: 1,
+            };
+    
+            for (const [unit, value] of Object.entries(intervals)) {
+                const count = Math.floor(seconds / value);
+                if (count > 0) {
+                return `${count} ${unit}${count > 1 ? "s" : ""} ago`;
+                }
+            }
+            return "just now";
+            }
+    
+            return createdAt.toLocaleString("en-US", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+            });
+    }
+
+
 
     return (
         <div>
@@ -40,7 +75,8 @@ const Reviews = () => {
                         <h1 className='text-xl font-medium text-gray-800'>All Reviews</h1>
                         <div className=' rounded-lg max-h-[20rem] overflow-scroll'>
                         {gigData.reviews.map((review) => (
-                            <div className='flex gap-4  border-b pb-4 mb-4 items-start' key={review?.id}>
+                            <div className='flex gap-4 relative border-b pb-4 mb-4 items-start' key={review?.id}>
+
                                 <div className='h-16 w-16 rounded-full'>
                                     {review.reviewer ? (
                                         <img
@@ -56,6 +92,7 @@ const Reviews = () => {
                                         </div>
                                     )}
                                 </div>
+
                                 <div className='flex flex-col gap-2'>
                                     <h4 className='text-lg font-medium text-gray-800'>{review.reviewer.fullName}</h4>
                                     <div className='flex  items-center gap-2'>
@@ -70,6 +107,12 @@ const Reviews = () => {
                                     </div>
                                         <p className='text-gray-600 text-sm'>{review.reviewText}</p>
                                 </div>
+                                <span className='absolute right-5 text-sm'>
+                                    {
+                                        formatDate(review?.createdAt, true)
+                                    }
+                                </span>
+
                             </div>
                         ))}
                         </div>
