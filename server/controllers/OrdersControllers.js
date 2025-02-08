@@ -1,12 +1,11 @@
-import { PrismaClient } from "@prisma/client";
 import { v4 as uuidV4 } from 'uuid'
+import prisma from '../prisma.js';
 
 
 // aur ye wo orders he jis user ne service banaya he uske service pe kitne order aaye he
 export const getSellerOrders = async (req, res) => {
     try {
         const {userId} = req?.user;
-        const prisma = new PrismaClient();
         console.log(userId);
         if(userId){
             const orders = await prisma.orders.findMany({
@@ -46,7 +45,6 @@ export const getSellerOrders = async (req, res) => {
 export const getBuyerOrders = async (req, res) => {
     try {
         if(req?.user?.userId){
-            const prisma = new PrismaClient();
             const orders = await prisma.orders.findMany({
                 where: {buyerId: parseInt(req?.user?.userId)},
                 include: {
@@ -88,9 +86,7 @@ export const getBuyerOrders = async (req, res) => {
 export const createOrder = async (req, res) => {
 
     const {gigId,price,upfrontPayment,remainingAmount,paymentDetails} = req.body;
-    // console.log("Body",req.body)
     const {userId} = req.user;  //Buyer Id
-    const prisma = new PrismaClient();
     let transactionId = uuidV4();
     try{
         const order = await prisma.orders.create({
@@ -156,7 +152,6 @@ export const createOrder = async (req, res) => {
 // Notifications Controllers
 export const markNotificationsAsRead = async (req, res) => {
     const { userId } = req.user;
-    const prisma = new PrismaClient();
     try {
         await prisma.notifications.updateMany({
             where: {sellerId: parseInt(userId),read: false},
@@ -175,7 +170,6 @@ export const markNotificationsAsRead = async (req, res) => {
 };
 
 export const markAsReadSingleNotification = async (req, res) => {
-    const prisma = new PrismaClient();
     const {id} = req.params;
     try {
         await prisma.notifications.update({
@@ -200,7 +194,6 @@ export const markAsReadSingleNotification = async (req, res) => {
 
 export const unreadMessages = async (req, res) => {
     const { userId } = req.user;
-    const prisma = new PrismaClient();
     try {
         const unreadCount = await prisma.notifications.count({
             where: {sellerId: parseInt(userId),read:false}
@@ -227,7 +220,6 @@ export const unreadMessages = async (req, res) => {
 }
 export const readMessages = async (req, res) => {
     const { userId } = req.user;
-    const prisma = new PrismaClient();
     try {
         const notifications = await prisma.notifications.findMany({
             where: {sellerId: parseInt(userId),read: true}
@@ -252,7 +244,6 @@ export const readMessages = async (req, res) => {
 export const updateOrder = async (req, res) => {
     const { orderId } = req.params;
     const { remainingAmount } = req.body;
-    const prisma = new PrismaClient(); 
     
     try {
         const existingOrder = await prisma.orders.findUnique({
@@ -308,7 +299,6 @@ export const updateOrder = async (req, res) => {
 // Delete an Order
 export const deleteOrder = async (req, res) => {
     const {orderId} = req.params;
-    const prisma = new PrismaClient();
     try {
         await prisma.orders.delete({
             where: {id: parseInt(orderId)}
@@ -331,7 +321,6 @@ export const deleteOrder = async (req, res) => {
 
 export const getOrderDetail = async (req, res) => {
     const { orderId } = req.params;
-    const prisma = new PrismaClient();
     try {
         const order = await prisma.orders.findUnique({
             where: {id: parseInt(orderId)}

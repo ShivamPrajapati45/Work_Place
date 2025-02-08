@@ -1,10 +1,12 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { compare, genSalt, hash } from "bcrypt";
 import jwt from 'jsonwebtoken'
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { oauth2Client } from "../utils/googleConfig.js";
 import bcrypt from 'bcrypt'
 import axios from 'axios'
+import prisma from "../prisma.js";
+
 // Generating Bcrypt or Hash password
 const generateHashPassword = async (password) => {
     const salt = await genSalt(10);
@@ -21,7 +23,6 @@ const createToken =  (email, userId) => {
 
 export const signup = async (req, res) => {
     try {
-        const prisma = new PrismaClient();
         const { email, password } = req.body;
         if(email && password){
             const existUser = await prisma.user.findUnique({
@@ -87,7 +88,6 @@ export const googleAuth = async (req, res) => {
         const {email, name, picture} = userRes.data;
         const data = userRes.data;
         console.log('data', data);
-        const prisma = new PrismaClient();
         const existUser = await prisma.user.findUnique({
             where: {email},
         });
@@ -143,7 +143,6 @@ export const googleAuth = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const prisma = new PrismaClient();
         const { email, password } = req.body;
         if(email && password){
             const user = await prisma.user.findUnique({
@@ -200,7 +199,6 @@ export const login = async (req, res) => {
 export const getUserInfo = async (req,res) => {
     try {
         if(req?.user){
-            const prisma = new PrismaClient();
             const user = await prisma.user.findUnique({
                 where:{
                     id: req?.user?.userId
@@ -224,9 +222,7 @@ export const getUserInfo = async (req,res) => {
 
 export const setUserInfo = async (req,res) => {
     try {
-        // console.log("Profile: ",req.body)
             const {userName, fullName, description, skills, socialLinks,location,portfolioLink} = req.body;
-            const prisma = new PrismaClient();
 
             if(userName && fullName && description){
                 const existUser = await prisma.user.findUnique({
@@ -298,7 +294,6 @@ export const setUserImage = async (req,res) => {
                     msg: 'Image Not Found',
                     success: false
                 })
-                const prisma = new PrismaClient();
                 const user = await prisma.user.update({
                     where: {id: req?.user?.userId},
                     data: {
@@ -352,7 +347,6 @@ export const editProfile = async (req,res) => {
             const {username, fullName, description} = req.body;
 
             if(username || fullName || description){
-                const prisma = new PrismaClient();
                 if(username){
                     const existUser = await prisma.user.findUnique({
                         where:{ username }
@@ -412,7 +406,6 @@ export const editUserProfileImage = async (req,res) => {
                     msg: 'Image not found',
                     success: false
                 })
-                const prisma = new PrismaClient();
                 const user = await prisma.user.update({
                     where: {id: req?.user?.userId},
                     data: {

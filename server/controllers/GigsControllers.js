@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../prisma.js';
 import {existsSync, renameSync, unlinkSync} from 'fs'
 import { uploadMultipleToCloudinary } from '../utils/cloudinary.js';
 
@@ -30,7 +30,6 @@ export const addGig = async (req,res) => {
                     shortDesc, 
                 } = req.query;
 
-                const prisma = new PrismaClient();
                 await prisma.gigs.create({
                     data: {
                         title,
@@ -69,11 +68,8 @@ export const addGig = async (req,res) => {
 // this getGigs function will get all the gigs of the user
 export const getGigs = async (req, res) => {
     try{
-        // console.log(req?.user)
-        const prisma = new PrismaClient();
         const user = await prisma.user.findUnique({
             where : {id: req?.user.userId},
-            // this include means that we want to include the gigs of the user
             include: {
                 gigs: true
             }
@@ -98,7 +94,6 @@ export const getGigData = async (req, res) => {
     try {
 
         if(req?.params?.gigId){
-            const prisma = new PrismaClient();
             const gig = await prisma.gigs.findUnique({
                 where: {id: parseInt(req.params.gigId)},
                 include: {
@@ -165,7 +160,6 @@ export const editGig = async (req, res) => {
                 fileNames.push(date + req.files[file].originalname);
             });
 
-            const prisma = new PrismaClient();
             const {
                 title,
                 description,
@@ -226,7 +220,6 @@ export const editGig = async (req, res) => {
 };
 
 const createSearchQuery = (searchTerm, category) => {
-    // console.log(searchTerm, category);
     const query = {
         where: {
             OR: [],
@@ -300,10 +293,7 @@ const createSearchQuery = (searchTerm, category) => {
 
 export const searchGig = async (req, res) => {
     try {
-        // if the search term or category is provided then we will search the gigs
-        // console.log('query: ', req.query);
         if(req?.query?.searchTerm || req?.query?.category){
-            const prisma = new PrismaClient();
             const gigs = await prisma.gigs.findMany(
                 createSearchQuery(req.query.searchTerm, req.query.category)
             );
@@ -331,7 +321,6 @@ export const searchGig = async (req, res) => {
 
 const checkOrder = async (userId, gigId) => {
     try {
-        const prisma = new PrismaClient();
         const hasUserOrderedGig = await prisma.orders.findFirst({
             where: {
                 buyerId: parseInt(userId),
@@ -374,7 +363,6 @@ export const addReview = async (req, res, _) => {
         if(req?.user?.userId && req.params.gigId){
             if(await checkOrder(req?.user?.userId , req.params.gigId)){
                 if(req.body.reviewText && req.body.rating){
-                    const prisma = new PrismaClient();
                     const newReview = await prisma.reviews.create({
                         data: {
                             rating: req.body.rating,
@@ -418,7 +406,6 @@ export const addReview = async (req, res, _) => {
 }
 
 const searchQuery = (searchTerm, category) => {
-    // console.log(searchTerm, category);
     const query = {
         where: {
             OR: [],
@@ -475,7 +462,6 @@ const searchQuery = (searchTerm, category) => {
 export const getAllGigs = async (req,res) => {
     try {
         const { category,searchTerm } = req.query;
-        const prisma = new PrismaClient();
         if(category || searchTerm){
             const gigs = await prisma.gigs.findMany(
                 searchQuery(searchTerm, category)
@@ -513,9 +499,7 @@ export const getAllGigs = async (req,res) => {
 }
 
 export const getGigsByQuery = async (req,res) => {
-    // console.log( "Params : ",req.query)
     try {
-        const prisma = new PrismaClient();
         const gigs = await prisma.gigs.findMany({
             include: {
                 createdBy: true,  // this will include the user who created the gig

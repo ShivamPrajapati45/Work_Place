@@ -8,6 +8,7 @@ import orderRoutes from './routes/OrdersRoutes.js';
 import messageRoutes from './routes/MessagesRoute.js'
 import dashBoardRoutes from './routes/DashBoardRoutes.js';
 import {app, server} from './socket/socket.js'
+import prisma from './prisma.js';
 
 dotenv.config();
 const port = process.env.PORT || 3001
@@ -32,4 +33,16 @@ app.use('/api/dashboard',dashBoardRoutes)
 
 server.listen(port,()=> {
     console.log(`server is running on port:${port}`)
+});
+
+
+// Prisma ko server shutdown hone se pahle disconnect karega
+process.on('SIGINT', async () => {
+    await prisma.$disconnect();
+    process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+    await prisma.$disconnect();
+    process.exit(0);
 });

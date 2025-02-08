@@ -1,11 +1,10 @@
-import { PrismaClient } from '@prisma/client'
+import prisma from '../prisma.js';
 import { getReceiverSocketId, io, userSocketMap } from '../socket/socket.js';
 
 
 export const getUnreadMessages = async (req, res) => {
     try {
         if(req.user.userId){
-            const prisma = new PrismaClient();
             const messages = await prisma.messages.findMany({
                 where: {
                     recipientId: req.user.userId,
@@ -38,7 +37,6 @@ export const getUnreadMessages = async (req, res) => {
 export const markAsRead = async (req, res) => {
     try {
         if(req.user.userId && req.params.messageId){
-            const prisma = new PrismaClient();
             await prisma.messages.update({
                 where: {
                     id: parseInt(eq.params.messageId),
@@ -69,7 +67,6 @@ export const markAsRead = async (req, res) => {
 // Sockets Parts Execution and implementation ✓✓✓✓
 
 export const sendMessage = async (req, res) => {
-    const prisma = new PrismaClient();
     try {
         const senderId = req.user.userId;  // This is the sender ID who is sending msg
         const {receiverId, orderId} = req.params;  // this is receiver ID the person jisko msg send kiya sender ne
@@ -138,7 +135,6 @@ export const sendMessage = async (req, res) => {
                     isRead: false
                 }
             });
-            console.log('Unread Messages Count: ', unreadMessagesCount, "Receiver Id", receiverId);
             io.to(receiverSocketId).emit('unreadCount', {
                 receiverId: receiverId,
                 senderId: senderId,
@@ -165,7 +161,6 @@ export const sendMessage = async (req, res) => {
 };
 
 export const receiveMessage = async (req, res) => {
-    const prisma = new PrismaClient();
     try {
         const {receiverId} = req.params;
         const senderId = req.user.userId;
@@ -202,7 +197,6 @@ export const receiveMessage = async (req, res) => {
                 isRead: false
             }
         });
-        console.log('Receive: ', unreadMessagesCount, 'ID receiver', receiverId);
         // Emit unread messages count to receiver
         const receiverSocketId = getReceiverSocketId(receiverId);
         if(receiverSocketId){
@@ -213,7 +207,6 @@ export const receiveMessage = async (req, res) => {
             });
         }
 
-        // console.log('conversation: ', conversation);
         return res.status(201).json({
             msg: 'Receive Successfully !!',
             conversation,
