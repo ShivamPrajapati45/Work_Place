@@ -11,15 +11,13 @@ const io = new Server(server, {
     }
 });
 
-// const userSocketMap = {}; //This is for checking which user is online
-const userSocketMap = new Map();
+const userSocketMap = new Map(); //This is for checking which user is online
 
 
 
 io.on('connection', (socket) => {
     const userId = socket.handshake.query.userId;
     if(userId != undefined){
-        // userSocketMap[userId.toString()] = socket.id
         userSocketMap.set(userId.toString(), socket.id)
     }else{
         console.log('User ID is not coming');
@@ -30,8 +28,6 @@ io.on('connection', (socket) => {
         if(userId){
             userSocketMap.delete(userId.toString());
         }
-        // delete userSocketMap[userId.toString()];
-        // io.emit('getOnlineUsers', Object.keys(userSocketMap));
         io.emit('getOnlineUsers', Array.from(userSocketMap.keys()));
 
     });
@@ -39,7 +35,6 @@ io.on('connection', (socket) => {
 });
 
 const getReceiverSocketId = (receiverId) => {
-    // return userSocketMap[receiverId?.toString()];
     return userSocketMap.get(receiverId?.toString());
 }
 

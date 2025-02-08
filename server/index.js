@@ -10,7 +10,6 @@ import dashBoardRoutes from './routes/DashBoardRoutes.js';
 import {app, server} from './socket/socket.js'
 
 dotenv.config();
-// const app = express();
 const port = process.env.PORT || 3001
 
 app.use(cors({

@@ -4,13 +4,13 @@ import { RECEIVE, SEND } from '@/utils/constant';
 import axios from 'axios';
 import { useParams, useSearchParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react'
-import { BsCheckAll } from 'react-icons/bs';
+import { BsCheckAll,BsCheck } from 'react-icons/bs';
 import { FaRegPaperPlane } from 'react-icons/fa';
 
 const MessageContainer = () => {
 
     const { orderId } = useParams();
-    const [{ userInfo,socket }] = useStateProvider();
+    const [{ userInfo,socket,onlineUsers }] = useStateProvider();
     const [messages, setMessages] = useState([]);
     const [messageText, setMessageText] = useState("");
     const scroll = useRef();
@@ -108,9 +108,12 @@ const MessageContainer = () => {
                                             {formatTime(message.createdAt)}
                                         </span>
                                         <span>
-                                            {message.senderId === userInfo.id && message.isRead && (
+                                            {/* {message.senderId === userInfo.id && message.isRead && (
                                                 <BsCheckAll/>
-                                            )}
+                                            )} */}
+                                            {
+                                                onlineUsers.includes(receiverId.toString()) ? (<BsCheckAll/>) : (<BsCheck/>)
+                                            }
                                         </span>
                                     </div>
                                 </div>

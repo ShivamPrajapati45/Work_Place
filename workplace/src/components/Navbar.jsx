@@ -11,9 +11,12 @@ import { reducerCases } from '@/context/constants';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import EditProfile from './EditProfile';
-
+import Cookies from 'js-cookie';
+import {io} from 'socket.io-client'
+import useSocketConnection from '@/hooks/useSocketConnection';
 const Navbar = () => {
 
+    const token = Cookies.get('token');
     const [isLoaded, setIsLoaded] = useState(false);
     const [isFixed, setIsFixed] = useState(false);
     const [searchData, setSearchData] = useState("");
@@ -36,6 +39,9 @@ const Navbar = () => {
         email: '',
         description: ''
     });
+
+    // Socket Connection 
+    useSocketConnection();
 
     // Fetching UnreadCount
     useEffect(() => {
@@ -64,9 +70,6 @@ const Navbar = () => {
         setData(handleData);
 
     },[userInfo]);
-
-
-    console.log(socket, onlineUsers);
 
     const handleValueChange = (e) => {
         const {name, value} = e.target;
@@ -211,7 +214,7 @@ const Navbar = () => {
         }catch(err){
             console.log(err);
         }
-    }
+    };
 
     const handleEditProfile = async () => {
         try{

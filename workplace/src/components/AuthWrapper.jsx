@@ -82,7 +82,6 @@ const AuthWrapper = ({ type }) => {
                 const response = await axios.post( type === 'login' ? LOGIN_ROUTES : SIGNUP_ROUTES, values,{withCredentials: true} );
                 if(response.data.success){
                     console.log('UserInfo: ', response.data.user);
-                    localStorage.setItem('userInfo', JSON.stringify(response.data.user));
                     dispatch({ type: reducerCases.SET_USER, userInfo: response.data.user });
                     router.push('/');
 

@@ -13,22 +13,21 @@ const page = () => {
     const [orders, setOrders] = useState([]);
     const [{userInfo,onlineUsers}] = useStateProvider();
     const router = useRouter();
-    const online = true;
 
     useEffect(() => {
         const getBuyerOrders = async () => {
             try {
                 const {data: {orders}} = await axios.get(GET_BUYER_ORDERS_ROUTE,{withCredentials: true});
                 setOrders(orders);
-                console.log("orders",orders);
+                // console.log("orders",orders);
             } catch (error) {
                 console.log(error);
             }
         };
 
         if(userInfo) getBuyerOrders();
-    },[userInfo])
-    console.log('Online: ', onlineUsers);
+    },[userInfo]);
+
     return (
         <div className="min-h-[88vh] my-10 mt-0 px-28">
             {
@@ -59,16 +58,27 @@ const page = () => {
                                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                                 >
                                     <td className="px-6 py-4">
-                                        <div className='relative h-14 w-14'>
-                                        <img 
-                                            src={order?.gig?.createdBy?.isProfileInfoSet ? order?.gig?.createdBy?.profileImage : order?.gig?.createdBy?.email[0].toUpperCase()} 
-                                            className='h-full w-full object-cover rounded-full border border-gray-300'
-                                            alt={`profile${index}`}
-                                        />
-                                        {onlineUsers?.includes(order?.gig?.createdBy?.id?.toString()) && (
-                                            <span className='absolute bottom-0 right-10 h-4 w-4 bg-green-500 border-2 border-white rounded-full'></span>
+                                        {order?.gig?.createdBy?.isProfileInfoSet ? (
+                                            <div className='relative h-14 w-14'>
+                                                <img 
+                                                    src={order?.gig?.createdBy?.profileImage} 
+                                                    className='h-full w-full object-cover rounded-full border border-gray-300'
+                                                    alt={`profile${index}`}
+                                                />
+                                                {onlineUsers?.includes(order?.gig?.createdBy?.id?.toString()) && (
+                                                    <span className='absolute bottom-0 right-10 h-4 w-4 bg-green-500 border-2 border-white rounded-full'></span>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className='bg-purple-500 flex items-center justify-center h-10 w-10 rounded-full relative'>
+                                                <span className='text-xl text-white'>
+                                                    {order?.gig?.createdBy?.email[0].toUpperCase()}
+                                                </span>
+                                                {onlineUsers?.includes(order?.gig?.createdBy?.id?.toString()) && (
+                                                    <span className='absolute top-8 right-6 h-4 w-4 bg-green-500 border-2 border-white rounded-full'></span>
+                                                )}
+                                            </div>
                                         )}
-                                        </div>
                                     </td>
                                     <td className="px-6 py-4">{order?.gig?.title}</td>
                                     <td className="px-6 py-4">{order?.gig?.category}</td>

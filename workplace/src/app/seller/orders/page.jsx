@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 
 const page = () => {
     const [orders, setOrders] = useState([]);
-    const [{userInfo}] = useStateProvider();
+    const [{userInfo,onlineUsers}] = useStateProvider();
 
     useEffect(() => {
         const getBuyerOrders = async () => {
@@ -15,7 +15,7 @@ const page = () => {
                 const {data: { orders }} = await axios.get(GET_SELLER_ORDERS_ROUTE,{withCredentials: true});
                 // console.log('Orders seller : ', res)
                 setOrders(orders);
-                // console.log("orders",orders);
+                console.log("orders",orders);
             } catch (error) {
                 console.log(error)
             }
@@ -56,12 +56,32 @@ const page = () => {
                     </thead>    
 
                     <tbody>
-                        {orders.length > 0 && orders?.map(( order ) => {
+                        {orders.length > 0 && orders?.map(( order,index ) => {
                             return (
                                 <tr key={order?.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {order?.id}
-                                    </th>
+                                    <td className="px-6 py-4">
+                                        {order?.buyer?.isProfileInfoSet ? (
+                                            <div className='relative h-14 w-14'>
+                                            <img 
+                                                src={order?.buyer?.profileImage} 
+                                                className='h-full w-full object-cover rounded-full border border-gray-300'
+                                                alt={`profile${index}`}
+                                            />
+                                            {onlineUsers?.includes(order?.buyer?.id.toString()) && (
+                                                <span className='absolute bottom-0 right-10 h-4 w-4 bg-green-500 border-2 border-white rounded-full'></span>
+                                            )}
+                                            </div>
+                                        ) : (
+                                            <div className='bg-purple-500 flex items-center justify-center h-10 w-10 rounded-full relative'>
+                                                <span className='text-xl text-white'>
+                                                    {order?.buyer?.email[0].toUpperCase()}
+                                                </span>
+                                                {onlineUsers?.includes(order?.buyer?.id.toString()) && (
+                                                    <span className='absolute top-8 right-6 h-4 w-4 bg-green-500 border-2 border-white rounded-full'></span>
+                                                )}
+                                            </div>
+                                        )}
+                                    </td>
                                     <td className="px-6 py-4">
                                         {order?.gig?.title}
                                     </td>
