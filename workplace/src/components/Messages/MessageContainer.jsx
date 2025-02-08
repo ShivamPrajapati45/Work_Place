@@ -20,7 +20,7 @@ const MessageContainer = () => {
     useEffect(() => {
         if(socket){
             socket?.on('newMessage', (newMessage) => {
-                console.log('NewMessage: ', newMessage)
+                // console.log('NewMessage: ', newMessage);
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
             });
 
@@ -30,6 +30,13 @@ const MessageContainer = () => {
         }
     },[socket]);
 
+    useEffect(() => {
+        if(receiverId){
+            const unreadCounts = JSON.parse(localStorage.getItem('unreadCounts')) || {};
+            delete unreadCounts[receiverId];
+            localStorage.setItem('unreadCounts',JSON.stringify(unreadCounts));
+        }
+    },[receiverId,socket]);
     // ye socket wala part 
     const receiveMessages = async () => {
         try {
@@ -53,7 +60,7 @@ const MessageContainer = () => {
                     withCredentials: true
                 });
                 if(res.data.success){
-                    console.log(res);
+                    // console.log(res);
                     setMessages([...messages, res?.data?.newMessage]);
                     setMessageText('');
                 };
@@ -66,7 +73,7 @@ const MessageContainer = () => {
     }
 
     useEffect(() => {
-                receiveMessages();
+        receiveMessages();
     },[])
 
     useEffect(() => {
@@ -112,7 +119,9 @@ const MessageContainer = () => {
                                                 <BsCheckAll/>
                                             )} */}
                                             {
-                                                onlineUsers.includes(receiverId.toString()) ? (<BsCheckAll/>) : (<BsCheck/>)
+                                                onlineUsers?.includes(receiverId.toString()) ? (<BsCheckAll
+                                                    
+                                                />) : (<BsCheck/>)
                                             }
                                         </span>
                                     </div>

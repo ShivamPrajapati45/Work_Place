@@ -11,8 +11,36 @@ import React, { useEffect, useState } from 'react'
 const page = () => {
     useAuth();
     const [orders, setOrders] = useState([]);
-    const [{userInfo,onlineUsers}] = useStateProvider();
+    const [{userInfo,onlineUsers,socket}] = useStateProvider();
     const router = useRouter();
+    const [unreadCounts, setUnreadCounts] = useState(() => {
+        const savedUnreadCounts = localStorage.getItem('unreadCounts');
+        return savedUnreadCounts ? JSON.parse(savedUnreadCounts) : {};
+    });
+    
+    useEffect(() => {
+        if(socket){
+            socket?.on('unreadCount', (data) => {
+                console.log('UnreadCount: ', data);
+                setUnreadCounts((prev) => {
+                    const updatedUnreadCounts = {
+                        ...prev,
+                        [data.senderId]: data.unreadCount
+                    };
+
+                    localStorage.setItem('unreadCounts',JSON.stringify(updatedUnreadCounts));
+                    return updatedUnreadCounts;
+                })
+            });
+            
+            return () => {
+                socket?.off('unreadCount');
+            }
+        }else{
+            console.log('Socket is null or not connected.');
+        }
+    
+    },[socket]);
 
     useEffect(() => {
         const getBuyerOrders = async () => {
@@ -65,6 +93,9 @@ const page = () => {
                                                     className='h-full w-full object-cover rounded-full border border-gray-300'
                                                     alt={`profile${index}`}
                                                 />
+                                                {unreadCounts[order?.gig?.createdBy?.id] > 0 && (
+                                                    <span className='absolute h-4 w-4 text-xs top-0 right-0 rounded-full bg-red-500 text-white '>{unreadCounts[order?.gig?.createdBy?.id] || 0}</span>
+                                                )}
                                                 {onlineUsers?.includes(order?.gig?.createdBy?.id?.toString()) && (
                                                     <span className='absolute bottom-0 right-10 h-4 w-4 bg-green-500 border-2 border-white rounded-full'></span>
                                                 )}
@@ -76,6 +107,9 @@ const page = () => {
                                                 </span>
                                                 {onlineUsers?.includes(order?.gig?.createdBy?.id?.toString()) && (
                                                     <span className='absolute top-8 right-6 h-4 w-4 bg-green-500 border-2 border-white rounded-full'></span>
+                                                )}
+                                                {unreadCounts[order?.gig?.createdBy?.id] > 0 && (
+                                                    <span className='absolute h-4 w-4 text-xs top-0 right-0 rounded-full bg-red-500 text-white '>{unreadCounts[order?.gig?.createdBy?.id] || 0}</span>
                                                 )}
                                             </div>
                                         )}
@@ -92,11 +126,10 @@ const page = () => {
                                             className="font-medium text-blue-600 dark:text-blue-300 hover:underline"
                                             href={`/buyer/orders/messages/${order?.id}?second=${order.gig.userId}`}
                                         >
-                                            Send
+                                            Chat
                                         </Link>
                                     </td>
                                     <td className='text-center'>
-                                        {/* {order.price !== order.paidAmount || !order.inCompleted ? 'Unpaid' : 'Paid'} */}
                                         {
                                             order.price !== order.paidAmount || !order.inCompleted ? (
                                                 <button 

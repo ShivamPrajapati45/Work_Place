@@ -9,7 +9,8 @@ export const initialState = {
     hasOrdered: false,
     reloadReviews: false,
     socket: null,
-    onlineUsers: null
+    onlineUsers: null,
+    unreadCount: 0,
 };
 
 const reducer = (state, action) => {
@@ -25,6 +26,12 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 socket: action.socket
+            };
+        
+        case reducerCases.UNREAD_COUNT:
+            return {
+                ...state,
+                unreadCount: action.unreadCount
             };
         
         case reducerCases.ONLINE_USERS:

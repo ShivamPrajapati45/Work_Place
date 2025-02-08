@@ -6,7 +6,7 @@ import { reducerCases } from '@/context/constants';
 
 const useSocketConnection = () => {
     const token = Cookies.get('token');
-    const [{ userInfo,socket, }, dispatch] = useStateProvider();
+    const [{ userInfo,socket,onlineUsers }, dispatch] = useStateProvider();
     useEffect(() => {
         if(token && userInfo){
             if(!socket && userInfo?.id){
@@ -23,9 +23,9 @@ const useSocketConnection = () => {
                     });
                     localStorage.setItem('onlineUsers',JSON.stringify(users));
                 });
+
                 dispatch({ type: reducerCases.SOCKET, socket: socketInstance });
             };
-
             return () => {};
 
         }else{

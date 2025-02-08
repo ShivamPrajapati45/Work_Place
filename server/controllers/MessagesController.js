@@ -118,7 +118,8 @@ export const sendMessage = async (req, res) => {
                 },
                 conversation: {
                     connect: {id: parseInt(gotConversation.id)}
-                }
+                },
+                isRead: false
             },
         });
 
@@ -130,6 +131,20 @@ export const sendMessage = async (req, res) => {
         const receiverSocketId = getReceiverSocketId(receiverId);
         if(receiverSocketId){
             io.to(receiverSocketId).emit('newMessage',newMessage);
+
+            const unreadMessagesCount = await prisma.messages.count({
+                where: {
+                    recipientId: parseInt(receiverId),
+                    isRead: false
+                }
+            });
+            console.log('Unread Messages Count: ', unreadMessagesCount, "Receiver Id", receiverId);
+            io.to(receiverSocketId).emit('unreadCount', {
+                receiverId: receiverId,
+                senderId: senderId,
+                unreadCount: unreadMessagesCount
+            });
+
         }else {
             console.log('Receiver not online:', receiverId);
         }
@@ -154,6 +169,7 @@ export const receiveMessage = async (req, res) => {
     try {
         const {receiverId} = req.params;
         const senderId = req.user.userId;
+
         const conversation = await prisma.conversation.findFirst({
             where: {
                 AND: [
@@ -166,6 +182,36 @@ export const receiveMessage = async (req, res) => {
                 participants: true
             }
         });
+
+        // Mark all messages as read
+        await prisma.messages.updateMany({
+            where: {
+                conversationId: conversation.id,
+                recipientId: parseInt(receiverId),
+                isRead: false
+            },
+            data: {
+                isRead: true
+            }
+        });
+
+        // Fetch unread messages count after marking as read
+        const unreadMessagesCount = await prisma.messages.count({
+            where: {
+                recipientId: parseInt(receiverId),
+                isRead: false
+            }
+        });
+        console.log('Receive: ', unreadMessagesCount, 'ID receiver', receiverId);
+        // Emit unread messages count to receiver
+        const receiverSocketId = getReceiverSocketId(receiverId);
+        if(receiverSocketId){
+            io.to(receiverSocketId).emit('unreadCount', {
+                receiverId: receiverId,
+                senderId: senderId,
+                unreadCount: unreadMessagesCount
+            });
+        }
 
         // console.log('conversation: ', conversation);
         return res.status(201).json({
@@ -181,4 +227,4 @@ export const receiveMessage = async (req, res) => {
             success: false
         });
     }
-}
+};

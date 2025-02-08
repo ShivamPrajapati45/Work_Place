@@ -7,22 +7,50 @@ import React, { useEffect, useState } from 'react'
 
 const page = () => {
     const [orders, setOrders] = useState([]);
-    const [{userInfo,onlineUsers}] = useStateProvider();
+    const [{userInfo,onlineUsers,socket}] = useStateProvider();
+    const [unreadCounts, setUnreadCounts] = useState(() => {
+        const savedUnreadCounts = localStorage.getItem('unreadCounts');
+        return savedUnreadCounts ? JSON.parse(savedUnreadCounts) : {};
+    });
 
     useEffect(() => {
         const getBuyerOrders = async () => {
             try {
                 const {data: { orders }} = await axios.get(GET_SELLER_ORDERS_ROUTE,{withCredentials: true});
-                // console.log('Orders seller : ', res)
                 setOrders(orders);
-                console.log("orders",orders);
             } catch (error) {
                 console.log(error)
             }
         };
 
         if(userInfo) getBuyerOrders();
-    },[userInfo])
+    },[userInfo]);
+
+    useEffect(() => {
+        if(socket){
+            socket?.on('unreadCount', (data) => {
+                console.log(data)
+                setUnreadCounts((prev) => {
+                    const updatedUnreadCounts = {
+                        ...prev,
+                        [data.senderId]: data.unreadCount,
+                    };
+
+                    localStorage.setItem('unreadCounts',JSON.stringify(updatedUnreadCounts));
+                    return updatedUnreadCounts;
+                })
+            });
+            
+            return () => {
+                socket?.off('unreadCount');
+            }
+        }else{
+            console.log('Socket is null or not connected.');
+        }
+
+    },[socket]);
+
+    console.log(orders);
 
     return (
         <div className='min-h-[88vh] my-10 mt-0 px-32'>
@@ -67,6 +95,9 @@ const page = () => {
                                                 className='h-full w-full object-cover rounded-full border border-gray-300'
                                                 alt={`profile${index}`}
                                             />
+                                            {unreadCounts[order?.buyerId] > 0 && (
+                                                <span className='absolute h-4 w-4 rounded-full text-center top-0 right-0 bg-red-500 text-white text-xs'>{unreadCounts[order?.buyerId]}</span>
+                                            )}
                                             {onlineUsers?.includes(order?.buyer?.id.toString()) && (
                                                 <span className='absolute bottom-0 right-10 h-4 w-4 bg-green-500 border-2 border-white rounded-full'></span>
                                             )}
@@ -78,6 +109,9 @@ const page = () => {
                                                 </span>
                                                 {onlineUsers?.includes(order?.buyer?.id.toString()) && (
                                                     <span className='absolute top-8 right-6 h-4 w-4 bg-green-500 border-2 border-white rounded-full'></span>
+                                                )}
+                                                {unreadCounts[order?.buyerId] > 0 && (
+                                                    <span className='absolute rounded-full h-4 w-4 text-center text-xs top-0 right-0 bg-red-500 text-white'>{unreadCounts[order?.buyerId]}</span>
                                                 )}
                                             </div>
                                         )}
@@ -102,7 +136,7 @@ const page = () => {
                                             className='font-medium text-blue-600 dark:text-blue-300 hover:underline'
                                             href={`/buyer/orders/messages/${order?.id}?second=${order?.buyer?.id}`}
                                         >
-                                            Send
+                                            Chat
                                         </Link>
                                     </td>
                                 </tr>
