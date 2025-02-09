@@ -115,14 +115,14 @@ const MessageContainer = () => {
                                             {formatTime(message.createdAt)}
                                         </span>
                                         <span>
-                                            {/* {message.senderId === userInfo.id && message.isRead && (
+                                            {message.senderId === userInfo.id && message.isRead && (
                                                 <BsCheckAll/>
-                                            )} */}
-                                            {
+                                            )}
+                                            {/* {
                                                 onlineUsers?.includes(receiverId.toString()) ? (<BsCheckAll
                                                     
                                                 />) : (<BsCheck/>)
-                                            }
+                                            } */}
                                         </span>
                                     </div>
                                 </div>

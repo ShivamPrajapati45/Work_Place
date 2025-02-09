@@ -13,7 +13,6 @@ const page = () => {
     // const [unreadCount, setUnreadCount] = useState(0);
     const [call, setCall] = useState(false);
 
-
     // fetching Notifications
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -39,16 +38,10 @@ const page = () => {
         await axios.patch(`${MARK_READ_SINGLE_NOTIFICATION}/${id}`,{
             withCredentials: true
         });
-        setCall((e) => {
-            !e
-        });
     };
 
     const markAllRead = async () => {
         await axios.put(MARK_READ,{withCredentials: true});
-        setCall((e) => {
-            !e
-        });
     }
 
     if(loading) return <div className='h-screen text-center flex  justify-center py-4'>
@@ -57,50 +50,6 @@ const page = () => {
 
     return (
         <div className="container h-screen mx-auto p-4">
-            {/* <div className="flex w-full items-center justify-around mb-3">
-                <p  
-                    className='text-blue-500 cursor-pointer hover:text-blue-600 font-semibold uppercase'
-                    onClick={() => markAllRead()}
-                >Mark All as Read</p>
-            </div>
-            <div className="unread-notifications space-y-4">
-                {unreadNotifications.length > 0 ? (
-                    unreadNotifications.map((notification) => (
-                        <div
-                            key={notification.id}
-                            className="notification p-4 bg-gray-100 rounded-lg shadow-sm flex justify-between items-center"
-                        >
-                        <p className="text-gray-800">{notification.message}</p>
-                        <button
-                            className="mark-read-btn bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
-                            onClick={() => markAsRead(notification?.id)}
-                        >
-                            Mark as Read
-                        </button>
-                        </div>
-                    ))
-                    ) : (
-                        <p>No unread notifications.</p>
-                    )
-                }
-            </div>
-
-
-
-            <div className="read-notifications space-y-4">
-                {readNotifications.length > 0 ? (
-                readNotifications.map((notification) => (
-                    <div
-                    key={notification.id}
-                    className="notification p-4 bg-gray-200 rounded-lg shadow-sm"
-                    >
-                    <p className="text-gray-800">{notification.message}</p>
-                    </div>
-                ))
-                ) : (
-                <p>No read notifications.</p>
-                )}
-            </div> */}
             <Tabs
                 defaultValue='read'
                 className='w-full'
@@ -153,7 +102,6 @@ const page = () => {
                     )}
                 </TabsContent>
             </Tabs>
-
         </div>
     )
 };

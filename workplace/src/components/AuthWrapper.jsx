@@ -15,7 +15,6 @@ import { useRouter } from 'next/navigation'
 const AuthWrapper = ({ type }) => {
     const [{showLogInModel,showSignUpModel},dispatch] = useStateProvider();
     const router = useRouter();
-    // console.log('Type: ', type)
 
     const responseGoogle = async (response) => {
         try {
@@ -81,12 +80,9 @@ const AuthWrapper = ({ type }) => {
             try{
                 const response = await axios.post( type === 'login' ? LOGIN_ROUTES : SIGNUP_ROUTES, values,{withCredentials: true} );
                 if(response.data.success){
-                    console.log('UserInfo: ', response.data.user);
                     dispatch({ type: reducerCases.SET_USER, userInfo: response.data.user });
                     router.push('/');
-
                 }
-                
 
             }catch(err){
                 setErrors({email: 'Invalid email or password', password: 'Invalid email or password'});

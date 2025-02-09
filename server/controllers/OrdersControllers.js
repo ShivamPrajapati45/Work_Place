@@ -1,5 +1,6 @@
 import { v4 as uuidV4 } from 'uuid'
 import prisma from '../prisma.js';
+import { io } from '../socket/socket.js';
 
 
 // aur ye wo orders he jis user ne service banaya he uske service pe kitne order aaye he
@@ -105,7 +106,6 @@ export const createOrder = async (req, res) => {
             }
         });
 
-        
         const buyer = await prisma.user.findUnique({
             where: {id: parseInt(userId)}
         })
@@ -117,12 +117,16 @@ export const createOrder = async (req, res) => {
         const sellerId = gig.userId;  // seller id
 
         // Create notification for the seller
-        await prisma.notifications.create({
+        // socket implementation
+        const newNotification = await prisma.notifications.create({
             data: {
-                message: `Your gig "${gig?.title}" has been purchased! by "${buyer?.fullName}"`,
+                message: `Your gig "${gig?.title}" has been purchased! by "${buyer?.isProfileInfoSet ? buyer?.fullName : buyer?.username}"`,
                 sellerId: sellerId
             }
         });
+
+        io.to(sellerId).emit('newNotification', newNotification);
+
 
         // Creating Payment Details
         await prisma.payments.create({

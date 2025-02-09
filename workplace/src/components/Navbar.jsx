@@ -3,17 +3,22 @@ import { useStateProvider } from '@/context/StateContext';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import Logo from './Logo';
-import {IoMenuOutline, IoNotificationsOutline, IoSearchOutline} from 'react-icons/io5'
+import {IoMenuOutline, IoNotificationsOutline, IoSearchOutline,IoCheckmark} from 'react-icons/io5'
 import {useCookies} from 'react-cookie'
 import axios from 'axios';
-import { EDIT_USER_IMAGE, EDIT_USER_INFO, GET_NOTIFICATIONS, GET_USER_INFO, HOST, LOGOUT_ROUTES } from '@/utils/constant';
+import {formatDistanceToNow} from 'date-fns'
+import { EDIT_USER_IMAGE, EDIT_USER_INFO, GET_NOTIFICATIONS, GET_READ_NOTIFICATIONS, GET_USER_INFO, HOST, LOGOUT_ROUTES, MARK_READ, MARK_READ_SINGLE_NOTIFICATION } from '@/utils/constant';
 import { reducerCases } from '@/context/constants';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import EditProfile from './EditProfile';
 import Cookies from 'js-cookie';
-import {io} from 'socket.io-client'
 import useSocketConnection from '@/hooks/useSocketConnection';
+import { DropdownMenu,DropdownMenuContent,DropdownMenuTrigger } from './ui/dropdown-menu';
+import {Tabs,TabsContent,TabsList,TabsTrigger} from './ui/tabs'
+import NotificationTab from './NotificationTab';
+
+
 const Navbar = () => {
 
     const token = Cookies.get('token');
@@ -32,6 +37,11 @@ const Navbar = () => {
     const [change, setChange] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const [showMenu, setShowMenu] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [unreadNotifications, setUnReadNotifications] = useState([]);
+    const [readNotifications, setReadNotifications] = useState([]);
+    const [loading, setLoading] = useState(true);
+    
 
     const [data, setData] = useState({
         fullName: '',
@@ -56,8 +66,39 @@ const Navbar = () => {
                 console.log(error)
             }
         };
-        if(userInfo) fetchUnreadCount();
-    },[userInfo]);
+
+        const fetchNotifications = async () => {
+            try{
+                const unreadResponse = await axios.get(GET_NOTIFICATIONS,{withCredentials: true});
+                const readResponse = await axios.get(GET_READ_NOTIFICATIONS,{withCredentials: true});
+                if(unreadResponse.data.success || readResponse.data.success){
+                    setReadNotifications(readResponse.data.notifications);
+                    setUnReadNotifications(unreadResponse.data.notifications);
+                    setLoading(false);
+                }
+
+            }catch(err){
+                console.log(err)
+            }finally{
+                setLoading(false);
+            }
+        };
+
+        if(userInfo){
+            fetchNotifications();
+            fetchUnreadCount();
+        };
+
+    },[userInfo, socket]);
+
+    useEffect(() => {
+        if(socket){
+            socket.on('newNotification', (notification) => {
+                setNotifications((prev) => [notification, ...prev]);
+                setUnreadCount((prev) => prev + 1);
+            })
+        }
+    },[userInfo,socket]);
 
     useEffect(() => {
         const handleData = {...data};
@@ -145,8 +186,6 @@ const Navbar = () => {
     ];
 
     useEffect(() => {
-        // if token rahega and userinfo nahi hoga tab jake ye call hoga
-        // console.log('token',cookies.token,userInfo);
 
         if(cookies.token && !userInfo){
             const getUserInfo = async () => {
@@ -166,9 +205,9 @@ const Navbar = () => {
                         userInfo: projectedUserInfo
                     });
                     setIsLoaded(true);
-                    // if(user?.isProfileInfoSet === false){
-                    //     router.push('/profile');
-                    // }
+                    if(user?.isProfileInfoSet === false){
+                        router.push('/profile');
+                    }
 
                 } catch (error) {
                     console.log("GetUserInfo: ",error)
@@ -266,6 +305,10 @@ const Navbar = () => {
         }catch(err){
             console.log("Edit : ", err);
         }
+    }
+
+    const markAllRead = async () => {
+        await axios.put(MARK_READ,{},{withCredentials: true});
     }
 
     return (
@@ -394,16 +437,23 @@ const Navbar = () => {
                                                     Switch to {isSeller ? 'Buyer' : 'Seller'}
                                             </li>
                                             <li className='relative'>
-                                                <button
-                                                    onClick={() => router.push("/seller/notifications")}
-                                                >
-                                                    <IoNotificationsOutline className='text-2xl' />
-                                                    {unreadCount > 0 && (
-                                                        <span className='absolute top-0 right-0 text-xs bg-red-500 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center'>
-                                                            {unreadCount}
-                                                        </span>
-                                                    )}
-                                                </button>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger>
+                                                        <IoNotificationsOutline className='text-2xl cursor-pointer' />
+                                                        {unreadCount > 0 && (
+                                                            <span className='absolute top-0 right-0 text-xs bg-red-500 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center'>
+                                                                {unreadCount > 10 ? `${unreadCount}+`: unreadCount}
+                                                            </span>
+                                                        )}
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent className='mr-5'>
+                                                        <NotificationTab
+                                                            unreadNotifications={unreadNotifications}
+                                                            readNotifications={readNotifications}
+                                                            markAllRead={markAllRead}
+                                                        />
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </li>
                                             <li
                                                 className='cursor-pointer'
@@ -425,7 +475,6 @@ const Navbar = () => {
                                                     setEdit={setEdit}
                                                     setImageHover={setImageHover}
                                                     userInfo={userInfo}
-
                                                 />
                                             </li>
                                         </ul>
@@ -511,16 +560,23 @@ const Navbar = () => {
                                                     Switch to {isSeller ? 'Buyer' : 'Seller'}
                                             </li>
                                             <li className='relative'>
-                                                <button
-                                                    onClick={() => router.push("/seller/notifications")}
-                                                >
-                                                    <IoNotificationsOutline className='text-2xl' />
-                                                    {unreadCount > 0 && (
-                                                        <span className='absolute top-0 right-0 text-xs bg-red-500 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center'>
-                                                            {unreadCount}
-                                                        </span>
-                                                    )}
-                                                </button>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger>
+                                                        <IoNotificationsOutline className='text-2xl cursor-pointer' />
+                                                        {unreadCount > 0 && (
+                                                            <span className='absolute top-0 right-0 text-xs bg-red-500 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center'>
+                                                                {unreadCount > 10 ? `${unreadCount}+`: unreadCount}
+                                                            </span>
+                                                        )}
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent className='mr-5'>
+                                                        <NotificationTab
+                                                            unreadNotifications={unreadNotifications}
+                                                            readNotifications={readNotifications}
+                                                            markAllRead={markAllRead}
+                                                        />
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </li>
                                             <li
                                                 className='cursor-pointer'
