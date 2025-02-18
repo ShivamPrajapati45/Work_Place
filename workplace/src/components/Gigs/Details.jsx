@@ -28,6 +28,7 @@ const Details = () => {
         }
     }, [gigData]);
 
+    console.log(gigData)
     const fetchRecommendedGigs = async () => {
         try {
             const res = await axios.get(`${RECOMMENDED_GIGS}/${gigData?.id}?category=${gigData?.category}&desc=${gigData?.shortDesc}`,{withCredentials: true});
@@ -86,7 +87,7 @@ const Details = () => {
     return (
         <>
             {gigData && currentImages !== "" && (
-                <div className='flex relative flex-col items-start mx-10 my-4 w-full max-h-screen col-span-2 gap-3'>
+                <div className='flex relative overflow-y-scroll flex-col items-start my-4 w-full max-h-screen col-span-2 gap-3 scrollbar-hide'>
 
                     <div className=' flex items-start justify-center gap-2.5 flex-col px-4 '>
                         <h1 className='text-2xl font-semibold'>{gigData?.shortDesc}</h1>

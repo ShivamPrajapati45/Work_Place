@@ -7,6 +7,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import {Select, SelectContent,SelectItem, SelectGroup,SelectTrigger, SelectValue} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton';
+import Footer from '@/components/Footer';
 
 const page = () => {
     const [allGigs, setAllGigs] = useState([]);
@@ -83,8 +84,8 @@ const page = () => {
     },[userInfo,category]);
     
     return (
-        <div className='mx-8 bottom-10 my-3 h-[100vh] mb-20'>
-            <div className='grid-cols-2 grid w-full items-center'>
+        <div className='bottom-10 my-3 h-[100vh] mb-20'>
+            <div className='grid-cols-2 px-16 grid w-full items-center'>
                 <div className='flex flex-col'>
                     <Select  
                         value={category} 
@@ -135,44 +136,42 @@ const page = () => {
                     )}
                 </div>
             </div>
-            <hr className='mt-2 border-[1.3px] border-slate-500' />
-
-            
-                <div className="flex h-[80vh] w-full overflow-auto px-4 my-4 rounded-lg">
-                    {isLoading ? (
-                        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 w-full'>
-                            {Array.from({length: 16}).map((_, index) => (
-                                <div 
-                                    key={index} 
-                                    className='flex flex-col items-center justify-center p-4 space-y-4 border border-gray-200 rounded-lg shadow-sm'
-                                >
-                                    <Skeleton className='h-[125px] w-full rounded-md bg-gray-200'/>
-                                    <div className='space-y-2 flex flex-col gap-2'>
-                                        <Skeleton className='h-4 w-[250px] bg-gray-200'/>
-                                        <Skeleton className='h-4 w-[250px] bg-gray-200'/>
-                                        <Skeleton className='h-4 w-2/4 rounded bg-gray-200'/>
-                                        <Skeleton className="h-14 w-14 rounded-full bg-gray-200" />
-                                    </div>
-
+            <hr className='mt-2 mx-5 border-[1.3px] border-slate-500' />
+            <div className="flex h-[80vh] w-full overflow-auto px-4 my-4 rounded-lg">
+                {isLoading ? (
+                    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 w-full'>
+                        {Array.from({length: 8}).map((_, index) => (
+                            <div 
+                                key={index} 
+                                className='flex flex-col items-center justify-center p-4 space-y-4 border border-gray-200 rounded-lg shadow-sm'
+                            >
+                                <Skeleton className='h-[125px] w-full rounded-md bg-gray-200'/>
+                                <div className='space-y-2 flex flex-col gap-2'>
+                                    <Skeleton className='h-4 w-[250px] bg-gray-200'/>
+                                    <Skeleton className='h-4 w-[250px] bg-gray-200'/>
+                                    <Skeleton className='h-4 w-2/4 rounded bg-gray-200'/>
+                                    <Skeleton className="h-14 w-14 rounded-full bg-gray-200" />
                                 </div>
+                            </div>
+                        ))}
+                    </div>
+                ):(
+                    allGigs && allGigs?.length > 0 ? (
+                        <div className="grid mx-8 grid-cols-1 lg:grid-cols-4 sm:grid-cols-2 md:grid-cols-3 h-full gap-5 w-full">
+                            {allGigs?.map((gig) => (
+                                <AllGigsCard gig={gig} key={gig?.id} />
                             ))}
                         </div>
-                    ):(
-                        allGigs && allGigs?.length > 0 ? (
-                            <div className="grid grid-cols-1 lg:grid-cols-4 sm:grid-cols-2 md:grid-cols-3  h-full gap-5 w-full">
-                                {allGigs?.map((gig) => (
-                                    <AllGigsCard gig={gig} key={gig?.id} />
-                                ))}
-                            </div>
-                        ) : (
-                            !isLoading && (
-                                <p className="text-xl text-[#212121] font-semibold text-center">
-                                    No Services Available for selected category..
-                                </p>
-                            )
+                    ) : (
+                        !isLoading && (
+                            <p className="text-xl text-[#212121] font-semibold text-center">
+                                No Services Available for selected category..
+                            </p>
                         )
-                    )}
-                </div>
+                    )
+                )}
+            </div>
+            <Footer/>
         </div>
     )
 }

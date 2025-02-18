@@ -15,7 +15,7 @@ const Pricing = () => {
     return (
         <>
             {gigData && (
-                <div className='sticky top-36 mb-10 h-max w-96'>
+                <div className='sticky border border-gray-300 rounded-md top-36 mb-10 h-max w-96'>
                     <div className='border p-6 rounded-lg shadow-lg flex flex-col gap-6'>
                         <div className='flex justify-between items-center'>
                             <h4 className='text-lg font-medium text-gray-800'>
@@ -26,16 +26,16 @@ const Pricing = () => {
                             </h6>
                         </div>
 
-                            <div className='text-gray-400 font-medium text-sm flex gap-6'>
-                                <div className='flex items-center gap-2'>
-                                    <FiClock className='text-xl text-blue-500' />
-                                    <span>{gigData?.deliveryTime} Days Delivery</span>
-                                </div>
-                                <div className='flex items-center gap-2'> 
-                                    <FiRefreshCcw className='text-xl text-blue-500' />
-                                    <span>{gigData?.revisions} Revisions</span>
-                                </div>
+                        <div className='text-gray-400 font-medium text-sm flex gap-6'>
+                            <div className='flex items-center gap-2'>
+                                <FiClock className='text-xl text-blue-500' />
+                                <span>{gigData?.deliveryTime} Days Delivery</span>
                             </div>
+                            <div className='flex items-center gap-2'> 
+                                <FiRefreshCcw className='text-xl text-blue-500' />
+                                <span>{gigData?.revisions} Revisions</span>
+                            </div>
+                        </div>
                         
                         <ul className='space-y-3'>
                             {gigData?.features.map((feature) => (
@@ -69,7 +69,7 @@ const Pricing = () => {
                     </div>
                     {gigData?.userId !== userInfo?.id && (
                         <div className='flex justify-end mt-4'>
-                            <button className='py-2 px-6 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-200'>
+                            <button className='py-2 w-full px-6 border border-black text-gray-700 rounded-md hover:bg-gray-100'>
                                 Contact Me
                             </button>
                         </div>

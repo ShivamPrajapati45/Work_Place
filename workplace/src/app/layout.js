@@ -24,17 +24,15 @@ export default function RootLayout({ children }) {
       <head>
         <title>WorkPlace</title>
       </head>
-        <body className="min-h-screen w-full overflow-x-hidden p-0 m-0 box-border">
+        <body className="flex flex-col min-h-screen">
         <StateProvider initialState={initialState} reducer={reducer}>
-          <div className="flex flex-col min-h-screen">
             <header>
               <Navbar/>
             </header>
-            <main className={`flex-grow ${pathName !== '/' ? 'mt-16':''}`}>
+            <main className={`flex-grow ${pathName !== '/' ? 'mt-16':''} min-h-screen`}>
               {children}
             </main>
-            <Footer/>
-          </div>
+            {/* <Footer/> */}
         </StateProvider>
       </body>
     </html>

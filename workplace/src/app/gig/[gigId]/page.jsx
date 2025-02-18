@@ -1,4 +1,5 @@
 'use client'
+import Footer from '@/components/Footer';
 import Details from '@/components/Gigs/Details';
 import Pricing from '@/components/Gigs/Pricing';
 import { reducerCases } from '@/context/constants';
@@ -44,9 +45,12 @@ const page = () => {
     },[dispatch, gigId, userInfo])
 
     return (
-        <div className='grid grid-cols-3 h-screen'>
-            <Details/>
-            <Pricing/>
+        <div className=''>
+            <div className='grid grid-cols-3 gap-2 mx-10 h-screen'>
+                <Details/>
+                <Pricing/>
+            </div>
+                <Footer/>
         </div>
     )
 }

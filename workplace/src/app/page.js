@@ -1,4 +1,5 @@
 'use client'
+import Footer from "@/components/Footer";
 import Business from "@/components/Landing/Business";
 import Companies from "@/components/Landing/Companies";
 import Everything from "@/components/Landing/Everything";
@@ -36,6 +37,7 @@ export default function Home() {
             <JoinWorkplace/>
         </>
       }
+      <Footer/>
     </div>
   );
 }
