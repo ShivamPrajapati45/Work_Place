@@ -5,6 +5,7 @@ import { FaStar } from 'react-icons/fa';
 const Reviews = ({addReview, data, setData}) => {
     const [{gigData}] = useStateProvider();
     const [averageRatings, setAverageRatings] = useState(0);
+
     useEffect(() => {
         if(gigData && gigData?.reviews.length){
             let avgRating  = 0;
@@ -48,17 +49,15 @@ const Reviews = ({addReview, data, setData}) => {
             });
     }
 
-
-
     return (
         <div>
             {gigData && (
-                <div className='mb-10 p-6 rounded-lg '>
+                <div className='mb-10 p-5 rounded-lg border-2 border-gray-100'>
                     <h3 className='text-2xl my-4 font-semibold text-green-700'>
                         Reviews
                     </h3>
-                    <div className='flex justify-between items-center mb-5 border-b pb-4'>
-                        <h3 className='text-lg text-gray-800'>{gigData.reviews.length} reviews for this Gig</h3>
+                    <div className='flex flex-col justify-between mb-5 border-b pb-4'>
+                        <h3 className='text-lg text-gray-800'>{gigData.reviews.length > 0 ? `${gigData.reviews.length} for this service` :  `No reviews for this service till now`}</h3>
                         <div className='flex items-center gap-2 text-yellow-400'>
                             <div className='flex gap-1'>
                                 {[1,2,3,4,5].map((star) => (
@@ -68,10 +67,13 @@ const Reviews = ({addReview, data, setData}) => {
                                     />
                                 ))}
                             </div>
-                            <span className='text-lg font-medium text-yellow-500'>{averageRatings}</span>
+                            <span className='text-lg font-medium text-yellow-500'>{averageRatings !== 'NaN' ? averageRatings : 0.0} </span>
+                            <span className='text-lg text-slate-500'>({gigData?.totalReviews} reviews)</span>
+
                         </div>
                     </div>
-                    <div className='flex flex-col gap-6'>
+                    {gigData.reviews.length > 0 && (
+                        <div className='flex flex-col gap-6'>
                         <h1 className='text-xl font-medium text-gray-800'>All Reviews</h1>
                         <div className=' rounded-lg max-h-[20rem] overflow-scroll'>
                         {gigData.reviews.map((review) => (
@@ -112,11 +114,12 @@ const Reviews = ({addReview, data, setData}) => {
                                         formatDate(review?.createdAt, true)
                                     }
                                 </span>
-
                             </div>
                         ))}
                         </div>
                     </div>
+                    )}
+                    
                 </div>
             ) }
         </div>

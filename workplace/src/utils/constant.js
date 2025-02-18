@@ -25,6 +25,8 @@ export const SEARCH_GIGS_ROUTE = `${GIG_ROUTES}/search`;
 export const CHECK_USER_ORDERED_GIG_ROUTE = `${GIG_ROUTES}/check-gig-order`;
 export const ADD_REVIEW = `${GIG_ROUTES}/add-review`;
 export const GET_GIGS = `${GIG_ROUTES}/get-gigs`;
+export const RECOMMENDED_GIGS = `${GIG_ROUTES}/get-recommended-gigs`;
+export const GET_SELLER_GIGS = `${GIG_ROUTES}/get-seller-gigs`;
 
 // Orders Routes
 export const CREATE_ORDER = `${ORDER_ROUTES}/create`;

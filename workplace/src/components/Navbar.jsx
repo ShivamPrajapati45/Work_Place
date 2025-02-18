@@ -404,13 +404,13 @@ const Navbar = () => {
                                                 isSeller && (
                                                     <>
                                                         <li
-                                                            className={`${pathName === '/seller/gigs/create' ? 'text-blue-600' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
+                                                            className={`${pathName === '/seller/gigs/create' ? 'text-blue-600 bg-black/5' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
                                                             onClick={() => router.push('/seller/gigs/create')}
                                                         >
                                                             Create Gig
                                                         </li>
                                                         <li
-                                                            className={`${pathName === '/seller' ? 'text-blue-600' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
+                                                            className={`${pathName === '/seller' ? 'text-blue-600 bg-black/5' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
                                                             onClick={() => router.push('/seller')}
                                                         >
                                                             Dashboard
@@ -419,13 +419,13 @@ const Navbar = () => {
                                                 )
                                             }
                                             <li
-                                                className={`${pathName === '/seller/orders' || pathName === '/buyer/orders' ? 'text-blue-600' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
+                                                className={`${pathName === '/seller/orders' || pathName === '/buyer/orders' ? 'text-blue-600 bg-black/5' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
                                                 onClick={handleOrdersNavigate}
                                             >
                                                 Orders
                                             </li>
                                             <li
-                                                className={`${pathName == '/gigs' ? 'text-blue-600' : ''} ${isSeller ? 'hidden' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
+                                                className={`${pathName == '/gigs' ? 'text-blue-600 bg-black/5' : ''} ${isSeller ? 'hidden' : ''} py-[5px] px-2 cursor-pointer rounded-md hover:bg-black/5 transition-all`}
                                                 onClick={handleClickToGigs}
                                             >
                                                 Explore

@@ -1,4 +1,3 @@
-
 import { useStateProvider } from '@/context/StateContext';
 import { RECEIVE, SEND } from '@/utils/constant';
 import axios from 'axios';
@@ -6,6 +5,8 @@ import { useParams, useSearchParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react'
 import { BsCheckAll,BsCheck } from 'react-icons/bs';
 import { FaRegPaperPlane } from 'react-icons/fa';
+import { LuSendHorizontal } from 'react-icons/lu'
+import {IoMdArrowDown} from 'react-icons/io';
 
 const MessageContainer = () => {
 
@@ -13,7 +14,9 @@ const MessageContainer = () => {
     const [{ userInfo,socket,onlineUsers }] = useStateProvider();
     const [messages, setMessages] = useState([]);
     const [messageText, setMessageText] = useState("");
-    const scroll = useRef();
+    const [showScrollBtn, setShowScrollBtn] = useState(false);
+    const scrollRef = useRef(null);
+    const containerRef = useRef(null);
     const query = useSearchParams();
     const receiverId = query.get('second');   // this is the receiver ID
     
@@ -25,8 +28,6 @@ const MessageContainer = () => {
             });
 
             return () => socket?.off('newMessage');
-        }else{
-            console.log('Socket is null or not connected.');
         }
     },[socket]);
 
@@ -43,8 +44,6 @@ const MessageContainer = () => {
             const response = await axios.get(`${RECEIVE}/${receiverId}`, {withCredentials: true});
             if(response.data.success){
                 setMessages(response.data.conversation.messages);
-            }{
-                return;
             }
             
         } catch (error) {
@@ -54,8 +53,8 @@ const MessageContainer = () => {
 
     const sentMessageHandler = async (e) => {
         e.preventDefault();
+        if(messageText.trim() === '') return;
         try {
-            if(messageText !== ''){
                 const res = await axios.post(`${SEND}/${receiverId}/${orderId}`, {message: messageText}, {
                     withCredentials: true
                 });
@@ -65,8 +64,6 @@ const MessageContainer = () => {
                     setMessageText('');
                 };
 
-
-            }
         } catch (error) {
             console.log("Sent : ",error)
         }
@@ -74,11 +71,29 @@ const MessageContainer = () => {
 
     useEffect(() => {
         receiveMessages();
-    },[])
+    },[]);
 
     useEffect(() => {
-        scroll.current?.scrollIntoView({behavior: 'smooth'})
-    },[messageText])
+        if(containerRef.current){
+            containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
+    },[messages]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (containerRef.current) {
+                setShowScrollBtn(containerRef.current.scrollTop < containerRef.current?.scrollHeight - containerRef.current?.clientHeight - 100);
+            }
+        };
+        if (containerRef.current) {
+            containerRef.current?.addEventListener('scroll', handleScroll);
+        }
+        return () => {
+            if (containerRef.current) {
+                containerRef.current.removeEventListener('scroll', handleScroll);
+            }
+        };
+    },[])
 
     const formatTime = (timeStamp) => {
         const date = new Date(timeStamp);
@@ -93,64 +108,50 @@ const MessageContainer = () => {
     };
 
     return (
-        <div className='h-[80vh]'>
-            <div className='flex flex-col items-center justify-center max-h-[80vh]' ref={scroll}>
-                <div className='bg-black py-9 px-4 shadow-2xl sm:rounded-lg w-[80vw]'>
-                    <div className='mt-8 bg-red-500' >
-                        <div className='space-y-4 h-[50vh] overflow-y-auto pr-4'>
-                            {messages.length > 0 && messages.map((message, index) => (
-                                <div
-                                    key={index}
-                                    className={`flex ${message?.senderId === userInfo?.id ? 'justify-end' : 'justify-start'}`}
-                                >
-                                    <div 
-                                        className={`inline-block rounded-lg 
-                                            ${message?.senderId === userInfo?.id 
-                                                ? 'bg-green-400 text-white' 
-                                                : 'bg-gray-200 text-gray-400'
-                                            } px-4 py-2 break-all`}
-                                    >
-                                        <p>{message.text}</p>
-                                        <span className='text-sm text-gray-100'>
-                                            {formatTime(message.createdAt)}
-                                        </span>
-                                        <span>
-                                            {message.senderId === userInfo.id && message.isRead && (
-                                                <BsCheckAll/>
-                                            )}
-                                            {/* {
-                                                onlineUsers?.includes(receiverId.toString()) ? (<BsCheckAll
-                                                    
-                                                />) : (<BsCheck/>)
-                                            } */}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <form
-                        className='flex mt-4'
-                        onSubmit={sentMessageHandler}
-                    >
-                        <input 
-                            type="text" 
-                            className='rounded-full py-2 px-4 text-black mr-5 w-full'
-                            placeholder='type a msg'
-                            name='message'
-                            onChange={(e) => setMessageText(e.target.value)}
-                            value={messageText}
-                        />
-                        <button 
-                            className='rounded-full bg-green-400 px-4 py-2 text-white'
-                            type='submit'
+        <div className='flex relative flex-col items-center w-full justify-center h-[85vh]'>
+                <div ref={containerRef} className='flex-1 overflow-y-auto p-2 space-y-2 bg-slate-200 w-[50vw]  rounded-t-lg' style={{ scrollbarWidth: 'thin'}}>
+                    {messages.length > 0 && messages.map((message, index) => (
+                        <div 
+                            key={index} 
+                            className={`flex  ${message?.senderId === userInfo?.id ? 'justify-end' : 'justify-start'}`}
                         >
-                            <FaRegPaperPlane/>
-                        </button>
-                    </form>
+                            <div ref={scrollRef} className={`max-w-[75%] px-3 py-1 rounded-lg shadow-md text-white ${message?.senderId === userInfo?.id ? 'bg-green-600' : 'bg-blue-500'}`}>
+                                <p className='text-white break-words'>{message?.text}</p>
+                                <div className='text-xs opacity-80 flex gap-1 justify-between items-center mt-1'>
+                                    <span>{formatTime(message?.createdAt)}</span>
+
+                                    {message?.senderId === userInfo?.id && (
+                                        message.isRead ? <BsCheckAll size={16} className='text-sky-300'/> : 
+                                            onlineUsers?.includes(receiverId.toString()) ? 
+                                            <BsCheckAll size={16} className='text-gray-400'/>
+                                            : 
+                                            <BsCheck size={16} className='text-gray-100'/>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-            </div>
+                <form onSubmit={sentMessageHandler} className='flex bg-slate-300 py-2 rounded-lg px-2 gap-3 items-center mt-4 w-1/2'>
+                    <input 
+                        type="text" 
+                        value={messageText}
+                        onChange={(e) => setMessageText(e.target.value)}
+                        placeholder='type a message...'
+                        className='flex-1 rounded-lg p-2 text-black outline-none'
+                    />
+                    <button type='submit' className='bg-green-500 p-2 rounded-full text-white hover:bg-green-600 transition duration-200'>
+                        <LuSendHorizontal size={26} />
+                    </button>
+                </form>
+                {showScrollBtn && (
+                <button 
+                    className='absolute bottom-16 opacity-80 hover:opacity-90 transition-all bg-gray-800 text-white p-2 rounded-full shadow-lg'
+                    onClick={() => containerRef.current?.scrollTo({ top: containerRef.current.scrollHeight, behavior: 'smooth' })}
+                >
+                    <IoMdArrowDown size={24}/>
+                </button>
+                )}
         </div>
     )
 }

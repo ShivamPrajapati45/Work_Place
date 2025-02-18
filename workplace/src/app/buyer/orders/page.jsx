@@ -1,17 +1,22 @@
 'use client'
+import ExploreMore from '@/components/Gigs/ExploreMore';
 import { Badge } from '@/components/ui/badge';
 import { useStateProvider } from '@/context/StateContext';
 import useAuth from '@/hooks/useAuth';
-import { GET_BUYER_ORDERS_ROUTE } from '@/utils/constant';
+import { GET_BUYER_ORDERS_ROUTE, GET_GIGS } from '@/utils/constant';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
+import { BsChatDotsFill } from 'react-icons/bs';
+
 
 const page = () => {
     useAuth();
     const [orders, setOrders] = useState([]);
     const [{userInfo,onlineUsers,socket}] = useStateProvider();
+    const [allGigs, setAllGigs] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const [unreadCounts, setUnreadCounts] = useState(() => {
         const savedUnreadCounts = localStorage.getItem('unreadCounts');
@@ -47,7 +52,6 @@ const page = () => {
             try {
                 const {data: {orders}} = await axios.get(GET_BUYER_ORDERS_ROUTE,{withCredentials: true});
                 setOrders(orders);
-                // console.log("orders",orders);
             } catch (error) {
                 console.log(error);
             }
@@ -56,36 +60,54 @@ const page = () => {
         if(userInfo) getBuyerOrders();
     },[userInfo]);
 
+    useEffect(() => {
+        const fetchAllGigs = async () => {
+            setIsLoading(true)
+            try{
+                const response = await axios.get(GET_GIGS,{withCredentials: true});
+                if(response.data.success){
+                    setTimeout(() => {
+                        setAllGigs(response?.data?.gigs || []);
+                        setIsLoading(false);
+                    }, 3000);
+                }
+
+            }catch(err){
+                console.log(err);
+                setIsLoading(false);
+            }
+        };
+        fetchAllGigs();
+    },[]);
+
     return (
-        <div className="min-h-[88vh] my-10 mt-0 px-28">
+        <div className="min-h-screen h-screen items-center flex gap-10 flex-col justify-between my-8 mt-0">
+            <div className="relative w-full overflow-x-auto px-28 sm:rounded-lg">
             {
                 orders.length > 0 && (
-                    <h3 className="font-bold text-lg text-center mb-5">All Your Orders</h3>
+                    <h3 className="font-bold text-lg text-center mb-2">All Your Orders</h3>
                 )
             }
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 {orders.length > 0 ? (
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead className="text-sm text-slate-800 uppercase bg-gray-300 dark:bg-gray-700 dark:text-gray-400">
+                    <table className="w-full rounded-xl text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead className="text-sm rounded-xl text-slate-800 uppercase bg-slate-300 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                {/* <th scope="col" className="px-6 py-3">Order ID</th> */}
-                                <th scope="col" className="px-6 py-3">Freelancer</th>
-                                <th scope="col" className="px-6 py-3">Title</th>
-                                <th scope="col" className="px-6 py-3">Category</th>
-                                <th scope="col" className="px-6 py-3">Price</th>
-                                <th scope="col" className="px-6 py-3">Delivery time</th>
-                                <th scope="col" className="px-6 py-3">Order Date</th>
-                                <th scope="col" className="px-6 py-3">Send Message</th>
-                                <th scope="col" className="px-6 py-3">Payment</th> 
+                                <th scope="col" className="px-6 py-1.5">Freelancer</th>
+                                <th scope="col" className="px-6 py-1.5">name</th>
+                                <th scope="col" className="px-6 py-1.5">Title</th>
+                                <th scope="col" className="px-6 py-1.5">Price</th>
+                                <th scope="col" className="px-6 py-1.5">Order Date</th>
+                                <th scope="col" className="px-6 py-1.5">Message</th>
+                                <th scope="col" className="px-6 py-1.5">Payment</th> 
                             </tr>
                         </thead>
-                        <tbody className=''>
+                        <tbody className='divide-y dark:divide-gray-700 dark:divide-opacity-60'>
                             {orders.map((order,index) => (
                                 <tr
                                     key={order?.id}
-                                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600"
                                 >
-                                    <td className="px-6 py-4">
+                                    <td scope='col' className="px-6 py-1">
                                         {order?.gig?.createdBy?.isProfileInfoSet ? (
                                             <div className='relative h-14 w-14'>
                                                 <img 
@@ -114,22 +136,21 @@ const page = () => {
                                             </div>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4">{order?.gig?.title}</td>
-                                    <td className="px-6 py-4">{order?.gig?.category}</td>
-                                    <td className="px-6 py-4 text-center">{order?.gig?.price}</td>
-                                    <td className="px-6 py-4 text-center">{order?.gig?.deliveryTime}</td>
-                                    <td className="px-6 py-4">
+                                    <td scope='col' className='px-6 py-1'>{order?.gig?.createdBy?.isProfileInfoSet ? order?.gig?.createdBy?.fullName : order?.gig?.createdBy?.username}</td>
+                                    <td scope='col' className="px-6 py-1">{order?.gig?.title}</td>
+                                    <td scope='col' className="px-6 py-1">{order?.gig?.price}</td>
+                                    <td scope='col' className="px-6 py-1">
                                         {order?.createdAt?.split("T")[0]}
                                     </td>
-                                    <td className="px-6 text-center py-4">
-                                        <Link
-                                            className="font-medium text-blue-600 dark:text-blue-300 hover:underline"
-                                            href={`/buyer/orders/messages/${order?.id}?second=${order.gig.userId}`}
+                                    <td scope='col' className="px-7 py-1 uppercase">
+                                        <button
+                                            onClick={() => router.push(`/buyer/orders/messages/${order?.id}?second=${order.gig.userId}`)}
+                                            className='flex text-white items-center hover:bg-slate-200 transition-all duration-300 bg-slate-100 border border-white px-4 rounded-md py-1 gap-1'
                                         >
-                                            Chat
-                                        </Link>
+                                            <BsChatDotsFill size={24} className='text-blue-500 dark:text-blue-300'/>
+                                        </button>
                                     </td>
-                                    <td className='text-center'>
+                                    <td scope='col' className='px-6 py-1'>
                                         {
                                             order.price !== order.paidAmount || !order.inCompleted ? (
                                                 <button 
@@ -163,6 +184,20 @@ const page = () => {
                                 Explore Services
                             </button>
                         </Link>
+                    </div>
+                )}
+            </div>
+            
+            <div className='min-h-[40vh] w-full px-28 flex items-center justify-center'>
+                {orders.length > 0 && (
+                    <div className='w-full'>
+                        {isLoading ? (
+                            <div className="flex justify-center h-full">
+                                <div className="w-16 h-16 border-4 border-gray-300 border-t-4 border-t-blue-400 rounded-full animate-spin"></div>
+                            </div>
+                        ) : (
+                            <ExploreMore allGigs={allGigs} />
+                        )}
                     </div>
                 )}
             </div>

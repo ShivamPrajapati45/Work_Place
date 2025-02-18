@@ -44,7 +44,7 @@ const page = () => {
     },[dispatch, gigId, userInfo])
 
     return (
-        <div className='grid grid-cols-3 mx-16 gap-12'>
+        <div className='grid grid-cols-3 h-screen'>
             <Details/>
             <Pricing/>
         </div>

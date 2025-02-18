@@ -8,9 +8,7 @@ import React, { useEffect, useState } from 'react'
 import {Select, SelectContent,SelectItem, SelectGroup,SelectTrigger, SelectValue} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton';
 
-
 const page = () => {
-
     const [allGigs, setAllGigs] = useState([]);
     const [{userInfo}] = useStateProvider();
     const [category, setCategory] = useState('');
@@ -18,7 +16,6 @@ const page = () => {
     const [filteredSuggestions, setFilteredSuggestions] = useState([]);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-
 
     const handleInputChange = (e) => {
         const value = e.target.value;

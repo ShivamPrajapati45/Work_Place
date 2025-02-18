@@ -57,7 +57,7 @@ const page = () => {
             <h3 className='font-bold text-lg text-center'>All Your Orders</h3>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-g ray-700 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-slate-300 dark:bg-g ray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">
                                 Buyer
@@ -82,7 +82,6 @@ const page = () => {
                             </th>
                         </tr>
                     </thead>    
-
                     <tbody>
                         {orders.length > 0 && orders?.map(( order,index ) => {
                             return (
@@ -99,7 +98,7 @@ const page = () => {
                                                 <span className='absolute h-4 w-4 rounded-full text-center top-0 right-0 bg-red-500 text-white text-xs'>{unreadCounts[order?.buyerId]}</span>
                                             )}
                                             {onlineUsers?.includes(order?.buyer?.id.toString()) && (
-                                                <span className='absolute bottom-0 right-10 h-4 w-4 bg-green-500 border-2 border-white rounded-full'></span>
+                                                <span className='absolute bottom-1 right-10 h-3 w-3 bg-green-500 border-2 border-white rounded-full'></span>
                                             )}
                                             </div>
                                         ) : (

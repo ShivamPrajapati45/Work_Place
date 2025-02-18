@@ -171,7 +171,7 @@ const page = () => {
                             </div>
 
                             {/* Unread Messages */}
-                            <div
+                            {/* <div
                                 className='shadow-md bg-white h-32 rounded-lg p-6 flex flex-col gap-4 cursor-pointer hover:shadow-xl transition-shadow'
                                 onClick={() => router.push('/seller/unreadMessages')}
                             >
@@ -179,7 +179,7 @@ const page = () => {
                                 <h3 className='text-4xl font-extrabold text-blue-600'>
                                     {dashboardData?.unreadMessages}
                                 </h3>
-                            </div>
+                            </div> */}
 
                             {/* Today Earnings */}
                             <div

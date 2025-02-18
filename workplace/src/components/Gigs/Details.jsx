@@ -1,12 +1,16 @@
-import Home from '@/app/page';
 import { useStateProvider } from '@/context/StateContext'
-import { HOST } from '@/utils/constant';
-import Image from 'next/image';
+import { GET_SELLER_GIGS, HOST, RECOMMENDED_GIGS } from '@/utils/constant';
 import React, { useEffect, useState } from 'react'
+import { TiStar } from 'react-icons/ti';
 import { FaStar } from 'react-icons/fa';
 import Reviews from './Reviews';
 import AddReview from './AddReview';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import axios from 'axios';
+import { Carousel,CarouselContent,CarouselItem,CarouselNext,CarouselPrevious } from '../ui/carousel';
+import AllGigsCard from './AllGigsCard';
+import { FreelancerProfile } from '../seller/FreelancerProfile';
 
 
 const Details = () => {
@@ -14,12 +18,51 @@ const Details = () => {
     const [currentImages, setCurrentImages] = useState();
     const [averageRatings, setAverageRatings] = useState("0");
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [recommendedGigs, setRecommendedGigs] = useState([]);
+    const [userGigs, setUserGigs] = useState([]);
     
+
     useEffect(() => {
         if (gigData) {
             setCurrentIndex(0); // Start with the first image
         }
     }, [gigData]);
+
+    const fetchRecommendedGigs = async () => {
+        try {
+            const res = await axios.get(`${RECOMMENDED_GIGS}/${gigData?.id}?category=${gigData?.category}&desc=${gigData?.shortDesc}`,{withCredentials: true});
+            if(res.data.success){
+                setRecommendedGigs(res.data.gigs);
+            }
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const getMoreServices = async () => {
+        try {
+            let res = await axios.get(`${GET_SELLER_GIGS}/${gigData?.createdBy?.id}/${gigData?.id}`, {withCredentials: true});
+            if(res.data.success){
+                setUserGigs(res.data.gigs);
+            }
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect( () => {
+        if(gigData){ 
+            fetchRecommendedGigs();
+            getMoreServices();
+        };
+
+        return () => {
+            setRecommendedGigs([]);
+            setUserGigs([]);
+        }
+    },[gigData])
 
     useEffect(() => {
             if(gigData && gigData?.reviews.length){
@@ -43,12 +86,14 @@ const Details = () => {
     return (
         <>
             {gigData && currentImages !== "" && (
-                <div className='flex flex-col col-span-2 gap-3'>
-                    <div className='flex w-full items-center justify-around'>
-                        <div className='flex items-center justify-center gap-3'>
-                            <div className='rounded-md'>
-                                {gigData?.createdBy ? (
-                                    <div className='h-14 w-14 overflow-hidden'>
+                <div className='flex relative flex-col items-start mx-10 my-4 w-full max-h-screen col-span-2 gap-3'>
+
+                    <div className=' flex items-start justify-center gap-2.5 flex-col px-4 '>
+                        <h1 className='text-2xl font-semibold'>{gigData?.shortDesc}</h1>
+                        <div className='flex items-center justify-center gap-4'>
+                            <div>
+                                {gigData?.createdBy?.isProfileInfoSet ? (
+                                    <div className='h-16 w-16 overflow-hidden'>
                                         <img
                                             src={gigData?.createdBy?.profileImage}
                                             alt='profile'
@@ -63,36 +108,34 @@ const Details = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className='flex gap-2 items-center'>
-                                <h6 className='text-slate-700'>@{gigData?.createdBy?.username}</h6>
-                            </div>
-                            <div className='flex items-center gap-3'>
-                                <div className='flex items-center'>
-                                    {[1,2,3,4,5].map((star) => (
-                                        <FaStar
-                                            key={star}
-                                            className={`cursor-pointer ${Math.ceil(averageRatings) >= star ? 'text-yellow-400' : 'text-gray-300'}`}
-                                        />
-                                    ))}
+                            <div className='flex flex-col'>
+                                <h1 className='text-xl'>{gigData?.createdBy?.fullName}</h1>
+                                <div className="flex items-center justify-center">
+                                        {[1,2,3,4,5].map((star) => (
+                                            <TiStar
+                                                key={star}
+                                                className={`${Math.ceil(averageRatings) >= star ? 'text-yellow-400' : 'text-gray-400'}`}
+                                                size={22}
+                                            />
+                                        ))}
+                                    <span className='text-lg'>
+                                        {averageRatings != 'NaN' ? averageRatings : 0.0}
+                                    </span>
+                                    <span className='text-gray-600  mx-1 text-lg font-light underline cursor-pointer'>
+                                        ({gigData?.totalReviews} reviews)
+                                    </span>
                                 </div>
-                                <span className='text-yellow-500 font-semibold underline'>
-                                    {averageRatings}
-                                </span>
                             </div>
-                            
-                        </div>
-                        <div>
-                            <h2 className='text-2xl text-center font-bold mb-1 text-[#212121]'>
-                                {gigData?.title}
-                            </h2>
                         </div>
                     </div>
-                    <div className='flex items-center flex-col gap-4'>
+
+                    {/* Image Section */}
+                    <div className='flex items-center my-5 flex-col gap-4 bg-gray-100 rounded-md p-2'>
                         <div 
-                            className='max-h-[350px] border-[1.7px] border-slate-500 relative w-[680px] overflow-hidden rounded-lg'
+                            className='max-h-[370px] relative w-[680px] overflow-hidden rounded-lg'
                         >
                                 <div
-                                    className="flex h-[350px] items-center transition-transform duration-500 ease-in-out"
+                                    className="flex h-[370px] items-center transition-transform duration-500 ease-in-out"
                                     style={{
                                         transform: `translateX(-${currentIndex * 100}%)`,
                                     }}
@@ -106,18 +149,18 @@ const Details = () => {
                                         />
                                     ))}
                                 </div>
-                            <button
-                                onClick={prevImage}
-                                className='absolute  left-2 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/70 duration-500  text-white rounded-full p-2'>
-                                <ChevronLeft/>
-                            </button>
-                            <button
-                                onClick={nextImage}
-                                className='absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/70 duration-500  text-white rounded-full p-2'>
-                                <ChevronRight/>
-                            </button>
                         </div>
-                        <div className='flex flex-wrap gap-4'>  
+                        <button
+                            onClick={prevImage}
+                            className='absolute cursor-pointer  shadow-lg shadow-black top-[55%] transform left-[-20px] -translate-y-1/2 bg-white rounded-full p-2.5'>
+                            <ChevronLeft className='text-black' size={26}/>
+                        </button>
+                        <button
+                            onClick={nextImage}
+                            className='absolute cursor-pointer shadow-sm shadow-black right-[140px] top-[55%] transform -translate-y-1/2 bg-white rounded-full p-2.5'>
+                            <ChevronRight className='text-black' size={26}/>
+                        </button>
+                        <div className='flex flex-wrap items-center gap-5'>  
                             {gigData?.images.length > 0 && gigData.images.map((image,index) => (
                                 <img
                                     src={HOST + "/uploads/" + image}
@@ -129,63 +172,85 @@ const Details = () => {
                             ))}
                         </div>
                     </div>
-                    <div className=''>
-                        <h3 className='font-semibold text-[#212121] uppercase text-lg mt-3'>about this service</h3>
-                        <p className='text-slate-600'>{gigData?.description}</p>
-                    </div>
-                    <div className='flex flex-col'>
-                        <h3 className='text-2xl my-4 font-semibold text-slate-900'>
-                            About The Seller
-                        </h3>
-                        <div className="relative mx-auto max-w-[31rem] rounded-lg bg-gradient-to-tr from-pink-400 to-blue-500 p-0.5 shadow-lg">
 
-                        <div className='flex w-[30rem] gap-5 items-center rounded-lg p-5 bg-white shadow-lg transition-all duration-500 mx-auto '>
-                            <div className='h-20 w-24 overflow-hidden'>
-                                {gigData?.createdBy ? (
-                                    <img
-                                        src={gigData?.createdBy?.profileImage}
-                                        alt='profile'
-                                        className='rounded-full h-full w-full object-cover'
-                                    />
-                                ) : (
-                                    <div className='bg-gradient-to-r from-purple-500 to-pink-500 h-20 w-20 flex items-center justify-center rounded-full'>
-                                        <span className='text-2xl font-semibold text-white'>
-                                            {gigData?.createdBy?.email[0].toUpperCase()}
-                                        </span>
-                                    </div>
-                                )}
-                            </div>
-                            <div className='flex flex-col gap-2 w-full'>
-                                <div className='flex justify-between items-center'>
-                                    <h4 className='font-semibold uppercase text-xl text-gray-800'>
-                                        {gigData?.createdBy?.fullName}
-                                    </h4>
-                                    <span className='text-gray-500 font-semibold text-lg '>
-                                        @{gigData?.createdBy?.username}
-                                    </span>
-                                </div>
+                    <div className='flex flex-col w-full justify-center'>
+                        <h3 className='font-semibold text-[#212121] text-xl mt-3'>About this service</h3>
+                        <p className='text-slate-600 mt-2.5'>{gigData?.description}</p>
+                    </div>
+
+                    <span className='text-xl'>Get to know {gigData?.createdBy?.fullName}</span>
+                    <FreelancerProfile averageRatings={averageRatings} gigData={gigData} />
+
+                    {recommendedGigs.length > 0 && (
+                        <div className='bg-gray-100 rounded-md p-4'>
+                            <p className='text-2xl text-slate-500 font-semibold mb-4 my-2'>Recommended for you</p>
+                            {recommendedGigs.length > 0 && (
                                 <div className=''>
-                                    <p>{gigData?.createdBy?.description}</p>
+                                    <Carousel
+                                        opts={{
+                                            align: "start",
+                                        }}
+                                        className="w-full mx-1 max-w-lg"
+                                    >
+                                        <CarouselContent>
+                                            {recommendedGigs.map((gig, index) => (
+                                                <CarouselItem
+                                                    key={index}
+                                                    className="w-1/2 md:w-1/2 lg:w-1/3 px-2"
+                                                >
+                                                    <AllGigsCard gig={gig}/>
+                                                </CarouselItem>
+                                            ))}
+                                        </CarouselContent>
+                                        {recommendedGigs.length > 1 && (
+                                            <>
+                                                <CarouselPrevious/>
+                                                <CarouselNext/>
+                                            </>
+                                        )}
+                                    </Carousel>
                                 </div>
-                                <div className='flex items-center gap-3'>
-                                    <div className='flex text-yellow-400'>
-                                        {[1,2,3,4,5].map((star) => (
-                                            <FaStar
-                                                key={star}
-                                                className={`cursor-pointer ${Math.ceil(gigData?.averageRating) >= star ? 'text-yellow-400' : 'text-gray-300'}`}
-                                            />
-                                        ))}
-                                    </div>
-                                    <span className='text-yellow-500 font-semibold'>{gigData?.averageRating > 0 ? gigData?.averageRating : 0}</span>
-                                    <span className='text-gray-500'>({gigData.totalReviews} Reviews)</span>
+                            )}
+                        </div>
+                    )}
+                    
+                    {userGigs.length > 0 && (
+                        <div className='bg-gray-100 rounded-md p-4'>
+                            <p className='text-2xl font-semibold mb-4 my-2'>More from {gigData?.createdBy?.fullName}</p>
+                            {userGigs.length > 0 && (
+                                <div className=''>
+                                    <Carousel
+                                        opts={{
+                                            align: "start",
+                                        }}
+                                        className="w-full mx-1 max-w-lg"
+                                    >
+                                        <CarouselContent>
+                                            {recommendedGigs.map((gig, index) => (
+                                                <CarouselItem
+                                                    key={index}
+                                                    className="w-1/2 md:w-1/2 lg:w-1/3 px-2"
+                                                >
+                                                    <AllGigsCard gig={gig}/>
+                                                </CarouselItem>
+                                            ))}
+                                        </CarouselContent>
+                                        {recommendedGigs.length > 1 && (
+                                            <>
+                                                <CarouselPrevious/>
+                                                <CarouselNext/>
+                                            </>
+                                        )}
+                                    </Carousel>
                                 </div>
-                            </div>
+                            )}
                         </div>
-                        </div>
-
-                    </div>
+                    )}
+                    
                     {hasOrdered && <AddReview/>}
-                    {/* <Reviews/> */}
+                    <div className='w-full'>
+                        <Reviews/>
+                    </div>
                 </div>
             )}
         </>

@@ -10,6 +10,7 @@ import Reviews from './Reviews';
 const AddReview = () => {
     const [{},dispatch] = useStateProvider();
     const [{}] = useStateProvider();
+    const maxLength = 150;
     const [data, setData] = useState({
         reviewText: '',
         rating: 0
@@ -38,21 +39,26 @@ const AddReview = () => {
         }
     }
     return (
-        <div className=''>
-            <h3 className='text-xl my-5 font-semibold text-gray-500'>
+        <div className='w-full px-2'>
+            <h3 className='text-xl my-4 text-[#212121]'>
                 Give Review
             </h3>
             <div className='flex flex-col items-start justify-start gap-2'>
+                <div className='relative w-[18rem] h-24 border'>
                     <textarea 
                         name="reviewText"
                         id="reviewText"
                         minLength={0}
-                        maxLength={40}
+                        maxLength={maxLength}
                         value={data.reviewText}
                         onChange={(e) => setData({...data, reviewText: e.target.value})}
                         placeholder='Add review....'
-                        className='block p-3 w-4/5 text-gray-500 bg-gray-50 rounded border border-gray-400'
+                        className='block w-full p-3 h-full text-gray-500 bg-gray-50 rounded border border-gray-400 resize-none'
                     />
+                    <span className='absolute bottom-2 right-1 text-sm text-gray-500'>
+                        {data.reviewText.length}/{maxLength}
+                    </span>
+                </div>
                 <div className='flex gap-2 mt-1'>
                     {[1,2,3,4,5].map((star) => (
                         <FaStar
@@ -63,17 +69,17 @@ const AddReview = () => {
                     ))}
                 </div>
                 <button
-                    className='flex items-center border border-gray-400 bg-green-400 justify-center rounded-sm relative py-2 px-3'
+                    className='flex items-center border border-gray-400 text-white bg-yellow-400 hover:bg-yellow-500/80 transition-all duration-300 justify-center rounded-sm relative py-2 px-3'
                     onClick={addReview}
                 >
                     Add Review
                 </button>
             </div>
-            <Reviews
+            {/* <Reviews
                 addReview={addReview}
                 data={data}
                 setData={setData}
-            />
+            /> */}
         </div>
     )
 }

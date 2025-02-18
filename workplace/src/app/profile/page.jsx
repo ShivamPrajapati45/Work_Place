@@ -5,9 +5,11 @@ import { SET_USER_IMAGE, SET_USER_INFO } from '@/utils/constant';
 import { IoArrowBack } from 'react-icons/io5'
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation';
 
 const page = () => {
 
+    const router = useRouter();
     const [{userInfo},dispatch] = useStateProvider();
     const [isLoaded, setIsLoaded] = useState(true);
     const [imageHover, setImageHover] = useState(false);
@@ -32,6 +34,7 @@ const page = () => {
         'React',
         'Python',
     ])
+
 
     const [skillInput, setSkillInput] = useState('');
 
@@ -146,6 +149,9 @@ const page = () => {
                             'Content-Type': 'multipart/form-data'
                         }
                     });
+                    if(data.success){
+                        router.push('/gigs');
+                    }
                 }
                 dispatch({
                     type: reducerCases.SET_USER,
@@ -244,7 +250,7 @@ const page = () => {
                                             }
                                             <div className='grid grid-cols-2 gap-8 px-16'>
                                                 <div>
-                                                    <label className=' text-base uppercase text-gray-900 dark:text-white' htmlFor='username'>enter username</label>
+                                                    <label className=' text-base uppercase text-gray-900 dark:text-white' htmlFor='userName'>enter username</label>
                                                     <input 
                                                         type="text" 
                                                         className={inputClassName}

@@ -7,6 +7,7 @@ import React, { useState } from 'react'
 
 const AllGigsCard = ({ gig }) => {
     const router = useRouter();
+
     const calculateRatings = () => {
         const { reviews } = gig;
         let rating = 0;
@@ -18,6 +19,7 @@ const AllGigsCard = ({ gig }) => {
         });
         return (rating / reviews.length).toFixed(1);
     }
+
     const [{userInfo}] = useStateProvider();
     const token = Cookies.get('token');
 
@@ -96,7 +98,7 @@ const AllGigsCard = ({ gig }) => {
 
                 {/* detail section */}
                 <div
-                    onClick={() => handleAuthUser(gig?.id)}
+                    onClick={() => (token && userInfo) ? router.push(`/gig/${gig?.id}?category=${gig?.category}&desc=${gig?.shortDesc}`) : router.push('/login')}
                     className='cursor-pointer px-4'
                 >
                         <div className="flex justify-between items-start mb-1">
@@ -136,7 +138,7 @@ const AllGigsCard = ({ gig }) => {
                             }
                         <span className="text-sm font-medium">@{gig?.createdBy?.username}</span>
                         <div className="ml-auto flex items-center">
-                            <Star size={14} className="text-yellow-400"           fill="currentColor" />
+                            <Star size={14} className="text-yellow-400" fill="currentColor" />
                             <span className="text-sm ml-1">{calculateRatings()}</span>
                             <span className='text-sm'>{gig?.reviews?.length}</span>
                         </div>

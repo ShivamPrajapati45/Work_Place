@@ -85,7 +85,7 @@ const Footer = () => {
     ]
 
     return (
-        <footer className='w-full z-40 bottom-0 mx-auto py-10 h-max border-t border-gray-200 bg-gray-100'>
+        <footer className='w-full hidden z-40 bottom-0 mx-auto py-10 h-max border-t border-gray-200 bg-gray-100'>
             <ul className='flex justify-between px-10'>
                 {data.map(({headerName,links})=>{
                 return (

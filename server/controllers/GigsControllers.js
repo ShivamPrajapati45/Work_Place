@@ -1,6 +1,7 @@
 import prisma from '../prisma.js';
 import {existsSync, renameSync, unlinkSync} from 'fs'
 import { uploadMultipleToCloudinary } from '../utils/cloudinary.js';
+import { PrismaClient } from '@prisma/client';
 
 
 export const addGig = async (req,res) => {
@@ -525,3 +526,102 @@ export const getGigsByQuery = async (req,res) => {
     }
 }
 
+export const searchRecommendedGigs = async (req, res) => {
+    try{
+        const {category, desc} = req.query;
+        const {gigId} = req.params;
+
+        if(category || desc && gigId){
+            const gigs = await prisma.gigs.findMany({
+                where: {
+                    AND: [
+                        {
+                            OR: [
+                                {
+                                    category: {
+                                        contains: category,
+                                        mode: 'insensitive'
+                                    },
+                                },
+                                {
+                                    shortDesc: {
+                                        contains: desc,
+                                        mode: 'insensitive'
+                                    }
+                                }
+                            ]
+                        },
+                        // {
+                        //     id: {
+                        //         not: parseInt(gigId)
+                        //     }
+                        // }
+                    ]
+                },
+                include: {
+                    createdBy: true,
+                    reviews: {
+                        include: {
+                            reviewer: true
+                        }
+                    }
+                }
+            })
+            return res.status(200).json({
+                gigs,
+                success: true
+            });
+        }
+
+        return res.status(404).json({
+            msg: 'Gigs not found',
+            success: false
+        });
+
+    }catch(err){
+        console.log('Search re:', err);
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: true
+        })
+    }
+}
+
+export const getSellerGigs = async (req,res) => {
+    try{
+        const {sellerId,gigId} = req.params;
+        if(!sellerId) return res.status(404).json({
+            msg: 'Seller not found',
+            success: false
+        })
+        const gigs = await prisma.gigs.findMany({
+            where: {
+                userId: parseInt(sellerId),
+                id: {
+                    not: parseInt(gigId)
+                },
+            },
+            include: {
+                createdBy: true,
+                reviews: {
+                    include: {
+                        reviewer: true
+                    }
+                }
+            }
+        })
+        
+
+        return res.status(200).json({
+            gigs,
+            success: true
+        })
+
+    }catch(err){
+        console.log(err);
+        return res.status(501).json({
+            msg: 'Internal Server Error',
+            success: true
+        })
+    }
+}
