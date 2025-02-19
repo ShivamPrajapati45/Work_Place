@@ -22,6 +22,16 @@ model User {
   portfolioLink    String?
   skills           String[]
   socialLinks      String[]
+  profession       String?
+  experienceLevel  String?
+  languages        String[]
+
+  hourlyRate       Float?
+  availability     String?
+  responseTime     String?
+  lastActive       DateTime? // auto updated on login
+  profileCompletion Int?
+  phoneNumber      String? @unique
 
   gigs             Gigs[]
   reviews          Reviews[]

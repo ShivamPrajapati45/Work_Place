@@ -7,6 +7,7 @@ import gigsRoutes from './routes/GigsRoutes.js';
 import orderRoutes from './routes/OrdersRoutes.js';
 import messageRoutes from './routes/MessagesRoute.js'
 import dashBoardRoutes from './routes/DashBoardRoutes.js';
+import aiRoutes from './routes/OpenAI.js';
 import {app, server} from './socket/socket.js'
 import prisma from './prisma.js';
 
@@ -28,7 +29,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/gigs', gigsRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/message',messageRoutes);
-app.use('/api/dashboard',dashBoardRoutes)
+app.use('/api/dashboard',dashBoardRoutes);
+app.use('/api/ai',aiRoutes);
 
 
 server.listen(port,()=> {
