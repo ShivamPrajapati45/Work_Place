@@ -89,3 +89,15 @@
 .scrollbar-hide {
   scrollbar-width: none;
 }
+
+/* chat bot ka scrollbar page.js Profile */ 
+.custom-scrollbar::-webkit-scrollbar {
+  width: 2px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}

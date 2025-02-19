@@ -5,6 +5,7 @@ export const GIG_ROUTES = `${API_URl}/gigs`;
 export const ORDER_ROUTES = `${API_URl}/order`;
 export const MESSAGE_ROUTES = `${API_URl}/message`;
 export const DASHBOARD_ROUTES = `${API_URl}/dashboard`;
+export const CHAT_AI = `${API_URl}/ai`
 
 // User Routes
 export const SIGNUP_ROUTES = `${AUTH_ROUTES}/signup`;
@@ -49,3 +50,5 @@ export const RECEIVE = `${MESSAGE_ROUTES}/receive`;
 
 // Dashboard Routes
 export const GET_SELLER_DASHBOARD_DATA = `${DASHBOARD_ROUTES}/seller`;
+
+export const BIO_SUGGESTION = `${CHAT_AI}/bio`
