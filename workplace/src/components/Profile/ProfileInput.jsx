@@ -3,9 +3,6 @@ import React from 'react'
 const ProfileInput = ({inputClassName,input, setInput,handleAdd,handleRemove,all,data}) => {
     return (
         <>
-            <label htmlFor="skills" className='block text-lg font-semibold text-gray-700 mb-2'>
-                Skills
-            </label>
             <div className="flex gap-3 items-center mb-2">
                 <input
                     type="text"
