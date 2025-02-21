@@ -225,7 +225,13 @@ export const setUserInfo = async (req,res) => {
     try {
             const {userName, fullName, description, skills, socialLinks,location,portfolioLink} = req.body;
 
-            console.log('req',req.body);
+            if(userName){
+                console.log('req',req.body);
+                return res.status(201).json({
+                    msg: 'Success',
+                    success: true,
+                })
+            }
             if(userName && fullName && description){
                 const existUser = await prisma.user.findUnique({
                     where: {username:userName}

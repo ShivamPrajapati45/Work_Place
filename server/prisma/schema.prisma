@@ -18,6 +18,7 @@ model User {
   isProfileInfoSet Boolean? @default(false)
   createdAt        DateTime @default(now())
 
+  secondEmail      String?
   location         String?
   portfolioLink    String?
   skills           String[]

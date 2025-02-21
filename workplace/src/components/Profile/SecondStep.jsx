@@ -8,7 +8,7 @@ import BackButton from './BackButton';
 import NextBtn from './NextBtn';
 
 
-const SecondStep = ({skillInput,setSkillInput,data,handleAddSkill,handleRemoveSkill,allSkills,selectedLanguages,handleLanguage,open,setOpen,profession,setProfession,experienceLevel,setExperienceLevel,setIsLoading,setStep,btnHover,setBtnHover,handleNextStep,isLoading,animatedComponents}) => {
+const SecondStep = ({ data,handlers,state }) => {
 
     const inputClassName = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500';
 
@@ -21,12 +21,12 @@ const SecondStep = ({skillInput,setSkillInput,data,handleAddSkill,handleRemoveSk
                         <label className="block text-gray-700 font-medium mb-2">Skills</label>
                         <ProfileInput
                             inputClassName={inputClassName}
-                            input={skillInput}
-                            setInput={setSkillInput}
+                            input={state.skillInput}
+                            setInput={handlers.setSkillInput}
                             data={data}
-                            handleAdd={handleAddSkill}
-                            handleRemove={handleRemoveSkill}
-                            all={allSkills}
+                            handleAdd={handlers.handleAddSkill}
+                            handleRemove={handlers.handleRemoveSkill}
+                            all={state.allSkills}
                         />
                     </div>
                     {/* Languages Input */}
@@ -36,9 +36,9 @@ const SecondStep = ({skillInput,setSkillInput,data,handleAddSkill,handleRemoveSk
                             options={languageOptions} 
                             isMulti
                             closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            value={selectedLanguages}
-                            onChange={handleLanguage}
+                            components={state.animatedComponents}
+                            value={state.selectedLanguages}
+                            onChange={handlers.handleLanguage}
                             name="languages"
                             className="w-full"
                         />
@@ -47,16 +47,16 @@ const SecondStep = ({skillInput,setSkillInput,data,handleAddSkill,handleRemoveSk
                     <div>
                         <label className="block text-gray-700 font-medium mb-2">Profession</label>
                         <ProfessionSelect
-                            open={open}
-                            setOpen={setOpen}
-                            profession={profession}
-                            setProfession={setProfession}
+                            open={state.open}
+                            setOpen={handlers.setOpen}
+                            profession={state.profession}
+                            setProfession={handlers.setProfession}
                         />
                     </div>
                     {/* Experience Input */}
                     <div>
                         <label className="block text-gray-700 font-medium mb-2">Experience Level</label>
-                        <Select value={experienceLevel} onValueChange={(value) => setExperienceLevel(value)}>
+                        <Select value={state.experienceLevel} onValueChange={(value) => handlers.setExperienceLevel(value)}>
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select Experience Level" />
                             </SelectTrigger>
@@ -75,14 +75,11 @@ const SecondStep = ({skillInput,setSkillInput,data,handleAddSkill,handleRemoveSk
                 {/* Navigation Buttons */}
                 <div className="flex justify-between mt-8">
                     <BackButton 
-                        setIsLoading={setIsLoading} 
-                        setStep={setStep} 
+                        handlers={handlers}
                     />
                     <NextBtn
-                        btnHover={btnHover}
-                        setBtnHover={setBtnHover}
-                        handleNextStep={handleNextStep}
-                        isLoading={isLoading}
+                        state={state}
+                        handlers={handlers}
                         className={'mt-4 px-6 w-auto py-1 text-lg font-semibold text-white bg-blue-600 rounded-md flex items-center justify-center gap-4 disabled:opacity-50'}
                     />
                 </div>

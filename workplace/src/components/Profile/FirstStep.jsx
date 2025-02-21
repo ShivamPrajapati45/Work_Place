@@ -1,9 +1,8 @@
 import React from 'react'
 import NextBtn from './NextBtn'
 
-const FirstStep = ({setImageHover,previewImage,userInfo,imageHover,handleFileChange,errorMsg,data,handleChange,btnHover,setBtnHover,handleNextStep,isLoading}) => {
+const FirstStep = ({ data,handlers,state }) => {
 
-    const inputClassName = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500';
     const labelClassName = 'mb-2 text-base uppercase text-gray-900 dark:text-white'
     const inputClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
 
@@ -14,25 +13,25 @@ const FirstStep = ({setImageHover,previewImage,userInfo,imageHover,handleFileCha
             >
                 <label className='text-lg font-semibold text-gray-800'>Select a Profile Picture</label>
                 <div 
-                    onMouseEnter={() => setImageHover(true)}
-                    onMouseLeave={() =>setImageHover(false)}
+                    onMouseEnter={() => handlers.setImageHover(true)}
+                    onMouseLeave={() => handlers.setImageHover(false)}
                     className='relative h-24 w-24 flex items-center justify-center rounded-full overflow-hidden cursor-pointer border border-gray-300 shadow-sm'>
                     {
-                        previewImage ?  (
+                        state.previewImage ?  (
                             <img
-                                src={previewImage}
+                                src={state.previewImage}
                                 alt='Profile'
                                 className='h-full w-full object-cover rounded-full'
                             />
                         ) : (
                             <img
-                                src={`${userInfo?.profileImage ? userInfo.profileImage : '/images/avatar.png'}`}
+                                src={`${state.userInfo?.profileImage ? state.userInfo.profileImage : '/images/avatar.png'}`}
                                 alt='Profile'
                                 className='h-full w-full object-cover rounded-full'
                             />
                         )
                     }
-                        <div className={`absolute bg-black bg-opacity-50 h-full w-full  flex items-center justify-center transition-opacity duration-300 ${imageHover ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className={`absolute bg-black bg-opacity-50 h-full w-full  flex items-center justify-center transition-opacity duration-300 ${state.imageHover ? 'opacity-100' : 'opacity-0'}`}>
                             <span className={'flex items-center justify-center relative'}>
                                 <svg
                                     xmlns='http://www.w1.org/2000/svg'
@@ -48,7 +47,7 @@ const FirstStep = ({setImageHover,previewImage,userInfo,imageHover,handleFileCha
                                 </svg>
                                 <input 
                                     type="file" 
-                                    onChange={handleFileChange}
+                                    onChange={handlers.handleFileChange}
                                     className='opacity-0 h-20 w-20 rounded-full cursor-pointer'
                                     name='profileImage'
                                     multiple={true}
@@ -57,7 +56,7 @@ const FirstStep = ({setImageHover,previewImage,userInfo,imageHover,handleFileCha
                         </div>
                 </div>
             </div>
-            {errorMsg && <span className='text-red-500 text-sm'>{errorMsg}</span>}
+            {state.errorMsg && <span className='text-red-500 text-sm'>{state.errorMsg}</span>}
 
             <div className='grid grid-cols-2 gap-8 px-5 my-2 items-center'>
                 <div>
@@ -67,7 +66,7 @@ const FirstStep = ({setImageHover,previewImage,userInfo,imageHover,handleFileCha
                         className={inputClass}
                         name='userName'
                         value={data.userName}
-                        onChange={handleChange}
+                        onChange={handlers.handleChange}
                         placeholder='Username'
                     />
                 </div>
@@ -78,7 +77,7 @@ const FirstStep = ({setImageHover,previewImage,userInfo,imageHover,handleFileCha
                         className={inputClass}
                         name='fullName'
                         value={data.fullName}
-                        onChange={handleChange}
+                        onChange={handlers.handleChange}
                         placeholder='FullName'
                     />
                 </div>
@@ -91,7 +90,7 @@ const FirstStep = ({setImageHover,previewImage,userInfo,imageHover,handleFileCha
                     className='mt-1 block w-full  h-24 max-h-32 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
                     name='description'
                     value={data.description}
-                    onChange={handleChange}
+                    onChange={handlers.handleChange}
                     placeholder='Write a catchy bio... or Ask AI'
                     minLength={5}
                     maxLength={100}
@@ -99,10 +98,8 @@ const FirstStep = ({setImageHover,previewImage,userInfo,imageHover,handleFileCha
             </div>
 
             <NextBtn
-                btnHover={btnHover}
-                setBtnHover={setBtnHover}
-                handleNextStep={handleNextStep}
-                isLoading={isLoading}
+                state={state}
+                handlers={handlers}
                 className={'mt-4 px-6 mx-5 w-auto py-1 text-lg font-semibold text-white bg-blue-600 rounded-md flex items-center justify-center gap-4 disabled:opacity-50'}
             />
         </div>

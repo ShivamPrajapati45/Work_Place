@@ -10,6 +10,7 @@ import makeAnimated from 'react-select/animated'
 import { IoMdSend } from "react-icons/io";
 import FirstStep from '@/components/Profile/FirstStep';
 import SecondStep from '@/components/Profile/SecondStep';
+import ThirdStep from '@/components/Profile/ThirdStep';
 
 
 const animatedComponents = makeAnimated();
@@ -141,6 +142,50 @@ const page = () => {
 
     }
 
+    const handleLanguage = (selectedOptions) => {
+        setSelectedLanguages(selectedOptions);
+        const selectedValues = selectedOptions?.map(option => option?.value);
+        setData(prevData => ({
+            ...prevData,
+            languages: selectedValues,
+        }))
+    }
+
+    const handleAskAI = async () => {
+        if(!query.trim()) return;
+        setLoading(true);
+
+        const newChat = { type: 'query', text: query};
+        setChatHistory(prev => [...prev, newChat]);
+        setQuery('');
+
+        // show loader for response
+        setChatHistory((prev) => [...prev, { type: 'loading', text: '' }]);
+        try {
+            const res = await axios.post(BIO_SUGGESTION, {query},{
+                headers: {'Content-Type': 'application/json'}
+            });
+
+            if(res.data.success){
+                const aiResponse = {type: 'response', text: res.data.response};
+                setLoading(false);
+                setChatHistory(prev => {
+                    return prev.filter(msg => msg.type !== 'loading') // Remove loader
+                              .concat(aiResponse); // Add AI response
+                });
+            }
+            
+        } catch (error) {
+            // console.log('Ai', error);
+            setChatHistory(prev => {
+                return prev.filter(msg => msg.type !== 'loading')
+                            .concat({ type: 'response', text: 'Error fetching response' });
+            });      
+        }finally{
+            setLoading(false);
+        }
+    }
+
     const setProfile = async () => {
         try {
             const payload = {
@@ -186,57 +231,13 @@ const page = () => {
         }
     };
 
-    const handleLanguage = (selectedOptions) => {
-        setSelectedLanguages(selectedOptions);
-        const selectedValues = selectedOptions?.map(option => option?.value);
-        setData(prevData => ({
-            ...prevData,
-            languages: selectedValues,
-        }))
-    }
+    
 
-    const handleAskAI = async () => {
-        if(!query.trim()) return;
-        setLoading(true);
-
-        const newChat = { type: 'query', text: query};
-        setChatHistory(prev => [...prev, newChat]);
-        setQuery('');
-
-        // show loader for response
-        setChatHistory((prev) => [...prev, { type: 'loading', text: '' }]);
-        try {
-            const res = await axios.post(BIO_SUGGESTION, {query},{
-                headers: {'Content-Type': 'application/json'}
-            });
-
-            if(res.data.success){
-                const aiResponse = {type: 'response', text: res.data.response};
-                setLoading(false);
-                setChatHistory(prev => {
-                    return prev.filter(msg => msg.type !== 'loading') // Remove loader
-                              .concat(aiResponse); // Add AI response
-                });
-            }
-            
-        } catch (error) {
-            // console.log('Ai', error);
-            setChatHistory(prev => {
-                return prev.filter(msg => msg.type !== 'loading')
-                            .concat({ type: 'response', text: 'Error fetching response' });
-            });      
-        }finally{
-            setLoading(false);
-        }
-    }
-
-    const inputClassName = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500';
-    const labelClassName = 'mb-2 text-base uppercase text-gray-900 dark:text-white'
-    const inputClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-
+    // sending in props handlers and state
     const handlers = {
         handleAddSkill,
         handleAddSocialLink,
+        handleRemoveSocialLink,
         handleChange,
         handleFileChange,
         setImage,
@@ -249,7 +250,26 @@ const page = () => {
         setProfession,
         setSkillInput,
         setIsLoading,
-        setOpen
+        setOpen,
+        setProfile,
+        setSocialLinkInput,
+        setBtnHover
+    }
+    const state = {
+        errorMsg,
+        previewImage,
+        imageHover,
+        userInfo,
+        btnHover,
+        isLoading,
+        allSkills,
+        selectedLanguages,
+        animatedComponents,
+        experienceLevel,
+        open,
+        profession,
+        skillInput,
+        socialLinkInput
     }
 
     return (
@@ -275,169 +295,30 @@ const page = () => {
                                 <div className='w-full md:w-[60%] rounded-lg'>
 
                                     {/* Step 1: Basic Detail */}
-                                    {step === 2 && (
+                                    {step === 1 && (
                                         <FirstStep
                                             data={data}
-                                            errorMsg={errorMsg}
-                                            handleChange={handleChange}
-                                            handleFileChange={handleFileChange}
-                                            previewImage={previewImage}
-                                            imageHover={imageHover}
-                                            setImageHover={setImageHover}
-                                            userInfo={userInfo}
-                                            btnHover={btnHover}
-                                            setBtnHover={setBtnHover}
-                                            handleNextStep={handleNextStep}
-                                            isLoading={isLoading}
+                                            state={state}
+                                            handlers={handlers}
                                         />
                                     )}
 
                                     {/* Step 2 : Professional Details */}
-                                    {step === 3 && (
+                                    {step === 2 && (
                                         <SecondStep
                                             data={data}
-                                            allSkills={allSkills}
-                                            selectedLanguages={selectedLanguages}
-                                            animatedComponents={animatedComponents}
-                                            handleAddSkill={handleAddSkill}
-                                            handleRemoveSkill={handleRemoveSkill}
-                                            handleLanguage={handleLanguage}
-                                            handleNextStep={handleNextStep}
-                                            setStep={setStep}
-                                            btnHover={btnHover}
-                                            setBtnHover={setBtnHover}
-                                            experienceLevel={experienceLevel}
-                                            setExperienceLevel={setExperienceLevel}
-                                            isLoading={isLoading}
-                                            setIsLoading={setIsLoading}
-                                            open={open}
-                                            setOpen={setOpen}
-                                            profession={profession}
-                                            setProfession={setProfession}
-                                            skillInput={skillInput}
-                                            setSkillInput={setSkillInput}
+                                            state={state}
+                                            handlers={handlers}
                                         />
                                     )}
 
                                     {/* Step 3: Contact & Social Links */}
-                                    {step === 1 && (
-                                        <div className="grid relative grid-cols-2 gap-6 py-16 px-6">
-                                            {/* Back Button */}
-                                            <button 
-                                                onClick={() => {
-                                                    setStep(2);
-                                                    setIsLoading(false);
-                                                }}
-                                                className="absolute top-5 left-0 hover:bg-gray-200 p-2 transition-all rounded-full text-2xl text-gray-700 hover:text-gray-900"
-                                            >
-                                                <IoArrowBack />
-                                            </button>
-
-                                            {/* Social Links Input */}
-                                            <div>
-                                                <label htmlFor="socialLinks" className="block text-lg font-semibold text-gray-700 mb-2">
-                                                    Social Links
-                                                </label>
-                                                <div className="flex gap-3 items-center">
-                                                    <input
-                                                        type="url"
-                                                        id="socialLinks"
-                                                        name="socialLinkInput"
-                                                        value={socialLinkInput}
-                                                        onChange={(e) => setSocialLinkInput(e.target.value)}
-                                                        className={`${inputClassName} flex-1`}
-                                                        placeholder="Enter a social media link"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none transition-all"
-                                                        onClick={() => handleAddSocialLink(socialLinkInput)}
-                                                    >
-                                                        ADD
-                                                    </button>
-                                                </div>
-                                                {/* Added Links List */}
-                                                {data.socialMediaLinks.length > 0 && (
-                                                    <ul className="mt-3 flex flex-wrap gap-3 bg-gray-100 rounded-lg p-3 max-h-24 overflow-y-auto border border-gray-300">
-                                                        {data.socialMediaLinks.map((link, index) => (
-                                                            <li
-                                                                key={`${link}-${index}`}
-                                                                className="flex gap-2 items-center py-1 px-3 bg-gray-200 rounded-full text-sm font-medium shadow-sm"
-                                                            >
-                                                                <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline truncate max-w-[150px]">
-                                                                    {link}
-                                                                </a>
-                                                                <span
-                                                                    className="text-red-500 cursor-pointer hover:text-red-700"
-                                                                    onClick={() => handleRemoveSocialLink(link)}
-                                                                >
-                                                                    ✕
-                                                                </span>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                )}
-                                            </div>
-
-                                            {/* Portfolio Link Input */}
-                                            <div>
-                                                <label htmlFor="portfolioLink" className="block text-lg font-semibold text-gray-700 mb-2">
-                                                    Portfolio Link
-                                                </label>
-                                                <input
-                                                    type="url"
-                                                    id="portfolioLink"
-                                                    className={`${inputClassName} w-full`}
-                                                    name="portfolioLink"
-                                                    value={data.portfolioLink}
-                                                    onChange={handleChange}
-                                                    placeholder="Enter your portfolio link"
-                                                />
-                                            </div>
-
-                                            {/* Location Input */}
-                                            <div>
-                                                <label htmlFor="location" className="block text-lg font-semibold text-gray-700 mb-2">
-                                                    Location
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    id="location"
-                                                    className={`${inputClassName} w-full`}
-                                                    name="location"
-                                                    value={data.location}
-                                                    onChange={handleChange}
-                                                    placeholder="Enter your city, country"
-                                                />
-                                            </div>
-
-                                            {/* Contact Inputs (Email & Phone) */}
-                                            <div>
-                                                <label htmlFor="email" className="block text-lg font-semibold text-gray-700 mb-2">
-                                                    Email Address
-                                                </label>
-                                                <input
-                                                    type="email"
-                                                    id="email"
-                                                    className={`${inputClassName} w-full`}
-                                                    name="email"
-                                                    value={data.email}
-                                                    onChange={handleChange}
-                                                    placeholder="Enter your email"
-                                                />
-                                            </div>
-
-                                            {/* Submit Button */}
-                                            <div className="col-span-2 flex justify-end mt-5">
-                                                <button
-                                                    className="px-6 py-2 text-lg font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none transition-all"
-                                                    onClick={setProfile}
-                                                    type="button"
-                                                >
-                                                    Set Profile
-                                                </button>
-                                            </div>
-                                        </div>
+                                    {step === 3 && (
+                                        <ThirdStep
+                                            data={data}
+                                            state={state}
+                                            handlers={handlers}
+                                        />
                                     )}
 
                                 </div>
