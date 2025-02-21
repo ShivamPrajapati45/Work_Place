@@ -19,8 +19,8 @@ const ProfessionSelect = ({open,setOpen,profession,setProfession}) => {
                         className="w-[200px] justify-between"
                         >
                         {profession
-                            ? professionOptions.find((profession) => profession.value === profession)?.label
-                            : "Select framework..."}
+                            ? professionOptions.find((item) => item.label === profession)?.label
+                            : "Select profession..."}
                         <ChevronsUpDown className="opacity-50" />
                     </Button>
                 </PopoverTrigger>
@@ -30,21 +30,21 @@ const ProfessionSelect = ({open,setOpen,profession,setProfession}) => {
                             <CommandList>
                                 <CommandEmpty>No Profession found.</CommandEmpty>
                                 <CommandGroup>
-                                    {professionOptions.map((profession, index) => (
+                                    {professionOptions.map((item, index) => (
                                         <CommandItem
-                                            key={profession.value}
-                                            value={profession.value}
-                                            onSelect={(currentValue) => {
-                                                setProfession(currentValue === profession ? "" : currentValue)
+                                            key={item.value}
+                                            value={item.value}
+                                            onSelect={() => {
+                                                setProfession(item.label)
                                                 setOpen(false)
                                             }}
                                             className='text-black'
                                         >
-                                            {profession.label}
+                                            {item.label}
                                             <Check
                                                 className={cn(
                                                     "ml-auto text-black",
-                                                    profession === profession.value ? "opacity-100  text-black" : "opacity-0 text-black"
+                                                    profession === item.value ? "opacity-100  text-black" : "opacity-0 text-black"
                                                 )}
                                             />
                                         </CommandItem>
