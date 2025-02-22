@@ -1,16 +1,18 @@
 'use client'
 import { reducerCases } from '@/context/constants';
 import { useStateProvider } from '@/context/StateContext';
-import { BIO_SUGGESTION, SET_USER_IMAGE, SET_USER_INFO } from '@/utils/constant';
-import { IoArrowBack } from 'react-icons/io5'
+import { BIO_SUGGESTION, SET_USER_IMAGE, SET_USER_INFO, SKILLS_SUGGESTION } from '@/utils/constant';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import makeAnimated from 'react-select/animated'
 import { IoMdSend } from "react-icons/io";
 import FirstStep from '@/components/Profile/FirstStep';
 import SecondStep from '@/components/Profile/SecondStep';
 import ThirdStep from '@/components/Profile/ThirdStep';
+import { RiChatSmileAiFill } from "react-icons/ri";
+import { AiOutlineClose } from "react-icons/ai";
+import { IoCopyOutline } from 'react-icons/io5';
 
 
 const animatedComponents = makeAnimated();
@@ -37,6 +39,17 @@ const page = () => {
     const [chatHistory,setChatHistory] = useState([]);
     const [loading, setLoading] = useState(false);
     const [btnHover, setBtnHover] = useState(false);
+    const [copiedText,setCopiedText] = useState(null);
+
+    const handleCopy = (text) => {
+            navigator.clipboard.writeText(text)
+            .then(() => {
+                setCopiedText(text)
+                setTimeout(() => setCopiedText(null), 1500);  // 1.5 baad reset
+            })
+            .catch(() => console.error("Copy failed", err))
+        
+    }
 
     const [data, setData] = useState({
         userName: '',
@@ -161,8 +174,9 @@ const page = () => {
 
         // show loader for response
         setChatHistory((prev) => [...prev, { type: 'loading', text: '' }]);
+
         try {
-            const res = await axios.post(BIO_SUGGESTION, {query},{
+            const res = await axios.post(BIO_SUGGESTION, {query,previousBio: data.description},{
                 headers: {'Content-Type': 'application/json'}
             });
 
@@ -177,17 +191,76 @@ const page = () => {
             
         } catch (error) {
             // console.log('Ai', error);
-            setChatHistory(prev => {
-                return prev.filter(msg => msg.type !== 'loading')
-                            .concat({ type: 'response', text: 'Error fetching response' });
-            });      
+            setChatHistory(prev => prev.filter(msg => msg.type !== 'loading')
+                    .concat({ type: 'response', text: 'Error fetching response' }));
+            
         }finally{
             setLoading(false);
         }
     }
 
+    const handleGenerateBio = async () => {
+        setLoading(true);
+        setChatOpen(true);
+
+        try {
+            if(profession || experienceLevel || data.fullName){
+                const res = await axios.post(BIO_SUGGESTION, {
+                    profession,
+                    experienceLevel,
+                    fullName: data.fullName
+                },{
+                    headers: {'Content-Type': 'application/json'}
+                })
+                if(res.data.success){
+                    const aiResponse = { type:'response',text: res.data.response };
+                    setData((prev) => ({...prev, description: res.data.response}));
+                    setChatHistory(prev => [...prev, aiResponse]);
+                }
+            }
+            
+        } catch (error) {
+            setChatHistory(prev => [...prev, { type: 'response', text: 'Error fetching response' }]);
+        } finally{
+            setLoading(false);
+        }
+    }
+
+    const handleSuggestSkills = async () => {
+        setChatHistory(prev => [...prev, { type: 'query', text: 'Suggest skills based on my bio' }]);
+    
+        try {
+            const res = await axios.post(SKILLS_SUGGESTION, { bio: data.description }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        
+            if (res.data.success) {
+                const skills = res.data.skills.split(',').map(skill => skill.trim()); // Comma se split karke array banao
+    
+                // Har skill ko alag message ke form me chat me add karo
+                skills.forEach((skill, index) => {
+                    setTimeout(() => {
+                        setChatHistory(prev => [...prev, { type: 'response', text: skill }]);
+                    }, index * 500); // Har skill ko 500ms delay ke sath show karo
+                });
+    
+            } else {
+                console.error('Error: AI did not return success');
+            }
+    
+        } catch (error) {
+            console.error("Error fetching skills:", error);
+            alert("Something went wrong.");
+        }
+    };
+    
     const setProfile = async () => {
         try {
+            setLoading(true);
+            setErrorMsg("");
+            
             const payload = {
                 ...data,
                 skills: data.skills,
@@ -199,21 +272,26 @@ const page = () => {
             const res = await axios.post(SET_USER_INFO,payload,{
                 withCredentials: true
             });
+            if(res.data.success){
+                router.push('/gigs');
+            }
             
             if(res.data.userNameError){
                 setErrorMsg(res.data.msg);
             }else{
                 setErrorMsg("");
                 if(image){
+                    setLoading(false);
                     const formData = new FormData();
                     formData.append('profileImage', image);
-                    const {data: { user,img }} = await axios.post(SET_USER_IMAGE,formData,{
+                    const {data} = await axios.post(SET_USER_IMAGE,formData,{
                         withCredentials: true,
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }
                     });
                     if(data.success){
+                        setLoading(false);
                         router.push('/gigs');
                     }
                 }
@@ -228,10 +306,11 @@ const page = () => {
 
         } catch (error) {
             console.log(error);
+        } finally{
+            setLoading(false);
         }
     };
 
-    
 
     // sending in props handlers and state
     const handlers = {
@@ -253,9 +332,11 @@ const page = () => {
         setOpen,
         setProfile,
         setSocialLinkInput,
-        setBtnHover
+        setBtnHover,
+        setQuery,
     }
     const state = {
+        query,
         errorMsg,
         previewImage,
         imageHover,
@@ -276,9 +357,9 @@ const page = () => {
         <>
                 {
                     isLoaded && (
-                        <div className='relative rounded-lg mx-auto my-8 flex flex-col md:flex-row items-center max-w-[90vw] h-auto md:h-[75vh] p-6 shadow-xl'>
+                        <div className='relative rounded-lg mx-auto my-6 flex flex-col md:flex-row max-w-[90vw] h-auto md:h-[75vh] p-4'>
 
-                                <div className='w-full md:w-[40%] flex items-center justify-center p-4'>
+                                <div className='w-full md:w-[30%] flex items-center justify-center p-1'>
                                     <div className='bg-gray-100 rounded-lg overflow-hidden w-full h-full flex items-center justify-center relative'>
                                         <img 
                                             key={step}
@@ -292,7 +373,7 @@ const page = () => {
                                     </div>
                                 </div>
 
-                                <div className='w-full md:w-[60%] rounded-lg'>
+                                <div className='w-full md:w-[70%] rounded-lg'>
 
                                     {/* Step 1: Basic Detail */}
                                     {step === 1 && (
@@ -309,6 +390,7 @@ const page = () => {
                                             data={data}
                                             state={state}
                                             handlers={handlers}
+                                            handleGenerateBio={handleGenerateBio}
                                         />
                                     )}
 
@@ -326,26 +408,33 @@ const page = () => {
                                 {/* below are chatBot implementation */}
                                 <div className='fixed bottom-6 right-6'>
                                     <button
-                                        className='w-14 h-14 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-all'
+                                        className='bg-blue-500 text-white p-3 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-all'
                                         onClick={() => setChatOpen(!chatOpen)}
                                     >
-                                        {chatOpen ? '✖' : '💬'}
+                                        {chatOpen ? <AiOutlineClose size={30}/> : <RiChatSmileAiFill size={30}/>}
                                     </button>
                                 </div>
 
                                 {/* Ai chatBox */}
                                 {chatOpen && (
-                                    <div className='fixed bottom-20 right-6 bg-white shadow-lg border rounded-lg w-[22rem] p-4 flex flex-col'>
-
+                                    <div className='fixed transition-transform bg-white duration-500 bottom-20 right-10 shadow-lg border rounded-lg w-[22rem] px-4 py-2 flex flex-col'>
                                         <h3 className='text-lg font-semibold mb-1 text-center'>Ask Me</h3>
 
-                                        <div className='h-56 flex flex-col overflow-y-auto border p-2 bg-gray-100 mb-2 custom-scrollbar'>
+                                        <div className='h-56 flex flex-col overflow-y-auto border p-2 bg-slate-100 mb-2 custom-scrollbar'>
                                             {chatHistory?.map((msg, index) => (
                                                 <div key={index} 
-                                                    className={`py-1 my-1 px-2 text-xs rounded-lg break-words shadow-md ${msg.type === 'query' ? 'bg-blue-500 text-white self-end' : 'bg-white text-black self-start'}`}
+                                                    className={`py-1.5 my-1 relative px-3 text-xs rounded-lg break-words shadow-md ${msg.type === 'query' ? 'bg-blue-500 text-white self-end' : 'bg-white text-black self-start'}`}
                                                     style={{ alignSelf: msg.type === 'query' ? 'flex-end' : 'flex-start' }}
                                                 > 
-                                                    {msg.type === 'loading' ? <span className='animate-pulse'>...</span>:msg.text}
+                                                    {msg.type === 'loading' ? <span className='animate-pulse'>...</span> : msg.text}
+                                                    {msg.type !== 'query' && msg.type !== 'loading' && (
+                                                        <button
+                                                            onClick={() => handleCopy(msg.text)}
+                                                            className='absolute right-1 bottom-1 text-gray-500 hover:text-gray-700'
+                                                        >
+                                                            {copiedText === msg.text ? <span className='text-xs p-1 text-green-400'>Copied</span> : <IoCopyOutline size={16}/>}
+                                                        </button>
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>
@@ -364,6 +453,15 @@ const page = () => {
                                                 <IoMdSend size={26}/>
                                             </button>
                                         </div>
+                                        {data.description !== '' && (
+                                            <button
+                                                className='bg-green-500 text-white mt-2 p-2 rounded-lg w-full text-sm hover:bg-green-600'
+                                                onClick={handleSuggestSkills}
+                                            >
+                                                Suggest Skills
+                                            </button>
+                                        )}
+                                        
                                     </div>
                                 )}
                         </div>

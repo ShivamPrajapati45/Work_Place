@@ -2,7 +2,6 @@ import { v4 as uuidV4 } from 'uuid'
 import prisma from '../prisma.js';
 import { io } from '../socket/socket.js';
 
-
 // aur ye wo orders he jis user ne service banaya he uske service pe kitne order aaye he
 export const getSellerOrders = async (req, res) => {
     try {

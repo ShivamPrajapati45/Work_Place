@@ -16,7 +16,7 @@ const ProfessionSelect = ({open,setOpen,profession,setProfession}) => {
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className="w-[200px] justify-between"
+                        className="w-[350px] justify-between"
                         >
                         {profession
                             ? professionOptions.find((item) => item.label === profession)?.label
@@ -24,7 +24,7 @@ const ProfessionSelect = ({open,setOpen,profession,setProfession}) => {
                         <ChevronsUpDown className="opacity-50" />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
+                <PopoverContent className="w-[200px] h-[300px] p-2">
                         <Command>
                             <CommandInput placeholder="Search profession..." className="h-9"/>
                             <CommandList>

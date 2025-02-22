@@ -2,7 +2,7 @@ import React from 'react'
 
 const ProfileInput = ({inputClassName,input, setInput,handleAdd,handleRemove,all,data}) => {
     return (
-        <>
+        <div className=''>
             <div className="flex gap-3 items-center mb-2">
                 <input
                     type="text"
@@ -22,13 +22,13 @@ const ProfileInput = ({inputClassName,input, setInput,handleAdd,handleRemove,all
                 </button>
             </div>
             {input && (
-                <div className="border border-gray-300 rounded-lg bg-white shadow-lg z-10 absolute w-1/2 max-h-40 overflow-y-auto">
+                <div className="rounded-lg bg-white shadow-lg z-10 absolute w-[30%] max-h-40 overflow-y-auto">
                     {all
                         .filter((skill) => skill.toLowerCase().includes(input.toLowerCase()))
                         .map((skill, index) => (
                             <div
                                 key={index}
-                                className="p-2 cursor-pointer hover:bg-gray-200"
+                                className="p-1 border-b border-gray-300 cursor-pointer hover:bg-gray-200"
                                 onClick={() => handleAdd(skill)}
                             >
                                 {skill}
@@ -37,26 +37,29 @@ const ProfileInput = ({inputClassName,input, setInput,handleAdd,handleRemove,all
                 </div>
             )}
             {/* Selected Skills List */}
-            <ul 
-                className="flex flex-wrap gap-3 rounded-lg p-2 overflow-y-auto"
-                style={{ maxHeight: '60px', maxWidth: '250px', border: '1px solid #e5e7eb', backgroundColor: '#f9fafb' }}
-            >
-                {data.skills.map((skill, index) => (
-                    <li
-                        key={`${skill}-${index}`}
-                        className="flex items-center gap-2 px-4 py-1 bg-gray-200 rounded-full text-sm font-medium"
-                    >
-                        <span>{skill}</span>
-                        <span
-                            className="text-red-500 cursor-pointer"
-                            onClick={() => handleRemove(skill)}
+            {data.skills.length > 0 && (
+                <ul 
+                    className="flex scrollbar-hide gap-3 rounded-lg p-1 overflow-y-auto"
+                    style={{ maxHeight: '60px', maxWidth: '250px', border: '1px solid #e5e7eb', backgroundColor: '#f9fafb' }}
+                >
+                    {data.skills.map((skill, index) => (
+                        <li
+                            key={`${skill}-${index}`}
+                            className="flex items-center gap-2 px-4 py-0.5 bg-gray-200 rounded-full text-sm font-medium"
                         >
-                            x
-                        </span>
-                    </li>
-                ))}
-            </ul>
-        </>
+                            <span className='text-xs'>{skill}</span>
+                            <span
+                                className="text-red-500  cursor-pointer"
+                                onClick={() => handleRemove(skill)}
+                            >
+                                x
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            )}
+            
+        </div>
     )
 }
 

@@ -1,5 +1,9 @@
 import React from 'react'
 import NextBtn from './NextBtn'
+import ProfessionSelect from './ProfessionSelect'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { experienceLevels } from '@/utils/categories';
+
 
 const FirstStep = ({ data,handlers,state }) => {
 
@@ -81,20 +85,35 @@ const FirstStep = ({ data,handlers,state }) => {
                         placeholder='FullName'
                     />
                 </div>
-            </div>
-                                            
-            <div className='mt-3 px-5'>
-                <label className='block text-sm font-medium text-gray-700' htmlFor='description'>Bio</label>
-                <textarea 
-                    id='description'
-                    className='mt-1 block w-full  h-24 max-h-32 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                    name='description'
-                    value={data.description}
-                    onChange={handlers.handleChange}
-                    placeholder='Write a catchy bio... or Ask AI'
-                    minLength={5}
-                    maxLength={100}
-                />
+
+                {/* Profession Input */}
+                <div>
+                    <label className="block text-gray-700 font-medium mb-2">Profession</label>
+                    <ProfessionSelect
+                        open={state.open}
+                        setOpen={handlers.setOpen}
+                        profession={state.profession}
+                        setProfession={handlers.setProfession}
+                    />
+                </div>
+                    {/* Experience Input */}
+                <div>
+                    <label className="block text-gray-700 font-medium mb-2">Experience Level</label>
+                    <Select value={state.experienceLevel} onValueChange={(value) => handlers.setExperienceLevel(value)}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select Experience Level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                {experienceLevels.map((level) => (
+                                    <SelectItem key={level.value} value={level.label}>
+                                        {level.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
 
             <NextBtn

@@ -52,3 +52,4 @@ export const RECEIVE = `${MESSAGE_ROUTES}/receive`;
 export const GET_SELLER_DASHBOARD_DATA = `${DASHBOARD_ROUTES}/seller`;
 
 export const BIO_SUGGESTION = `${CHAT_AI}/bio`
+export const SKILLS_SUGGESTION = `${CHAT_AI}/skill`

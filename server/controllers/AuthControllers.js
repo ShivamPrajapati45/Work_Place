@@ -144,7 +144,6 @@ export const googleAuth = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(email, password);
         if(email && password){
             const user = await prisma.user.findUnique({
                 where:{ email },
@@ -223,16 +222,10 @@ export const getUserInfo = async (req,res) => {
 
 export const setUserInfo = async (req,res) => {
     try {
-            const {userName, fullName, description, skills, socialLinks,location,portfolioLink} = req.body;
+            const {userName, fullName, description, skills,location,email,profession,experienceLevel,languages,socialLinks,portfolioLink} = req.body;
 
-            if(userName){
-                console.log('req',req.body);
-                return res.status(201).json({
-                    msg: 'Success',
-                    success: true,
-                })
-            }
             if(userName && fullName && description){
+
                 const existUser = await prisma.user.findUnique({
                     where: {username:userName}
                 });
@@ -254,6 +247,10 @@ export const setUserInfo = async (req,res) => {
                         socialLinks: socialLinks || [],
                         portfolioLink: portfolioLink,
                         location: location,
+                        languages: languages || [],
+                        profession: profession,
+                        experienceLevel: experienceLevel,
+                        secondEmail: email,
                         isProfileInfoSet: true
                     },
                 })

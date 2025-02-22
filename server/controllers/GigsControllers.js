@@ -2,7 +2,6 @@ import prisma from '../prisma.js';
 import {existsSync, renameSync, unlinkSync} from 'fs'
 import { uploadMultipleToCloudinary } from '../utils/cloudinary.js';
 
-
 export const addGig = async (req,res) => {
     try {
         if(req.files && req.query){

@@ -178,8 +178,8 @@ export const professionOptions = [
 ];
 
 export const experienceLevels = [
-    { value: "beginner", label: "Beginner" },
-    { value: "intermediate", label: "Intermediate" },
-    { value: "advanced", label: "Advanced" },
-    { value: "expert", label: "Expert" },
+    { value: "beginner", label: "Beginner (0 - 3 Years)" },
+    { value: "intermediate", label: "Intermediate (3 - 6 Years)" },
+    { value: "advanced", label: "Advanced (6 - 9 Years)" },
+    { value: "expert", label: "Expert (9+ Years)" },
 ];
