@@ -3,7 +3,7 @@ import { IoArrowBack } from 'react-icons/io5';
 
 const ThirdStep = ({ data,state,handlers }) => {
 
-    const inputClassName = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500';
+    const inputClassName = 'w-full px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500';
 
     return (
         <div className="grid relative grid-cols-2 gap-6 py-16 px-6">
@@ -19,7 +19,7 @@ const ThirdStep = ({ data,state,handlers }) => {
             </button>
             {/* Social Links Input */}
             <div>
-                <label htmlFor="socialLinks" className="block text-lg font-semibold text-gray-700 mb-2">
+                <label htmlFor="socialLinks" className="block font-semibold text-gray-600 mb-2">
                     Social Links
                 </label>
                 <div className="flex gap-3 items-center">
@@ -30,11 +30,11 @@ const ThirdStep = ({ data,state,handlers }) => {
                         value={state.socialLinkInput}
                         onChange={(e) => handlers.setSocialLinkInput(e.target.value)}
                         className={`${inputClassName} flex-1`}
-                        placeholder="Enter a social media link"
+                        placeholder="Instagram, facebook, any other"
                     />
                     <button
                         type="button"
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none transition-all"
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none transition-all"
                         onClick={() => handlers.handleAddSocialLink(state.socialLinkInput)}
                     >
                         ADD
@@ -64,7 +64,7 @@ const ThirdStep = ({ data,state,handlers }) => {
             </div>
             {/* Portfolio Link Input */}
             <div>
-                <label htmlFor="portfolioLink" className="block text-lg font-semibold text-gray-700 mb-2">
+                <label htmlFor="portfolioLink" className="block text-base font-semibold text-gray-700 mb-2">
                     Portfolio Link
                 </label>
                 <input
@@ -74,12 +74,12 @@ const ThirdStep = ({ data,state,handlers }) => {
                     name="portfolioLink"
                     value={data.portfolioLink}
                     onChange={handlers.handleChange}
-                    placeholder="Enter your portfolio link"
+                    placeholder="Eg. https://chatgpt.com/"
                 />
             </div>
             {/* Location Input */}
             <div>
-                <label htmlFor="location" className="block text-lg font-semibold text-gray-700 mb-2">
+                <label htmlFor="location" className="block text-base font-semibold text-gray-700 mb-2">
                     Location
                 </label>
                 <input
@@ -89,12 +89,12 @@ const ThirdStep = ({ data,state,handlers }) => {
                     name="location"
                     value={data.location}
                     onChange={handlers.handleChange}
-                    placeholder="Enter your city, country"
+                    placeholder="Eg. Mumbai, India"
                 />
             </div>
             {/* Contact Inputs (Email & Phone) */}
             <div>
-                <label htmlFor="email" className="block text-lg font-semibold text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-base font-semibold text-gray-700 mb-2">
                     Email Address
                 </label>
                 <input
@@ -104,7 +104,7 @@ const ThirdStep = ({ data,state,handlers }) => {
                     name="email"
                     value={data.email}
                     onChange={handlers.handleChange}
-                    placeholder="Enter your email"
+                    placeholder="Eg. user@gmail.com"
                 />
             </div>
             {/* Submit Button */}

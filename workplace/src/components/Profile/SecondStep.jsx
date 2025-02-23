@@ -36,7 +36,7 @@ const SecondStep = ({ data,handlers,state,handleGenerateBio }) => {
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-6 items-center justify-center'>
                         {/* Skills Input */}
                         <div>
-                            <label className="block text-gray-700 font-medium mb-2">Skills</label>
+                            <label className="block text-gray-700 font-medium">Skills</label>
                             <ProfileInput
                                 inputClassName={inputClassName}
                                 input={state.skillInput}
@@ -49,7 +49,7 @@ const SecondStep = ({ data,handlers,state,handleGenerateBio }) => {
                         </div>
                         {/* Languages Input */}
                         <div>
-                            <label className=" text-gray-700 font-medium mb-2">Languages</label>
+                            <label className=" text-gray-700 font-medium mb-4">Languages</label>
                             <ReactSelect 
                                 options={languageOptions} 
                                 isMulti

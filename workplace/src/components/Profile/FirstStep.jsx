@@ -13,13 +13,13 @@ const FirstStep = ({ data,handlers,state }) => {
     return (
         <div className=''>
             <div 
-                className='flex gap-1 flex-col items-center cursor-pointer'
+                className='flex gap-1 flex-col items-center'
             >
                 <label className='text-lg font-semibold text-gray-800'>Select a Profile Picture</label>
                 <div 
                     onMouseEnter={() => handlers.setImageHover(true)}
                     onMouseLeave={() => handlers.setImageHover(false)}
-                    className='relative h-24 w-24 flex items-center justify-center rounded-full overflow-hidden cursor-pointer border border-gray-300 shadow-sm'>
+                    className='relative h-24 w-24 flex items-center justify-center rounded-full overflow-hidden border border-gray-300 shadow-sm'>
                     {
                         state.previewImage ?  (
                             <img
@@ -96,7 +96,7 @@ const FirstStep = ({ data,handlers,state }) => {
                         setProfession={handlers.setProfession}
                     />
                 </div>
-                    {/* Experience Input */}
+                {/* Experience Input */}
                 <div>
                     <label className="block text-gray-700 font-medium mb-2">Experience Level</label>
                     <Select value={state.experienceLevel} onValueChange={(value) => handlers.setExperienceLevel(value)}>

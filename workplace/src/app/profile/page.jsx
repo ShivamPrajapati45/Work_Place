@@ -13,9 +13,15 @@ import ThirdStep from '@/components/Profile/ThirdStep';
 import { RiChatSmileAiFill } from "react-icons/ri";
 import { AiOutlineClose } from "react-icons/ai";
 import { IoCopyOutline } from 'react-icons/io5';
+import { motion } from 'framer-motion';
 
 
 const animatedComponents = makeAnimated();
+const steps = [
+    { id: 1, title: "Basic Details" },
+    { id: 2, title: "Professional Details" },
+    { id: 3, title: "Contact & Social Links" }
+];
 
 const page = () => {
 
@@ -40,6 +46,7 @@ const page = () => {
     const [loading, setLoading] = useState(false);
     const [btnHover, setBtnHover] = useState(false);
     const [copiedText,setCopiedText] = useState(null);
+    const [isSubmitting,setIsSubmitting] = useState(false);
 
     const handleCopy = (text) => {
             navigator.clipboard.writeText(text)
@@ -258,61 +265,63 @@ const page = () => {
     
     const setProfile = async () => {
         try {
-            setLoading(true);
-            setErrorMsg("");
-            
+            setIsSubmitting(true);
+            setErrorMsg(""); // Error message reset
+    
             const payload = {
                 ...data,
                 skills: data.skills,
                 socialLinks: data.socialMediaLinks,
                 profession: profession,
-                experienceLevel:experienceLevel
-            }
-
-            const res = await axios.post(SET_USER_INFO,payload,{
+                experienceLevel: experienceLevel
+            };
+    
+            const res = await axios.post(SET_USER_INFO, payload, {
                 withCredentials: true
             });
-            if(res.data.success){
-                router.push('/gigs');
-            }
-            
-            if(res.data.userNameError){
-                setErrorMsg(res.data.msg);
-            }else{
-                setErrorMsg("");
-                if(image){
-                    setLoading(false);
+    
+            if (res.data.success) {
+                if (image) {
+                    // अगर image है तो पहले profile image upload होगा
                     const formData = new FormData();
                     formData.append('profileImage', image);
-                    const {data} = await axios.post(SET_USER_IMAGE,formData,{
+    
+                    const { data } = await axios.post(SET_USER_IMAGE, formData, {
                         withCredentials: true,
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
+                        headers: { 'Content-Type': 'multipart/form-data' }
                     });
-                    if(data.success){
-                        setLoading(false);
+    
+                    if (data.success) {
+                        dispatch({
+                            type: reducerCases.SET_USER,
+                            userInfo: {
+                                ...userInfo,
+                                ...data,
+                            },
+                        });
                         router.push('/gigs');
                     }
+                } else {
+                    // अगर कोई image नहीं है तो सीधे redirect कर दो
+                    dispatch({
+                        type: reducerCases.SET_USER,
+                        userInfo: {
+                            ...userInfo,
+                            ...data,
+                        },
+                    });
+                    router.push('/gigs');
                 }
-                dispatch({
-                    type: reducerCases.SET_USER,
-                    userInfo: {
-                        ...userInfo,
-                        ...data,
-                    },
-                })
+            } else if (res.data.userNameError) {
+                setErrorMsg(res.data.msg);
             }
-
         } catch (error) {
             console.log(error);
-        } finally{
-            setLoading(false);
+        } finally {
+            setIsSubmitting(false); // अब loading हर condition में properly reset होगा
         }
     };
-
-
-    // sending in props handlers and state
+    
     const handlers = {
         handleAddSkill,
         handleAddSocialLink,
@@ -355,118 +364,158 @@ const page = () => {
 
     return (
         <>
-                {
-                    isLoaded && (
-                        <div className='relative rounded-lg mx-auto my-6 flex flex-col md:flex-row max-w-[90vw] h-auto md:h-[75vh] p-4'>
+                {/* Loader Overlay */}
+                {isSubmitting && (
+                    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 backdrop-blur-sm">
+                        <div className="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center">
+                        {/* Loader */}
+                        <div className="relative flex items-center justify-center">
+                            <div className="absolute w-20 h-20 border-4 border-blue-500 border-t-transparent border-b-transparent rounded-full animate-spin"></div>
+                            <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent border-b-transparent rounded-full animate-spin-slow"></div>
+                        </div>
 
-                                <div className='w-full md:w-[30%] flex items-center justify-center p-1'>
-                                    <div className='bg-gray-100 rounded-lg overflow-hidden w-full h-full flex items-center justify-center relative'>
-                                        <img 
-                                            key={step}
-                                            src={step === 1 ? "./images/Basic_detail.jpg" : 
-                                                step === 2 ? "./images/professional_detail.jpg" : 
-                                                step === 3 ? "./images/Basic_detail.jpg" : 
-                                                "./images/Basic_detail.jpg"} 
-                                            alt="side-image" 
-                                            className="w-full h-full object-cover rounded-lg transition-opacity  duration-700 ease-in-out opacity-100 scale-100 animate-fadeSlide"
-                                        /> 
+                        {/* Text */}
+                        <p className="text-xl font-semibold text-gray-800 mt-5 animate-pulse">
+                            Setting up your profile...
+                        </p>
+                        </div>
+                    </div>
+                )}
+
+
+                {/* Main Content */}
+                <div className='relative rounded-lg mx-auto my-6 flex flex-col md:flex-row  justify-center max-w-[90vw] h-auto md:h-[75vh] p-4'>
+
+                        <div className="w-full md:w-[30%] flex flex-col items-center p-4 relative">
+                            <div className="relative flex flex-col items-start gap-20 w-full">
+                                
+                                {/* Progress Line (Full Gray, Changes to Blue on Step) */}
+                                <div className="absolute left-[22px] top-[40px] w-[4px] h-[240px] bg-gray-300 rounded-full"></div>
+                                
+                                {/* Dynamic Progress Line */}
+                                <motion.div 
+                                    className="absolute left-[22px] top-[40px] w-[4px] bg-blue-500 rounded-full" 
+                                    initial={{ height: 0 }} 
+                                    animate={{ height: step === 1 ? "0px" : step === 2 ? "90px" : "240px" }}
+                                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                                ></motion.div>
+
+                                {steps.map((item, index) => (
+                                    <div key={item.id} className="flex items-center gap-4 relative">
+                                        
+                                        {/* 🔹 Step Circle (With Hover & Animation) */}
+                                        <motion.div 
+                                            className={`w-12 h-12 flex items-center justify-center rounded-full font-bold text-lg shadow-md transition-all duration-300 
+                                                ${step >= item.id ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-700"}
+                                            `}
+                                            whileHover={{ scale: 1.1 }}
+                                            animate={{ scale: step === item.id ? 1.2 : 1 }}
+                                            transition={{ duration: 0.3 }}
+                                        >
+                                            {item.id}
+                                        </motion.div>
+                                        
+                                        {/* 🔹 Step Title */}
+                                        <motion.p 
+                                            className={`text-lg font-semibold transition-all duration-300 
+                                                ${step === item.id ? "text-blue-600" : step > item.id ? "text-blue-500" : "text-gray-500"}`}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ duration: 0.3, delay: 0.1 }}
+                                        >
+                                            {item.title}
+                                        </motion.p>
                                     </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className='w-full md:w-[70%] rounded-lg'>
+                            {/* Step 1: Basic Detail */}
+                            {step === 1 && (
+                                <FirstStep
+                                    data={data}
+                                    state={state}
+                                    handlers={handlers}
+                                />
+                            )}
+                            {/* Step 2 : Professional Details */}
+                            {step === 2 && (
+                                <SecondStep
+                                    data={data}
+                                    state={state}
+                                    handlers={handlers}
+                                    handleGenerateBio={handleGenerateBio}
+                                />
+                            )}
+                            {/* Step 3: Contact & Social Links */}
+                            {step === 3 && (
+                                <ThirdStep
+                                    data={data}
+                                    state={state}
+                                    handlers={handlers}
+                                />
+                            )}
+                        </div>
+
+                        {/* below are chatBot implementation */}
+                        <div className='fixed bottom-6 right-6'>
+                            <button
+                                className='bg-blue-500 text-white p-3 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-all'
+                                onClick={() => setChatOpen(!chatOpen)}
+                            >
+                                {chatOpen ? <AiOutlineClose size={30}/> : <RiChatSmileAiFill size={30}/>}
+                            </button>
+                        </div>
+
+                        {/* Ai chatBox */}
+                        {chatOpen && (
+                            <div className='fixed transition-transform bg-white duration-500 bottom-20 right-10 shadow-lg border rounded-lg w-[22rem] px-4 py-2 flex flex-col'>
+                                <h3 className='text-lg font-semibold mb-1 text-center'>Ask Me</h3>
+                                <div className='h-56 flex flex-col overflow-y-auto border p-2 bg-slate-100 mb-2 custom-scrollbar'>
+                                    {chatHistory?.map((msg, index) => (
+                                        <div key={index} 
+                                            className={`py-1.5 my-1 relative px-3 text-xs rounded-lg break-words shadow-md ${msg.type === 'query' ? 'bg-blue-500 text-white self-end' : 'bg-white text-black self-start'}`}
+                                            style={{ alignSelf: msg.type === 'query' ? 'flex-end' : 'flex-start' }}
+                                        > 
+                                            {msg.type === 'loading' ? <span className='animate-pulse'>...</span> : msg.text}
+                                            {msg.type !== 'query' && msg.type !== 'loading' && (
+                                                <button
+                                                    onClick={() => handleCopy(msg.text)}
+                                                    className='absolute right-1 bottom-1 text-gray-500 hover:text-gray-700'
+                                                >
+                                                    {copiedText === msg.text ? <span className='text-xs p-1 text-green-400'>Copied</span> : <IoCopyOutline size={16}/>}
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
-
-                                <div className='w-full md:w-[70%] rounded-lg'>
-
-                                    {/* Step 1: Basic Detail */}
-                                    {step === 1 && (
-                                        <FirstStep
-                                            data={data}
-                                            state={state}
-                                            handlers={handlers}
-                                        />
-                                    )}
-
-                                    {/* Step 2 : Professional Details */}
-                                    {step === 2 && (
-                                        <SecondStep
-                                            data={data}
-                                            state={state}
-                                            handlers={handlers}
-                                            handleGenerateBio={handleGenerateBio}
-                                        />
-                                    )}
-
-                                    {/* Step 3: Contact & Social Links */}
-                                    {step === 3 && (
-                                        <ThirdStep
-                                            data={data}
-                                            state={state}
-                                            handlers={handlers}
-                                        />
-                                    )}
-
-                                </div>
-
-                                {/* below are chatBot implementation */}
-                                <div className='fixed bottom-6 right-6'>
-                                    <button
-                                        className='bg-blue-500 text-white p-3 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-all'
-                                        onClick={() => setChatOpen(!chatOpen)}
+                                <div className='flex items-center bg-slate-100 justify-around gap-2 rounded-md w-full p-2'>
+                                    <input 
+                                        className='w-full text-sm p-2 border rounded-md' 
+                                        placeholder='Type your question...'
+                                        value={query}
+                                        onChange={(e) => setQuery(e.target.value)}
+                                    ></input>
+                                    <button 
+                                        className='bg-blue-500 p-2 rounded-full text-white hover:bg-blue-600'
+                                        onClick={handleAskAI}
                                     >
-                                        {chatOpen ? <AiOutlineClose size={30}/> : <RiChatSmileAiFill size={30}/>}
+                                        <IoMdSend size={26}/>
                                     </button>
                                 </div>
-
-                                {/* Ai chatBox */}
-                                {chatOpen && (
-                                    <div className='fixed transition-transform bg-white duration-500 bottom-20 right-10 shadow-lg border rounded-lg w-[22rem] px-4 py-2 flex flex-col'>
-                                        <h3 className='text-lg font-semibold mb-1 text-center'>Ask Me</h3>
-
-                                        <div className='h-56 flex flex-col overflow-y-auto border p-2 bg-slate-100 mb-2 custom-scrollbar'>
-                                            {chatHistory?.map((msg, index) => (
-                                                <div key={index} 
-                                                    className={`py-1.5 my-1 relative px-3 text-xs rounded-lg break-words shadow-md ${msg.type === 'query' ? 'bg-blue-500 text-white self-end' : 'bg-white text-black self-start'}`}
-                                                    style={{ alignSelf: msg.type === 'query' ? 'flex-end' : 'flex-start' }}
-                                                > 
-                                                    {msg.type === 'loading' ? <span className='animate-pulse'>...</span> : msg.text}
-                                                    {msg.type !== 'query' && msg.type !== 'loading' && (
-                                                        <button
-                                                            onClick={() => handleCopy(msg.text)}
-                                                            className='absolute right-1 bottom-1 text-gray-500 hover:text-gray-700'
-                                                        >
-                                                            {copiedText === msg.text ? <span className='text-xs p-1 text-green-400'>Copied</span> : <IoCopyOutline size={16}/>}
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <div className='flex items-center bg-slate-100 justify-around gap-2 rounded-md w-full p-2'>
-                                            <input 
-                                                className='w-full text-sm p-2 border rounded-md' 
-                                                placeholder='Type your question...'
-                                                value={query}
-                                                onChange={(e) => setQuery(e.target.value)}
-                                            ></input>
-                                            <button 
-                                                className='bg-blue-500 p-2 rounded-full text-white hover:bg-blue-600'
-                                                onClick={handleAskAI}
-                                            >
-                                                <IoMdSend size={26}/>
-                                            </button>
-                                        </div>
-                                        {data.description !== '' && (
-                                            <button
-                                                className='bg-green-500 text-white mt-2 p-2 rounded-lg w-full text-sm hover:bg-green-600'
-                                                onClick={handleSuggestSkills}
-                                            >
-                                                Suggest Skills
-                                            </button>
-                                        )}
-                                        
-                                    </div>
+                                {data.description !== '' && (
+                                    <button
+                                        className='bg-green-500 text-white mt-2 p-2 rounded-lg w-full text-sm hover:bg-green-600'
+                                        onClick={handleSuggestSkills}
+                                    >
+                                        Suggest Skills
+                                    </button>
                                 )}
-                        </div>
-                    )
-                }
+                                
+                            </div>
+                        )}
+                </div>
         </>
     )
 }

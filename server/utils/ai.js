@@ -13,7 +13,7 @@ export const openAIForBio = async (req, res) => {
         };
 
         const { fullName, profession,experienceLevel,query,previousBio } = req.body;
-        console.log(fullName,profession,experienceLevel,query)
+        // console.log(fullName,profession,experienceLevel,query)
 
         if(!query && (!fullName || !profession || !experienceLevel)){
             return res.status(400).json({ msg: 'Query or all details are required', success: false });
