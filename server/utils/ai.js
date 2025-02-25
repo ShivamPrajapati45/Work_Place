@@ -21,21 +21,35 @@ export const openAIForBio = async (req, res) => {
 
         let prompt;
         if(!previousBio){
-            prompt = `Generate a professional and engaging description for a user based on the following details:
-                    - Full Name: ${fullName}
-                    - Profession: ${profession}
-                    - Experience Level: ${experienceLevel}
-                    
-            The description should be concise, highlighting the user's expertise and what they offer. 
-            Keep it natural, engaging, and suitable for a professional freelancing platform.`;
-        }else{
-            prompt = `Modify the following description based on user's request:
-            
-            User's Existing description: "${previousBio}"
-            User's Request: "${query}"
+            prompt = `Generate a professional and engaging summary for a freelancer based on the following details:  
+                    - **Full Name:** ${fullName}  
+                    - **Profession:** ${profession}  
+                    - **Experience Level:** ${experienceLevel}  
 
-            If they ask to make it shorter, summarize it. If they want it more engaging, make it lively. 
-            Don't ask the user to provide the description again—just modify it directly.`;
+                    The summary should:  
+                    ✔ Highlight the freelancer’s expertise and key skills  
+                    ✔ Clearly convey what services they offer  
+                    ✔ Be concise yet impactful, suitable for a professional freelancing platform  
+                    ✔ Maintain a natural, engaging, and confident tone  
+                    ✔ Optionally include relevant software/tools they might use (if applicable)  
+
+                    Ensure that the tone remains **client-friendly, compelling, and professional** to attract potential clients.
+                    `;
+        }else{
+            prompt = `Modify the following professional summary based on the user's request:  
+
+                        - **Existing Description:** "${previousBio}"  
+                        - **User's Request:** "${query}"  
+
+                        Follow these guidelines:  
+                        ✔ If the user wants a **shorter version**, summarize it concisely while retaining key points.  
+                        ✔ If they request a **more engaging** version, enhance the language, making it lively and compelling.  
+                        ✔ If they want it to sound **more professional**, refine the tone to be polished and authoritative.  
+                        ✔ If they mention **specific additions or removals**, apply the changes accordingly.  
+                        ✔ **DO NOT** ask the user for the description again—just modify it directly.  
+
+                        Ensure the revised description maintains clarity, professionalism, and is well-suited for a freelancing platform.  
+                        `;
         }
         
 

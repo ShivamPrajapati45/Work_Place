@@ -1,5 +1,6 @@
 import React from 'react'
 import { IoArrowBack } from 'react-icons/io5';
+import Preview from './Preview';
 
 const ThirdStep = ({ data,state,handlers }) => {
 
@@ -8,6 +9,7 @@ const ThirdStep = ({ data,state,handlers }) => {
     return (
         <div className="grid relative grid-cols-2 gap-6 py-16 px-6">
             {/* Back Button */}
+            {state.errorMsg && <p className='text-red-500 lg:bottom-20 lg:left-10 text-sm absolute text-center'>{state.errorMsg}</p>}
             <button 
                 onClick={() => {
                     handlers.setStep(2);
@@ -80,7 +82,7 @@ const ThirdStep = ({ data,state,handlers }) => {
             {/* Location Input */}
             <div>
                 <label htmlFor="location" className="block text-base font-semibold text-gray-700 mb-2">
-                    Location
+                    Location*
                 </label>
                 <input
                     type="text"
@@ -95,7 +97,7 @@ const ThirdStep = ({ data,state,handlers }) => {
             {/* Contact Inputs (Email & Phone) */}
             <div>
                 <label htmlFor="email" className="block text-base font-semibold text-gray-700 mb-2">
-                    Email Address
+                    Email Address*
                 </label>
                 <input
                     type="email"
@@ -108,7 +110,8 @@ const ThirdStep = ({ data,state,handlers }) => {
                 />
             </div>
             {/* Submit Button */}
-            <div className="col-span-2 flex justify-end mt-5">
+            <div className="col-span-2 flex justify-end gap-10 mt-5">
+                <Preview data={state.previewData}/>
                 <button
                     className="px-6 py-2 text-lg font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none transition-all"
                     onClick={handlers.setProfile}

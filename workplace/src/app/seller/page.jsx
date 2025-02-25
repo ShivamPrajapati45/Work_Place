@@ -11,7 +11,8 @@ const page = () => {
     const [{userInfo}] = useStateProvider();
     const router = useRouter();
     const [dashboardData, setDashboardData] = useState(undefined);
-    // console.log("User: ", userInfo)
+    const [showMore, setShowMore] = useState(false);
+
     useEffect(() => {
         const getSellerDashboardData = async () => {
             try {
@@ -33,41 +34,14 @@ const page = () => {
     return (
         <>
             {userInfo && (
-                <div className='flex flex-col lg:flex-row max-h-[80vh]  my-6 px-6 lg:px-32 gap-10'>
+                <div className='flex flex-col max-w-full lg:flex-row max-h-[80vh] h-screen my-6 px-6 lg:px-20 gap-10'>
 
                     {/* Profile Section */}
-                    <div className="shadow-lg bg-black/5  rounded-lg p-8 flex flex-col gap-6 lg:min-w-[320px] lg:w-96 relative">
-                        {/* Notification Icon */}
-                        <div className="absolute top-4 right-4 flex items-center justify-center">
-                            <div className="relative">
-                            <button className="text-gray-700 hover:text-blue-500 transition">
-                                <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14V11a6 6 0 00-5-5.917V4a1 1 0 10-2 0v1.083A6 6 0 006 11v3c0 .217-.07.417-.195.595L4.4 17H9m3 0a3 3 0 006 0m-6 0v1a3 3 0 01-6 0v-1m6 0H9"
-                                />
-                                </svg>
-                            </button>
-                            {/* Notification Badge */}
-                            {dashboardData?.notifications > 0 && (
-                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                                {dashboardData.notifications}
-                                </span>
-                            )}
-                            </div>
-                        </div>
+                    <div className=" overflow-scroll rounded-lg p-8 flex scrollbar-hide flex-col gap-6 lg:min-w-[450px] lg:w-96 bg-white shadow-lg relative">
 
-                        {/* Profile Image */}
-                        <div className='w-full flex items-center justify-center'>
-                            <div className="relative h-28 w-28">
+                        {/* Basic detail: Full Name, Username, Profession */}
+                        <div className='w-full flex gap-6 p-4 items-start bg-white '>
+                            <div className="relative flex flex-col items-center h-24 w-24">
                                 {userInfo ? (
                                 <img
                                     src={userInfo?.profileImage}
@@ -81,39 +55,67 @@ const page = () => {
                                     </span>
                                 </div>
                                 )}
-                                {/* Online Badge */}
-                                <span className="absolute bottom-2 right-2 h-4 w-4 bg-green-500 border-2 border-white rounded-full"></span>
+                                <h1 className="text-sm mt-2 font-semibold text-gray-700 text-center">
+                                    {userInfo?.profession}
+                                </h1>
                             </div>
-                        </div>
-
-
-                        {/* User Information */}
-                        <div className="">
-                            <h2 className="text-2xl font-bold text-gray-800">{userInfo.fullName}</h2>
-                            <p className="text-lg text-gray-500">{userInfo.username}</p>
-                        </div>
-
-                        {/* Description */}
-                        <p className="text-gray-600 leading-relaxed">
-                            {userInfo.description || "No description provided."}
-                        </p>
-
-                        {/* skills Section */}
-                        {userInfo.skills?.length > 0 && (
-                            <div className='w-full'>
-                                <h3 className='text-lg font-bold text-gray-700 mb-2'>Skills</h3>
-                                <div className='flex flex-wrap gap-2'>
-                                    {userInfo.skills.map((skill, index) => (
-                                        <span 
-                                            key={index}
-                                            className="bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded-full"
-                                        >
-                                            {skill}
-                                        </span>
-                                    ))}
+                            {/* User Information */}
+                            <div className="flex flex-col">
+                                <div className='flex w-full justify-between gap-10'>
+                                    <h2 className="text-xl font-bold text-gray-900">{userInfo.fullName}</h2>
+                                    <p className="text-sm text-gray-500">@{userInfo.username}</p>
                                 </div>
+                                <p className="text-base text-slate-500">{userInfo.email}</p>
                             </div>
-                        )}
+                        </div>
+
+                        {/* Description, skills ,languages */}
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <h3 className="text-base font-semibold text-gray-700 mb-2">About</h3>
+                            <p className="text-gray-600 leading-relaxed">
+                                {showMore ? userInfo.description : `${userInfo.description?.slice(0, 100)}...`}
+                            </p>
+                            {userInfo.description?.length > 100 && (
+                                <button
+                                    onClick={() => setShowMore(!showMore)}
+                                    className="text-blue-500 mt-2 text-sm font-medium hover:underline"
+                                >
+                                    {showMore ? "Show Less" : "Show More"}
+                                </button>
+                            )}
+                        </div>
+
+                            {/* skills Section */}
+                            {userInfo.skills?.length > 0 && (
+                                <div className='w-full'>
+                                    <h3 className='text-sm font-semibold text-gray-700 mb-2'>Skills</h3>
+                                    <div className='flex flex-wrap gap-2'>
+                                        {userInfo.skills.map((skill, index) => (
+                                            <span 
+                                                key={index}
+                                                className="bg-green-100 text-slate-700 text-sm font-medium px-3 py-1 rounded-full"
+                                            >
+                                                {skill}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            {userInfo.languages?.length > 0 && (
+                                <div className='w-full'>
+                                    <h3 className='text-lg font-bold text-gray-700 mb-2'>Skills</h3>
+                                    <div className='flex flex-wrap gap-2'>
+                                        {userInfo.skills.map((skill, index) => (
+                                            <span 
+                                                key={index}
+                                                className="bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded-full"
+                                            >
+                                                {skill}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                         {/* Social  */}
                         {userInfo.socialLinks?.length > 0 && (
@@ -169,17 +171,6 @@ const page = () => {
                                     {dashboardData?.orders}
                                 </h3>
                             </div>
-
-                            {/* Unread Messages */}
-                            {/* <div
-                                className='shadow-md bg-white h-32 rounded-lg p-6 flex flex-col gap-4 cursor-pointer hover:shadow-xl transition-shadow'
-                                onClick={() => router.push('/seller/unreadMessages')}
-                            >
-                                <h2 className='text-lg font-semibold text-gray-600'>Unread Messages </h2>
-                                <h3 className='text-4xl font-extrabold text-blue-600'>
-                                    {dashboardData?.unreadMessages}
-                                </h3>
-                            </div> */}
 
                             {/* Today Earnings */}
                             <div

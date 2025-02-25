@@ -15,7 +15,6 @@ import { AiOutlineClose } from "react-icons/ai";
 import { IoCopyOutline } from 'react-icons/io5';
 import { motion } from 'framer-motion';
 
-
 const animatedComponents = makeAnimated();
 const steps = [
     { id: 1, title: "Basic Details" },
@@ -47,6 +46,7 @@ const page = () => {
     const [btnHover, setBtnHover] = useState(false);
     const [copiedText,setCopiedText] = useState(null);
     const [isSubmitting,setIsSubmitting] = useState(false);
+    const [next,setNext] = useState(false);
 
     const handleCopy = (text) => {
             navigator.clipboard.writeText(text)
@@ -146,12 +146,27 @@ const page = () => {
 
     const handleNextStep = () => {
         setErrorMsg('');
-        // if(step === 1){
-        //     if(!data.userName || !data.fullName || !image){
-        //         setErrorMsg('Username, Full Name and Image are required.');
-        //         return;
-        //     }
-        // }
+        if(step === 1){
+            if(!data.userName || !data.fullName || !image || !experienceLevel || !profession){
+                setErrorMsg('All Field Required.');
+                return;
+            }else{
+                setErrorMsg('');
+            }
+        }else if(step === 2){
+            if(!data.description || data.description.length < 5){
+                setErrorMsg('Bio must be at least 5 characters long.');
+                return;
+            }else if(data.skills.length === 0){
+                setErrorMsg('Add at least one skill.');
+                return;
+            }else if(!selectedLanguages || selectedLanguages.length === 0){
+                setErrorMsg('Add at least one language.');
+                return;
+            }else{
+                setErrorMsg('');
+            }
+        }
 
         setIsLoading(true);
         setErrorMsg('');
@@ -265,6 +280,14 @@ const page = () => {
     
     const setProfile = async () => {
         try {
+            if(!data.location){
+                setErrorMsg('Location is required.');
+                return;
+            }else if(!data.email){
+                setErrorMsg('Email is required.');
+                return;
+            }
+
             setIsSubmitting(true);
             setErrorMsg(""); // Error message reset
     
@@ -321,7 +344,11 @@ const page = () => {
             setIsSubmitting(false); // अब loading हर condition में properly reset होगा
         }
     };
-    
+    const previewData = {
+        ...data,
+        profession: profession,
+        experienceLevel: experienceLevel
+    };
     const handlers = {
         handleAddSkill,
         handleAddSocialLink,
@@ -359,8 +386,11 @@ const page = () => {
         open,
         profession,
         skillInput,
-        socialLinkInput
+        socialLinkInput,
+        previewData
     }
+
+    
 
     return (
         <>

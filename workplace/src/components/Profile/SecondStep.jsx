@@ -12,6 +12,7 @@ const SecondStep = ({ data,handlers,state,handleGenerateBio }) => {
 
     return (
         <div className="relative py-12">
+                {state.errorMsg && <span className='text-red-500 text-sm'>{state.errorMsg}</span>}
             <div className="w-full max-w-3xl bg-white rounded-lg p-4">
                 <div className="grid grid-cols-1 gap-6 w-full rounded-lg">
                     <div className='relative'>
@@ -22,7 +23,7 @@ const SecondStep = ({ data,handlers,state,handleGenerateBio }) => {
                             name='description'
                             value={data.description}
                             onChange={handlers.handleChange}
-                            placeholder='Write a catchy bio... or Ask AI'
+                            placeholder='write professional summary or ASK AI'
                             minLength={5}
                             maxLength={100}
                         />

@@ -123,7 +123,7 @@ const EditProfile = ({
                                     name='fullName'
                                     value={data.fullName}
                                     onChange={handleValueChange}
-                                    className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'}  col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`} 
+                                    className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'} col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`} 
                                 />
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
@@ -149,21 +149,6 @@ const EditProfile = ({
                                     name='email'
                                     value={data.email}
                                     onChange={handleValueChange} 
-                                    className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'}  col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`}
-                                />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <label htmlFor="description" className="text-right">
-                                    Description
-                                </label>
-                                <textarea 
-                                    disabled={edit} 
-                                    id="description" 
-                                    name='description'
-                                    value={data.description} 
-                                    onChange={handleValueChange}
-                                    minLength={10}
-                                    maxLength={50}
                                     className={`${edit ? 'text-slate-400 cursor-not-allowed' : 'text-black'}  col-span-3 px-3 py-1 rounded-lg border-[1.5px] border-slate-400`}
                                 />
                             </div>
