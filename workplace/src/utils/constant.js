@@ -51,5 +51,9 @@ export const RECEIVE = `${MESSAGE_ROUTES}/receive`;
 // Dashboard Routes
 export const GET_SELLER_DASHBOARD_DATA = `${DASHBOARD_ROUTES}/seller`;
 
-export const BIO_SUGGESTION = `${CHAT_AI}/bio`
-export const SKILLS_SUGGESTION = `${CHAT_AI}/skill`
+// AI API
+export const BIO_SUGGESTION = `${CHAT_AI}/bio`;
+export const SKILLS_SUGGESTION = `${CHAT_AI}/skill`;
+export const TITLE_SUGGESTION = `${CHAT_AI}/title`;
+export const DESCRIPTION_SUGGESTION = `${CHAT_AI}/desc`;
+export const FEATURES_SUGGESTION = `${CHAT_AI}/features`;

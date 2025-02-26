@@ -41,6 +41,95 @@ export const categories = [
     },
 ];
 
+export const serviceCategories = [
+    // 🔹 Development & IT
+    { name: "Web Development" },
+    { name: "Mobile App Development" },
+    { name: "Game Development" },
+    { name: "Software Development" },
+    { name: "E-commerce Development" },
+    { name: "AI & Machine Learning" },
+    { name: "Blockchain & Web3" },
+    { name: "Cybersecurity & Ethical Hacking" },
+    { name: "DevOps & Cloud Services" },
+
+    // 🔹 Design & Creative
+    { name: "Graphic Design" },
+    { name: "UI/UX Design" },
+    { name: "Logo & Branding" },
+    { name: "3D Modeling & Product Design" },
+    { name: "NFT Art & Digital Art" },
+    { name: "Video Editing & Animation" },
+    { name: "Presentation Design" },
+    { name: "T-Shirt & Merchandise Design" },
+    { name: "Interior & Architecture Design" },
+
+    // 🔹 Writing & Content
+    { name: "SEO Content Writing" },
+    { name: "Copywriting & Sales Copy" },
+    { name: "Technical Writing" },
+    { name: "Ghostwriting" },
+    { name: "Blog & Article Writing" },
+    { name: "Scriptwriting" },
+    { name: "Translation & Transcription" },
+    { name: "Creative Writing" },
+    { name: "Proofreading & Editing" },
+
+    // 🔹 Marketing & Advertising
+    { name: "Social Media Marketing" },
+    { name: "SEO & SEM" },
+    { name: "Email Marketing" },
+    { name: "Influencer Marketing" },
+    { name: "Google & Facebook Ads" },
+    { name: "Affiliate Marketing" },
+    { name: "Brand Strategy & Consulting" },
+
+    // 🔹 Business & Consulting
+    { name: "Business Plans & Strategy" },
+    { name: "Market Research" },
+    { name: "Financial Consulting" },
+    { name: "Pitch Deck & Investor Presentations" },
+    { name: "HR & Recruiting" },
+    { name: "Legal Consulting & Contracts" },
+
+    // 🔹 Music & Audio
+    { name: "Voice Over" },
+    { name: "Music Production & Mixing" },
+    { name: "Podcast Editing" },
+    { name: "Sound Design" },
+    { name: "Singing & Jingles" },
+
+    // 🔹 Lifestyle & Personal Services
+    { name: "Fitness Coaching" },
+    { name: "Personal Finance & Budgeting" },
+    { name: "Life Coaching" },
+    { name: "Relationship Advice" },
+    { name: "Astrology & Spiritual Guidance" },
+
+    // 🔹 Data & Analytics
+    { name: "Data Entry & Admin Support" },
+    { name: "Data Analysis & Visualization" },
+    { name: "Power BI & Tableau" },
+    { name: "Excel & Google Sheets Automation" },
+    { name: "AI & Chatbot Development" },
+
+    // 🔹 Video & Animation
+    { name: "2D Animation & Explainer Videos" },
+    { name: "3D Animation" },
+    { name: "Whiteboard Animation" },
+    { name: "YouTube Video Editing" },
+    { name: "Gaming Video Editing" },
+    { name: "Stop Motion Animation" },
+
+    // 🔹 Miscellaneous
+    { name: "Virtual Assistance" },
+    { name: "Online Tutoring" },
+    { name: "Resume Writing & LinkedIn Optimization" },
+    { name: "Mystery Shopping" },
+    { name: "Event Planning & Wedding Services" }
+];
+
+
 export const allCategories = [
     {
         name: 'Graphic Design',

@@ -37,7 +37,7 @@ const imageUpload = ({ files, setFile }) => {
                             </span>
                     )}
                         <div className='flex items-center justify-center w-full'>
-                            <label htmlFor="" className='flex cursor-pointer flex-col w-full h-20 border-2 rounded-md border-dashed hover:bg-gray-100 hover:border-gray-300'>
+                            <label htmlFor='file' className='flex cursor-pointer flex-col w-full h-20 border-2 rounded-md border-dashed hover:bg-gray-100 hover:border-gray-300'>
                                 <div className='flex flex-col items-center justify-center pt-3.5'>
                                     <svg 
                                         xmlns="http://www.w3.org/2000/svg" 
@@ -52,27 +52,28 @@ const imageUpload = ({ files, setFile }) => {
                                             clipRule={'evenodd'}
                                         />
                                     </svg>
-                                    <p className=' text-sm tracking-wider text-gray-400 group-hover:text-gray-600'>
+                                    <p className='text-sm tracking-wider text-gray-400 group-hover:text-gray-600'>
                                         Select a photo
                                     </p>
                                 </div>
                                 <input 
                                     type="file" 
+                                    id='file'
                                     onChange={handleFile}
                                     multiple={true}
-                                    className='opacity-0' 
                                     name='files[]'
+                                    className='hidden'
                                 />
                             </label>
                         </div>
                         <div className='flex flex-wrap gap-2 mt-2'>
                             {files?.map((file, key) => (
-                                    <div key={key} className='relative overflow-hidden border border-black'>
+                                    <div key={key} className='relative overflow-hidden'>
                                         <i
                                             onClick={() => {
                                                 removeImage(file.name);
                                             }}
-                                            className='mdi mdi-close absolute right-1 hover:text-white cursor-pointer z-20'
+                                            className='mdi mdi-close absolute right-1 text-white cursor-pointer z-20'
                                         >
                                             X
                                         </i>

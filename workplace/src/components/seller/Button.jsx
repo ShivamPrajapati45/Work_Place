@@ -5,6 +5,7 @@ const Button = ({
         isLoading, 
         isDisabled,
         className,
+        setBtnHover,
         children
     }) => {
     return (
@@ -13,6 +14,8 @@ const Button = ({
             className={`${className} flex items-center justify-center gap-2 text-lg font-semibold px-5 py-2 rounded-lg disabled:opacity-70`}
             type='button'
             disabled={isDisabled || isLoading}
+            onMouseEnter={() => setBtnHover(true)}
+            onMouseLeave={() => setBtnHover(false)}
         >
             {
                 isLoading ? (

@@ -46,7 +46,6 @@ const page = () => {
     const [btnHover, setBtnHover] = useState(false);
     const [copiedText,setCopiedText] = useState(null);
     const [isSubmitting,setIsSubmitting] = useState(false);
-    const [next,setNext] = useState(false);
 
     const handleCopy = (text) => {
             navigator.clipboard.writeText(text)
@@ -56,7 +55,7 @@ const page = () => {
             })
             .catch(() => console.error("Copy failed", err))
         
-    }
+    };
 
     const [data, setData] = useState({
         userName: '',

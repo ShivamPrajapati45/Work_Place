@@ -15,8 +15,8 @@ import EditProfile from './EditProfile';
 import Cookies from 'js-cookie';
 import useSocketConnection from '@/hooks/useSocketConnection';
 import { DropdownMenu,DropdownMenuContent,DropdownMenuTrigger } from './ui/dropdown-menu';
-import {Tabs,TabsContent,TabsList,TabsTrigger} from './ui/tabs'
 import NotificationTab from './NotificationTab';
+import {CirclePlus} from 'lucide-react'
 
 
 const Navbar = () => {
@@ -41,6 +41,7 @@ const Navbar = () => {
     const [unreadNotifications, setUnReadNotifications] = useState([]);
     const [readNotifications, setReadNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showPlusTitle, setShowPlusTitle] = useState(false);
     
 
     const [data, setData] = useState({
@@ -404,11 +405,17 @@ const Navbar = () => {
                                                 isSeller && (
                                                     <>
                                                         <li
-                                                            className={`${pathName === '/seller/gigs/create' ? 'text-blue-600 bg-black/5' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
+                                                            className={`${pathName === '/seller/gigs/create' ? 'bg-black/5 ' : ''} py-[5px] cursor-pointer px-2 rounded-full transition-all relative`}
                                                             onClick={() => router.push('/seller/gigs/create')}
+                                                            onMouseEnter={() => setShowPlusTitle(true)}
+                                                            onMouseLeave={() => setShowPlusTitle(false)}
                                                         >
-                                                            Create Gig
+                                                            <CirclePlus size={28} className='text-green-400 hover:opacity-80 transition-opacity duration-300'/>
+                                                            {showPlusTitle && <span className='bg-gray-700 absolute top-9 text-center text-xs rounded-md text-nowrap text-white px-2 py-1'>
+                                                                Create Service
+                                                            </span>}
                                                         </li>
+                                                        
                                                         <li
                                                             className={`${pathName === '/seller' ? 'text-blue-600 bg-black/5' : ''} py-[5px] cursor-pointer px-2 rounded-md hover:bg-black/5 transition-all`}
                                                             onClick={() => router.push('/seller')}
