@@ -52,7 +52,7 @@ const PopularServices = () => {
     return (
         <div className='mt-3 text-white'>
         <h2 className='text-4xl mb-3 text-[#212121] text-center font-semibold uppercase'>Popular Services</h2>
-        <ul className='flex flex-wrap gap-16 justify-center bg-gradient-to-r from-gray-800 to-gray-600 py-10'>
+        <ul className='flex flex-wrap gap-16 justify-center bg-[#12121284] py-10'>
             {popularServices.map(({name,label,image})=>{
                 const [isHovered, setIsHovered] = useState(false);
                 return(

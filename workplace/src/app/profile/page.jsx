@@ -14,6 +14,8 @@ import { RiChatSmileAiFill } from "react-icons/ri";
 import { AiOutlineClose } from "react-icons/ai";
 import { IoCopyOutline } from 'react-icons/io5';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
+import { ubuntu } from '@/utils/fonts';
 
 const animatedComponents = makeAnimated();
 const steps = [
@@ -321,6 +323,7 @@ const page = () => {
                                 ...data,
                             },
                         });
+                        toast.success('Profile Created Successfully')
                         router.push('/gigs');
                     }
                 } else {
@@ -339,6 +342,7 @@ const page = () => {
             }
         } catch (error) {
             console.log(error);
+            toast.error('Profile Updation Failed');
         } finally {
             setIsSubmitting(false); // अब loading हर condition में properly reset होगा
         }
@@ -413,7 +417,7 @@ const page = () => {
 
 
                 {/* Main Content */}
-                <div className='relative rounded-lg mx-auto my-6 flex flex-col md:flex-row  justify-center max-w-[90vw] h-auto md:h-[75vh] p-4'>
+                <div className={` ${ubuntu.className} relative rounded-lg mx-auto my-6 flex flex-col md:flex-row  justify-center max-w-[90vw] h-auto md:h-[75vh] p-4`}>
 
                         <div className="w-full md:w-[30%] flex flex-col items-center p-4 relative">
                             <div className="relative flex flex-col items-start gap-20 w-full">

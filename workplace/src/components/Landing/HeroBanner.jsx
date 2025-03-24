@@ -2,6 +2,7 @@
 import React,{useEffect,useState} from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import toast from 'react-hot-toast'
 
 const HeroBanner = () => {
     const router = useRouter();
@@ -38,7 +39,7 @@ const HeroBanner = () => {
         return () => clearInterval(interval);
     },[image]) 
 
-        let index = 0;
+    let index = 0;
     useEffect(() => {
         const interval = setInterval(() => {
             index = (index + 1) % placeholders.length;
@@ -77,7 +78,7 @@ const HeroBanner = () => {
                 </div>
                     <button 
                         type='submit'
-                        className='bg-[#34A853] text-white px-8 text-lg font-semibold rounded-r-md uppercase'
+                        className='bg-primary_text text-white px-8 text-lg font-semibold rounded-r-md uppercase'
                     >search</button>
                 </form>
                 <div className='text-[#212121] flex gap-3 justify-center items-center'>

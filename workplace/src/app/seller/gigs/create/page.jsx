@@ -12,6 +12,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 import { RiChatSmileAiFill } from 'react-icons/ri';
 import { IoCopyOutline } from 'react-icons/io5';
 import { IoMdSend } from 'react-icons/io';
+import toast from 'react-hot-toast';
 
 const page = () => {
     const router = useRouter();
@@ -51,7 +52,7 @@ const page = () => {
         })
         .catch(() => console.error("Copy failed", err))
     
-};
+    };
 
     useEffect(() => {
         if(data.category){
@@ -155,12 +156,14 @@ const page = () => {
 
                 if(response?.data?.success){
                     setIsSubmitting(false);
+                    toast.success('Service Created Successfully')
                     router.push('/seller/gigs');
                 }
             }
             
         } catch (error) {
             console.log('err', error);
+            toast.error('Service Creation Failed !!')
         }finally{
             setIsSubmitting(false);
         }

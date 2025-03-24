@@ -14,7 +14,7 @@ const Logo = ({fillColor}) => {
             <text
                 x={20}
                 y={25}
-                fill='#40bf1d'
+                fill='#8830da'
                 fontSize={22}
                 fontFamily='Arial, sans-serif'
                 fontWeight='bold'

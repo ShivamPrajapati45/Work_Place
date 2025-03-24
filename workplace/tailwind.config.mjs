@@ -14,6 +14,9 @@ export default {
 	theme: {
 		extend: {
 			colors: {
+				primary_text: '#8830da',
+				primary_button: '#8830da',
+				primary_button_hover: '#9f48f0',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				card: {

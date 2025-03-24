@@ -35,7 +35,7 @@ const JoinWorkplace = () => {
                 data-aos='fade-up'
                 data-aos-delay='200'
             >
-                <div className='absolute -top-8 bg-gradient-to-r from-green-400 to-green-600 w-14 h-14 flex items-center justify-center rounded-full shadow-lg group-hover:-top-12 duration-500 transition-all'>
+                <div className='absolute -top-8 bg-gradient-to-r from-purple-400 to-purple-600 w-14 h-14 flex items-center justify-center rounded-full shadow-lg group-hover:-top-12 duration-500 transition-all'>
                     <span className='text-white text-xl font-bold'>1</span>
                 </div>
                 <div className='overflow-hidden rounded-lg mb-4'>
@@ -45,10 +45,10 @@ const JoinWorkplace = () => {
                         className='transition-transform duration-500'
                     />
                     </div>
-                <h3 className='text-xl text-[#212121] font-semibold mb-2 group-hover:text-green-600 transition-colors duration-300'>
+                <h3 className='text-xl text-[#212121] font-semibold mb-2 group-hover:text-primary_text transition-colors duration-300'>
                     Join
                 </h3>
-                <p className='text-gray-700 group-hover:text-blue-500 transition-colors duration-3003'>
+                <p className='text-gray-700  transition-colors duration-3003'>
                     Create your profile and take the first step towards your goals.
                 </p>
             </div>
@@ -59,7 +59,7 @@ const JoinWorkplace = () => {
                 data-aos='fade-up'
                 data-aos-delay='200'
             >
-                <div className='absolute -top-8 bg-gradient-to-r from-green-400 to-green-600 w-14 h-14 flex items-center justify-center rounded-full shadow-lg group-hover:-top-12 duration-500 transition-all'>
+                <div className='absolute -top-8 bg-gradient-to-r from-purple-400 to-purple-600 w-14 h-14 flex items-center justify-center rounded-full shadow-lg group-hover:-top-12 duration-500 transition-all'>
                     <span className='text-white text-xl font-bold'>2</span>
                 </div>
                 <div className='overflow-hidden rounded-lg mb-4'>
@@ -69,10 +69,10 @@ const JoinWorkplace = () => {
                         className='transition-transform duration-500'
                     />
                 </div>
-                <h3 className='text-xl text-[#212121] font-semibold mb-2 group-hover:text-green-600 transition-colors duration-300'>
+                <h3 className='text-xl text-[#212121] font-semibold mb-2 group-hover:text-primary_text transition-colors duration-300'>
                     Post Your Service
                 </h3>
-                <p className='text-gray-700 group-hover:text-blue-500 transition-colors duration-300'>
+                <p className='text-gray-700  transition-colors duration-300'>
                     Share your skills and connect with top professionals.
                 </p>
             </div>
@@ -83,7 +83,7 @@ const JoinWorkplace = () => {
                 data-aos='fade-up'
                 data-aos-delay='200'
             >
-                <div className='absolute -top-8 bg-gradient-to-r from-green-400 to-green-600 w-14 h-14 flex items-center justify-center rounded-full shadow-lg group-hover:-top-12 duration-500 transition-all'>
+                <div className='absolute -top-8 bg-gradient-to-r from-purple-400 to-purple-600 w-14 h-14 flex items-center justify-center rounded-full shadow-lg group-hover:-top-12 duration-500 transition-all'>
                     <span className='text-white text-xl font-bold'>3</span>
                 </div>
                 <div className='overflow-hidden rounded-lg mb-4'>
@@ -93,10 +93,10 @@ const JoinWorkplace = () => {
                         className=' transition-transform duration-500'
                     />
                 </div>
-                <h3 className='text-xl text-[#212121] font-semibold mb-2 group-hover:text-green-600 transition-colors duration-300'>
+                <h3 className='text-xl text-[#212121] font-semibold mb-2 group-hover:text-primary_text transition-colors duration-300'>
                     Collaborate & Grow
                 </h3>
-                <p className='text-gray-700 group-hover:text-blue-500 transition-colors duration-300'>
+                <p className='text-gray-700 transition-colors duration-300'>
                     Build strong partnerships and achieve amazing results.
                 </p>
             </div>
@@ -106,7 +106,7 @@ const JoinWorkplace = () => {
         <div className='text-center mt-12' data-aos='zoom-in'>
             <button
                 onClick={handleClick}
-                className="group bg-green-500 hover:bg-green-600 transition-all text-lg font-medium px-8 py-4 rounded-lg shadow-lg text-white relative overflow-hidden"
+                className="group bg-purple-500 hover:bg-purple-600 transition-all text-lg font-medium px-8 py-4 rounded-lg shadow-lg text-white relative overflow-hidden"
             >
                 <span className="relative z-10">Get Started Now</span>
                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></span>

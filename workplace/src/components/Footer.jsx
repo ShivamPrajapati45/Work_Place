@@ -103,15 +103,15 @@ const Footer = () => {
                 })}
             </ul>
             
-            <div className='mt-4 mx-10 rounded-md flex h-12 items-center bg-black px-10 justify-between'>
+            <div className='mt-4 rounded-md flex h-12 items-center px-5 justify-between'>
                 <Logo/>
-                <ul className='flex gap-5'>
+                <ul className='flex gap-5 px-5'>
                     {socialLinks.map(({name,icon,link})=>{
                         return (
-                            <li className=' p-1 rounded-full w-full' key={name}>
+                            <li className='p-1 rounded-full w-full' key={name}>
                                 <Link 
                                     href={link}
-                                    className='text-blue-500 text-xl'
+                                    className='text-primary_text text-xl hover:text-[#7e45b4]'
                                 >
                                     {icon}
                                 </Link>
@@ -120,7 +120,8 @@ const Footer = () => {
                     })}
                 </ul>
             </div>
-                <p className='text-black mt-4 text-sm text-center w-full'>@Copyright Reserve || 2025</p>
+                <hr className='mx-10 bg-gray-600 h-0.5' />
+                {/* <p className='text-black mt-4 text-sm text-center w-full'>@Copyright Reserve || 2025</p> */}
 
         </footer>
     )

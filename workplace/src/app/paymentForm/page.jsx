@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react'
 import { useFormik} from 'formik'
 import * as Yup from 'yup';
+import toast from 'react-hot-toast';
 
 
 const page = () => {
@@ -78,6 +79,10 @@ const page = () => {
 
                 const response = await axios.post(CREATE_ORDER, payload,{ withCredentials: true })
                 if(response.data.success){
+                    toast.success('Payment Done Successfully',{
+                        duration: '3000',
+                        removeDelay: '2000'
+                    });
                     route.push('/success?payment_status=success')
                     // resetForm();
                 }

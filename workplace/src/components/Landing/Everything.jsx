@@ -31,11 +31,11 @@ const Everything = () => {
 
     return (
         <div 
-            className='bg-white bg-gradient-to-t from-gray-500 to-gray-600 py-12 px-6 md:px-16 lg:px-6 flex w-full gap-5 lg:flex-row items-center'
+            className='bg-gray-200 py-12 px-6 md:px-16 lg:px-6 flex w-full gap-5 lg:flex-row items-center'
 
         >
             <div 
-                className='flex flex-col p-4 items-start bg-gray-200 rounded-lg shadow-xl transform transition duration-500 hover:shadow-2xl'
+                className='flex flex-col p-4 items-start rounded-lg  transform transition duration-500'
                 data-aos='fade-right'
                 data-aos-delay='200'
             >

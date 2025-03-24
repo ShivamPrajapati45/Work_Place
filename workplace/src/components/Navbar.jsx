@@ -17,6 +17,7 @@ import useSocketConnection from '@/hooks/useSocketConnection';
 import { DropdownMenu,DropdownMenuContent,DropdownMenuTrigger } from './ui/dropdown-menu';
 import NotificationTab from './NotificationTab';
 import {CirclePlus} from 'lucide-react'
+import toast from 'react-hot-toast';
 
 
 const Navbar = () => {
@@ -183,7 +184,7 @@ const Navbar = () => {
     const links = [
         { linkName: "Explore", handler: handleClickToGigs,type: 'link' },
         { linkName: "Sign In", handler: handleLogin,type: 'login' },
-        { linkName: "JOIN ", handler: handleSignUp,type: 'signup' },
+        { linkName: "Join ", handler: handleSignUp,type: 'signup' },
     ];
 
     useEffect(() => {
@@ -248,6 +249,7 @@ const Navbar = () => {
                     type: reducerCases.SET_USER,
                     userInfo: undefined
                 });
+                toast.success('Logout Successfully!!');
                 router.push('/');
             }
 
@@ -278,6 +280,10 @@ const Navbar = () => {
                             ...userInfo,
                             ...res.data.user
                         }
+                    });
+                    toast.success('Updated Successfully',{
+                        duration: '3000',
+                        removeDelay: '2000'
                     })
                     setChange(false);
                 }
@@ -390,7 +396,7 @@ const Navbar = () => {
                                                         {type === 'signup' && (
                                                             <button
                                                                 onClick={handler}
-                                                                className='uppercase text-sm md:text-lg font-semibold py-[2px] px-4 rounded-sm bg-[#34A853] hover:bg-[#66ba7d] text-white transition-all duration-500'
+                                                                className='md:text-lg uppercase py-[2px] px-4 rounded-sm bg-primary_button hover:bg-primary_button_hover text-white transition-all duration-300'
                                                             >
                                                                 {linkName}
                                                             </button>

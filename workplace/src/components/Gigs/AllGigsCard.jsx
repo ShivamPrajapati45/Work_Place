@@ -32,15 +32,6 @@ const AllGigsCard = ({ gig }) => {
         setCurrentImageIndex((prev) => (prev - 1 + gig?.images.length) % gig?.images.length);
     };
 
-    const handleAuthUser = (id) => {
-        if(token && userInfo){
-            router.push(`/gig/${id}`)
-        }else{
-            router.push('/login');
-        }
-        
-    }
-
     return (
         <>
             <div
@@ -102,10 +93,9 @@ const AllGigsCard = ({ gig }) => {
                     className='cursor-pointer px-4'
                 >
                         <div className="flex justify-between items-start mb-1">
-                            <h3 className="font-semibold text-base truncate">{gig?.title}</h3>
+                            <h3 className="text-sm truncate">{gig?.title}</h3>
                             <span className="font-bold text-base">${gig?.price}</span>
                         </div>
-                        <p className="text-xs text-gray-600 mb-2 line-clamp-2">{gig?.shortDesc}</p>
                         <div className="flex flex-wrap gap-1 mb-2">
                             {gig?.features.slice(0, 3).map((feature, index) => (
                                 <span

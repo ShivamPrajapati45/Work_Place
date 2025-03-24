@@ -11,8 +11,9 @@ import { googleAuth } from '@/utils/api'
 import { useFormik } from 'formik'
 import * as yup from 'yup';
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
-const AuthWrapper = ({ type }) => {
+const   AuthWrapper = ({ type }) => {
     const [{showLogInModel,showSignUpModel},dispatch] = useStateProvider();
     const router = useRouter();
 
@@ -81,6 +82,7 @@ const AuthWrapper = ({ type }) => {
                 const response = await axios.post( type === 'login' ? LOGIN_ROUTES : SIGNUP_ROUTES, values,{withCredentials: true} );
                 if(response.data.success){
                     dispatch({ type: reducerCases.SET_USER, userInfo: response.data.user });
+                    toast.success(type == 'login' ? 'Login Successfully' : 'Signup Successfully');
                     router.push('/');
                 }
 
@@ -101,10 +103,10 @@ const AuthWrapper = ({ type }) => {
             </div>
             <div className='h-[100vh] w-[100vw] flex flex-col justify-center items-center'>
                 <div 
-                    className=' fixed z-[101] h-max w-max rounded-2xl bg-[#fff] flex justify-center items-center'
+                    className='fixed z-[101] h-max w-max rounded-2xl bg-[#fff] flex justify-center items-center'
                     id='auth-model'
                 >
-                    <div className='p-6 gap-4 flex flex-col justify-center items-center'>
+                    <div className='p-6 gap-4 shadow-lg shadow-gray-400 flex flex-col justify-center items-center'>
                         <IoClose onClick={() => router.push('/')} className='cursor-pointer text-2xl absolute right-5 top-5 hover:scale-105 transition-all hover:bg-gray-100 hover:text-red-800 rounded-full '/>
                         <div>
                             <h3 className='text-[#212121] uppercase font-semibold text-xl'>
@@ -163,7 +165,7 @@ const AuthWrapper = ({ type }) => {
                                     <span className='text-red-500 text-sm p-0 m-0'>{formik.errors.password}</span>
                                 ) : null}
                             <button 
-                                className='text-white bg-black px-12 text-lg font-semibold rounded-md p-3 w-80'
+                                className='text-white bg-black hover:bg-[#252525] px-12 text-lg font-semibold rounded-md p-3 w-80'
                                 onClick={formik.isSubmitting}
                             >
                                 {formik.isSubmitting ? 'Processing...' : 'Continue'}
@@ -178,11 +180,11 @@ const AuthWrapper = ({ type }) => {
                                 (
                                     <>
                                         <span className='text-slate-700'>
-                                            <span className='text-lg'>
+                                            <span className='text-sm'>
                                                 Not a member yet ?&nbsp;&nbsp;
                                             </span>
                                             <span 
-                                                className='cursor-pointer text-blue-500 hover:underline transition-all'
+                                                className='cursor-pointer text-sm text-blue-500 hover:underline transition-all'
                                                 onClick={handleSignUp}
                                             >JOIN NOW</span>
                                         </span>
@@ -191,11 +193,11 @@ const AuthWrapper = ({ type }) => {
                                 (
                                     <>
                                         <span className='text-slate-700'>
-                                            <span className='text-lg'>
+                                            <span className='text-sm'>
                                                 Already a member ?&nbsp;&nbsp;
                                             </span>
                                             <span 
-                                                className='cursor-pointer text-xl text-blue-500 hover:underline transition-all'
+                                                className='cursor-pointer text-sm text-blue-500 hover:underline transition-all'
                                                 onClick={handleLogin}
                                             >LOGIN</span>
                                         </span>

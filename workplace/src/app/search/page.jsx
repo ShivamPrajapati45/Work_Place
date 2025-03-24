@@ -1,5 +1,6 @@
 'use client'
 import Footer from '@/components/Footer';
+import AllGigsCard from '@/components/Gigs/AllGigsCard';
 import { Select,SelectContent,SelectGroup,SelectItem,SelectValue,SelectTrigger } from '@/components/ui/select';
 import { allCategories } from '@/utils/categories';
 import { SEARCH_GIGS_ROUTE } from '@/utils/constant';

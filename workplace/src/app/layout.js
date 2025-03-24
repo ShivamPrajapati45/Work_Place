@@ -6,6 +6,13 @@ import reducer,{initialState} from "@/context/StateReducers";
 import Navbar from "@/components/Navbar";
 import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
+import { Toaster } from "react-hot-toast";
+import { Ubuntu } from "next/font/google"
+
+const ubuntu = Ubuntu({
+  subsets: ['latin'],
+  weight: ['300', '400'],
+})
 
 export default function RootLayout({ children }) {
 
@@ -20,11 +27,8 @@ export default function RootLayout({ children }) {
 
 
   return (
-    <html lang="en">
-      <head>
-        <title>WorkPlace</title>
-      </head>
-        <body className="flex flex-col min-h-screen">
+    <html lang="en" suppressHydrationWarning>
+        <body className={`flex flex-col min-h-screen ${ubuntu.className}`}>
         <StateProvider initialState={initialState} reducer={reducer}>
             <header>
               <Navbar/>
@@ -32,8 +36,8 @@ export default function RootLayout({ children }) {
             <main className={`flex-grow ${pathName !== '/' ? 'mt-16':''} min-h-screen`}>
               {children}
             </main>
-            {/* <Footer/> */}
         </StateProvider>
+        <Toaster/>
       </body>
     </html>
   );

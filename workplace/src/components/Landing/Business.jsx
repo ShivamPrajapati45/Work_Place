@@ -37,24 +37,24 @@ const Business = () => {
             </h4>
             <ul className='flex flex-col gap-4 text-lg'  data-aos='fade-left'>
                 <li className='flex gap-2 items-center'>
-                    <BsCheckCircle className='text-[#34A853]'/>
+                    <BsCheckCircle className='text-primary_text'/>
                     <span>Talent Matching</span>
                 </li>
                 <li className='flex gap-2 items-center'>
-                    <BsCheckCircle className='text-[#34A853]'/>
+                    <BsCheckCircle className='text-primary_text'/>
                     <span>Dedicated Account Management</span>
                 </li>
                 <li className='flex gap-2 items-center'>
-                    <BsCheckCircle className='text-[#34A853]'/>
+                    <BsCheckCircle className='text-primary_text'/>
                     <span>Team Collaboration tools</span>
                 </li>
                 <li className='flex gap-2 items-center'>
-                    <BsCheckCircle className='text-[#34A853]'/>
+                    <BsCheckCircle className='text-primary_text'/>
                     <span>Business Payment Solutions</span>
                 </li>
             </ul>
             <button 
-                className='text-lg font-medium px-7 py-3 hover:bg-[#43be63] transition-all bg-[#34A853] text-white rounded-md'
+                className='text-lg font-medium px-7 py-3 hover:bg-[#ad52c4] transition-all bg-[#963fac] text-white rounded-md'
                 type='button'
                 onClick={handleClick}
 
