@@ -49,7 +49,7 @@ const ProfileInput = ({inputClassName,input, setInput,handleAdd,handleRemove,all
                         >
                             <span className='text-xs'>{skill}</span>
                             <span
-                                className="text-red-500  cursor-pointer"
+                                className="text-red-500 text-nowrap  cursor-pointer"
                                 onClick={() => handleRemove(skill)}
                             >
                                 x

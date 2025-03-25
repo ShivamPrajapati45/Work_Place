@@ -12,7 +12,7 @@ import {app, server} from './socket/socket.js'
 import prisma from './prisma.js';
 
 dotenv.config();
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 4009
 
 app.use(cors({
     origin: ['http://localhost:3000'],

@@ -1,4 +1,5 @@
-export const HOST = process.env.SERVER_URL;
+// export const HOST = process.env.SERVER_URL;
+export const HOST = process.env.NEXT_PUBLIC_BACKEND_URL;
 export const API_URl = `${HOST}/api`;
 export const AUTH_ROUTES = `${API_URl}/auth`;
 export const GIG_ROUTES = `${API_URl}/gigs`;

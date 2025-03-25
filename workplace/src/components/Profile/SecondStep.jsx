@@ -25,7 +25,7 @@ const SecondStep = ({ data,handlers,state,handleGenerateBio }) => {
                             onChange={handlers.handleChange}
                             placeholder='write professional summary or ASK AI'
                             minLength={5}
-                            maxLength={100}
+                            maxLength={600}
                         />
                         <button
                             onClick={handleGenerateBio}

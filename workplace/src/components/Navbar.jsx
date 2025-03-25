@@ -208,7 +208,7 @@ const Navbar = () => {
                     });
                     setIsLoaded(true);
                     if(user?.isProfileInfoSet === false){
-                        // router.push('/profile');
+                        router.push('/profile');
                     }
 
                 } catch (error) {
