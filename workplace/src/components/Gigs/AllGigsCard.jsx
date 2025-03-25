@@ -97,7 +97,7 @@ const AllGigsCard = ({ gig }) => {
                             <span className="font-bold text-base">${gig?.price}</span>
                         </div>
                         <div className="flex flex-wrap gap-1 mb-2">
-                            {gig?.features.slice(0, 3).map((feature, index) => (
+                            {gig?.features.slice(0, 1).map((feature, index) => (
                                 <span
                                     key={index}
                                     className="bg-gray-200 text-xs px-2 py-0.5 rounded-full"
@@ -119,7 +119,7 @@ const AllGigsCard = ({ gig }) => {
                                         className="w-9 h-9 rounded-full mr-2"
                                     />
                                 ) : (
-                                    <div className="bg-purple-400 h-7 w-7 flex items-center justify-center rounded-full relative">
+                                    <div className="bg-purple-400 h-9 w-9 mr-2 flex items-center justify-center rounded-full relative">
                                         <span className="text-lg text-white">
                                             {gig?.createdBy?.email[0].toUpperCase()}
                                         </span>

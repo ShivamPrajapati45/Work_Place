@@ -26,15 +26,15 @@ const Pricing = () => {
                             </h6>
                         </div>
 
-                        <div className='text-gray-400 font-medium text-sm flex gap-6'>
+                        <div className='text-gray-500 font-medium text-sm flex gap-6'>
                             <div className='flex items-center gap-2'>
                                 <FiClock className='text-xl text-blue-500' />
                                 <span>{gigData?.deliveryTime} Days Delivery</span>
                             </div>
-                            <div className='flex items-center gap-2'> 
+                            {/* <div className='flex items-center gap-2'> 
                                 <FiRefreshCcw className='text-xl text-blue-500' />
                                 <span>{gigData?.revisions} Revisions</span>
-                            </div>
+                            </div> */}
                         </div>
                         
                         <ul className='space-y-3'>
@@ -59,7 +59,7 @@ const Pricing = () => {
                                 </button>
                             ) : (
                                 <button
-                                    className='relative flex items-center justify-center py-2 px-4 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600'
+                                    className='relative flex items-center justify-center py-2 px-4 bg-primary_button text-white font-bold rounded-md hover:bg-primary_button_hover'
                                     onClick={() => router.push(`/paymentForm?gigId=${gigData?.id}`)}
                                 >
                                     <span>CONTINUE</span>
@@ -67,13 +67,13 @@ const Pricing = () => {
                                 </button>
                             )}
                     </div>
-                    {gigData?.userId !== userInfo?.id && (
+                    {/* {gigData?.userId !== userInfo?.id && (
                         <div className='flex justify-end mt-4'>
                             <button className='py-2 w-full px-6 border border-black text-gray-700 rounded-md hover:bg-gray-100'>
                                 Contact Me
                             </button>
                         </div>
-                    )}
+                    )} */}
                 </div>
             )}
         </>

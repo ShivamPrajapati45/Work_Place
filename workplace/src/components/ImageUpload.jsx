@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 const imageUpload = ({ files, setFile }) => {
 
     const [msg, setMsg] = useState('');
-    console.log('files',files)
+    // console.log('files',files)
     
     const handleFile = (e) => {
         setMsg('');

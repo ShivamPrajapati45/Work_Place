@@ -15,7 +15,7 @@ export const getSellerOrders = async (req, res) => {
                             id: parseInt(userId)
                         },
                     },
-                    inCompleted: false
+                    // inCompleted: false
                 },
                 include: {
                     gig: true,

@@ -28,7 +28,7 @@ const Details = () => {
         }
     }, [gigData]);
 
-    console.log(gigData)
+    // console.log(gigData)
     const fetchRecommendedGigs = async () => {
         try {
             const res = await axios.get(`${RECOMMENDED_GIGS}/${gigData?.id}?category=${gigData?.category}&desc=${gigData?.shortDesc}`,{withCredentials: true});
@@ -51,7 +51,9 @@ const Details = () => {
         } catch (error) {
             console.log(error)
         }
-    }
+    };
+
+    console.log('user Gigs: ', userGigs)
 
     useEffect( () => {
         if(gigData){ 
@@ -227,7 +229,7 @@ const Details = () => {
                                         className="w-full mx-1 max-w-lg"
                                     >
                                         <CarouselContent>
-                                            {recommendedGigs.map((gig, index) => (
+                                            {userGigs.map((gig, index) => (
                                                 <CarouselItem
                                                     key={index}
                                                     className="w-1/2 md:w-1/2 lg:w-1/3 px-2"
@@ -236,7 +238,7 @@ const Details = () => {
                                                 </CarouselItem>
                                             ))}
                                         </CarouselContent>
-                                        {recommendedGigs.length > 1 && (
+                                        {userGigs.length > 1 && (
                                             <>
                                                 <CarouselPrevious/>
                                                 <CarouselNext/>

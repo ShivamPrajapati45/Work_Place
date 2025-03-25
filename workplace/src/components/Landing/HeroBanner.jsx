@@ -26,9 +26,6 @@ const HeroBanner = () => {
         {
             name: 'UI/UX'
         },
-        {
-            name: 'Singer'
-        }
     ]
 
 

@@ -53,9 +53,9 @@ return (
             </div>
 
             {/* Contact Button */}
-            <button className="mt-4 w-full bg-black text-white py-2 rounded-md hover:bg-gray-800">
+            {/* <button className="mt-4 w-full bg-black text-white py-2 rounded-md hover:bg-gray-800">
                 Contact Me
-            </button>
+            </button> */}
 
             {/* gigData Details */}
             <div className="border p-4 mt-4 bg-gray-100 rounded-lg">

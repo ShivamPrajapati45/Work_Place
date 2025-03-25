@@ -16,8 +16,8 @@ const page = () => {
     const orderId = router.get('orderId');
     const [err, setErr] = useState('');
     const route = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
     
-    // console.log('gigIdGig', gigId)
 
 
     useEffect(() => {
@@ -60,6 +60,7 @@ const page = () => {
         }),
         onSubmit: async (values, { setSubmitting, setErrors, resetForm }) => {
             try{
+                setIsSubmitting(true);
                 const { fullName,cardNumber,cvv,expirationDate } = values;
                 const upfrontPayment = gig?.price/2;
                 const remainingAmount = gig?.price - upfrontPayment;
@@ -78,12 +79,10 @@ const page = () => {
                 };
 
                 const response = await axios.post(CREATE_ORDER, payload,{ withCredentials: true })
-                if(response.data.success){
-                    toast.success('Payment Done Successfully',{
-                        duration: '3000',
-                        removeDelay: '2000'
-                    });
-                    route.push('/success?payment_status=success')
+                if(response?.data?.success){
+                    toast.success('Payment Done Successfully');
+                    route.push('/success?payment_status=success');
+                    setSubmitting(false);
                     // resetForm();
                 }
 
@@ -93,6 +92,7 @@ const page = () => {
 
             }finally{
                 setSubmitting(false);
+                setIsSubmitting(false);
             }
         }
     })
@@ -102,6 +102,22 @@ const page = () => {
     return (
         <>
             <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+            {isSubmitting && (
+                    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 backdrop-blur-sm">
+                        <div className="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center">
+                        {/* Loader */}
+                        <div className="relative flex items-center justify-center">
+                            <div className="absolute w-20 h-20 border-4 border-blue-500 border-t-transparent border-b-transparent rounded-full animate-spin"></div>
+                            <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent border-b-transparent rounded-full animate-spin-slow"></div>
+                        </div>
+
+                        {/* Text */}
+                        <p className="text-xl font-semibold text-gray-800 mt-5 animate-pulse">
+                            Creating your service...
+                        </p>
+                        </div>
+                    </div>
+            )}
             <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
                 <div className="mx-auto max-w-5xl">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Payment</h2>

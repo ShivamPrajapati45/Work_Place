@@ -180,7 +180,7 @@ const page = () => {
                             Explore services and place your first order today.
                         </p>
                         <Link href="/gigs">
-                            <button className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition">
+                            <button className="bg-primary_button text-white px-6 py-3 rounded-md hover:bg-primary_button_hover transition">
                                 Explore Services
                             </button>
                         </Link>

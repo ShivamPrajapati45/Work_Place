@@ -419,7 +419,7 @@ const page = () => {
                 {/* Main Content */}
                 <div className={` ${ubuntu.className} relative rounded-lg mx-auto my-6 flex flex-col md:flex-row  justify-center max-w-[90vw] h-auto md:h-[75vh] p-4`}>
 
-                        <div className="w-full md:w-[30%] flex flex-col items-center p-4 relative">
+                        <div className="w-full md:w-[30%] flex flex-col items-center border-r-2 shadow-md shadow-purple-300 p-4 relative  justify-center rounded-md">
                             <div className="relative flex flex-col items-start gap-20 w-full">
                                 
                                 {/* Progress Line (Full Gray, Changes to Blue on Step) */}
@@ -427,7 +427,7 @@ const page = () => {
                                 
                                 {/* Dynamic Progress Line */}
                                 <motion.div 
-                                    className="absolute left-[22px] top-[40px] w-[4px] bg-blue-500 rounded-full" 
+                                    className="absolute left-[22px] top-[40px] w-[4px] bg-primary_text rounded-full" 
                                     initial={{ height: 0 }} 
                                     animate={{ height: step === 1 ? "0px" : step === 2 ? "90px" : "240px" }}
                                     transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -439,7 +439,7 @@ const page = () => {
                                         {/* 🔹 Step Circle (With Hover & Animation) */}
                                         <motion.div 
                                             className={`w-12 h-12 flex items-center justify-center rounded-full font-bold text-lg shadow-md transition-all duration-300 
-                                                ${step >= item.id ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-700"}
+                                                ${step >= item.id ? "bg-primary_text text-white" : "bg-gray-300 text-gray-700"}
                                             `}
                                             whileHover={{ scale: 1.1 }}
                                             animate={{ scale: step === item.id ? 1.2 : 1 }}
@@ -451,7 +451,7 @@ const page = () => {
                                         {/* 🔹 Step Title */}
                                         <motion.p 
                                             className={`text-lg font-semibold transition-all duration-300 
-                                                ${step === item.id ? "text-blue-600" : step > item.id ? "text-blue-500" : "text-gray-500"}`}
+                                                ${step === item.id ? "text-primary_text" : step > item.id ? "text-primary_text" : "text-gray-500"}`}
                                             initial={{ opacity: 0, x: -20 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ duration: 0.3, delay: 0.1 }}

@@ -105,28 +105,28 @@ const page = () => {
                         </SelectContent>
                     </Select>
                 </div>
-                <div className='relative flex items-center gap-3 justify-center'>   
+                <div className='relative flex items-center gap-3 justify-center w-full'>   
                     <input 
                         type="text" 
                         value={searchTerm}
                         onChange={handleInputChange}
-                        placeholder='Search..'
-                        className='w-full font-semibold border-[1.5px] rounded-md px-4 py-2.5 outline-slate-900 '
+                        placeholder='Search here..'
+                        className='w-full focus:outline-none focus:ring-1 focus:ring-primary_button focus:border-primary_text  border-[1.5px] rounded-md px-4 py-2.5 transition'
                     />
                     
                     <button 
                         type="button" 
-                        className="text-white flex items-center justify-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        className="text-white flex items-center justify-center bg-primary_button_hover hover:bg-primary_button font-medium rounded-lg text-sm px-5 py-3 me-2 dark:bg-primary_button dark:hover:bg-primary_button_hover focus:outline-none dark:focus:ring-primary_button"
                         onClick={handleBtn}
                     >
                         Search
                     </button>
                     {filteredSuggestions.length > 0 && (
-                        <ul className="absolute z-10 bg-white border left-1 rounded-md mt-44 max-h-44 max-w-52 overflow-auto">
+                        <ul className="absolute z-20 left-0 top-full bg-white border w-full shadow-lg rounded-md mt-2 max-h-44 max-w-52 overflow-auto">
                             {filteredSuggestions.map((gig, index) => (
                             <li
                                 key={gig.id || index}
-                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                className="px-4 py-3 hover:bg-gray-100 border-b transition cursor-pointer text-gray-700 text-sm"
                                 onClick={() => handleSuggestionClick(gig.title)}
                             >
                                 {gig.title}

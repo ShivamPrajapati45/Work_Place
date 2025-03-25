@@ -20,9 +20,9 @@ const Button = ({
             {
                 isLoading ? (
                     <div className='flex gap-1.5 items-center justify-center px-5 py-2'>
-                        <div className='h-2.5 w-2.5 bg-[#212121] rounded-full animate-[bounce_1s_infinite] [animation-delay:-0.1s]'></div>
-                        <div className='h-2.5 w-2.5 bg-[#212121] rounded-full animate-[bounce_1s_infinite] [animation-delay:-0.20s]'></div>
-                        <div className='h-2.5 w-2.5 bg-[#212121] rounded-full animate-[bounce_1s_infinite]'></div>
+                        <div className='h-2.5 w-2.5 bg-[#ffffffb6] rounded-full animate-[bounce_1s_infinite] [animation-delay:-0.1s]'></div>
+                        <div className='h-2.5 w-2.5 bg-[#ffffffb6] rounded-full animate-[bounce_1s_infinite] [animation-delay:-0.20s]'></div>
+                        <div className='h-2.5 w-2.5 bg-[#ffffffb6] rounded-full animate-[bounce_1s_infinite]'></div>
                     </div>
                 ) : (
                     children

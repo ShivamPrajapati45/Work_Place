@@ -7,7 +7,7 @@ const PreviewService = ({data, files, features}) => {
         <Dialog>
             <DialogTrigger asChild>
                 <button 
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none"
+                    className="px-4 py-2 bg-primary_button text-white rounded-lg hover:bg-primary_button_hover focus:outline-none"
                 >
                     Preview
                 </button>

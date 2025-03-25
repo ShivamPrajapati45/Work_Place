@@ -164,9 +164,9 @@ export const generateDescription = async (req, res) => {
 
         if (query) {
             // User ne manually kuch likha hai, toh uska query + existing description bhi bhejna hoga
-            prompt = `Enhance and refine the following gig description based on the user's request. 
+            prompt = `Enhance and refine the following service description based on the user's request. 
 
-                        ### **Gig Information**:
+                        ### **Service Information**:
                         - **Category:** "${category}"  
                         - **Title:** "${title}"  
                         - **Existing Description:** "${previousDescription || 'None'}"  
@@ -175,7 +175,7 @@ export const generateDescription = async (req, res) => {
                         ### **Important Instructions**:
                         1. **Modify and improve the description** to make it more detailed and compelling.
                         2. **Address any specific requests mentioned in the user's query**.
-                        3. **Ensure the description fully explains the gig**, covering all necessary details:
+                        3. **Ensure the description fully explains the service**, covering all necessary details:
                         - What the service includes  
                         - Step-by-step process  
                         - Key benefits for the client  
@@ -183,36 +183,38 @@ export const generateDescription = async (req, res) => {
                         4. **Improve clarity, structure, and professionalism**.
                         5. **Use bullet points where needed** to enhance readability.
                         6. **Make it persuasive and engaging while maintaining professionalism**.
-                        7. **Avoid adding unnecessary headings** like "Gig Title" or "Category" in the response.
+                        7. **Avoid adding unnecessary headings** like "Service Title" or "Category" in the response.
 
                         ### **Output Format**:
-                        Provide **only the improved gig description** (without extra labels or headings). The output should be **a complete and structured gig description** that fully explains the service.
+                        Provide **only the improved service description** (without extra labels or headings). The output should be **a complete and structured service description** that fully explains the service.
                         `;
 
 
         } else if (title && category) {
             // First-time generation case
-            prompt = `Generate a **detailed and professional gig description** for a freelancer's service.
+            prompt = `Generate a **detailed, professional, and persuasive service description** for a freelancer's service.
 
-                        ### **Gig Information**:
+                        ### **Service Information:**
                         - **Category:** "${category}"  
                         - **Title:** "${title}"  
 
-                        ### **Important Instructions**:
-                        1. **Start with an engaging introduction** that instantly captures the client's attention.
-                        2. **Clearly explain what this service offers**, covering all important details.
-                        3. **Break down the process step-by-step** so clients know what to expect.
-                        4. **Highlight the key benefits** of hiring this freelancer for the service.
-                        5. **Explain what makes this service unique** compared to others.
-                        6. **Use bullet points** for clarity where necessary.
-                        7. **Ensure the tone is professional, client-focused, and persuasive**.
-                        8. **Avoid generic statements** – make the description specific to the given title and category.
-                        9. **Keep it structured, engaging, and free from unnecessary fluff**.
+                        ### **Key Instructions:**
+                        1. **Start with a compelling introduction** that instantly grabs the client's attention.  
+                        2. **Clearly outline the services offered**, specifying deliverables, scope, and what clients can expect.  
+                        3. **Explain the step-by-step process**, detailing how the freelancer will execute the service.  
+                        4. **Highlight the benefits** of hiring this freelancer, focusing on value, quality, and efficiency.  
+                        5. **Emphasize what makes this service unique**, mentioning special skills, tools, or methods used.  
+                        6. **Incorporate bullet points or numbered lists** for clarity and easy readability.  
+                        7. **Use persuasive and client-centric language**, making the description feel tailored and trustworthy.  
+                        8. **Avoid vague or generic statements** – keep the content specific to the service.  
+                        9. **Maintain a professional yet engaging tone**, making the description both informative and appealing.  
+                        10. **Format the description properly**, with short paragraphs and clear separation of points.  
 
-                        ### **Output Format**:
-                        Provide **only the gig description** (without any extra headings like "Gig Title" or "Category"). The output should be **a fully detailed and well-structured gig description** that clearly explains everything a client needs to know.
+                        ### **Output Format:**
+                        - Provide **only the service description** (no extra headings like "Category" or "Title").  
+                        - The output should be **clear, structured, and detailed**, with bullet points or paragraphs for readability.  
+                        - **No unnecessary fluff** – make it concise, specific, and impactful.
                         `;
-
         }
 
         // AI Response
@@ -250,9 +252,9 @@ export const generateFeatures = async (req, res) => {
             return res.status(400).json({ msg: 'Gig description is required', success: false });
         }
 
-        const prompt = `Based on the following gig description, extract **3-4 key features** that highlight the most important aspects of the service.
+        const prompt = `Based on the following service description, extract **3-4 key features** that highlight the most important aspects of the service.
 
-            ### **Gig Description**:
+            ### **Service Description**:
             "${description}"
 
             ### **Instructions**:

@@ -1,6 +1,7 @@
 import prisma from '../prisma.js';
 import {existsSync, renameSync, unlinkSync} from 'fs'
 import { uploadMultipleToCloudinary } from '../utils/cloudinary.js';
+import { io } from '../socket/socket.js';
 
 export const addGig = async (req,res) => {
     try {
@@ -24,9 +25,7 @@ export const addGig = async (req,res) => {
                     category,
                     features,
                     price,
-                    revisions,
                     time,
-                    shortDesc, 
                 } = req.query;
 
                 await prisma.gigs.create({
@@ -37,8 +36,8 @@ export const addGig = async (req,res) => {
                         category,
                         features,
                         price: parseFloat(price),
-                        shortDesc,
-                        revisions: parseInt(revisions),
+                        shortDesc: 'Not Available',
+                        revisions: 0,
                         images: fileNames,
                         createdBy: {connect: {id: req.user.userId}}
                         
@@ -165,9 +164,8 @@ export const editGig = async (req, res) => {
                 category,
                 features,
                 price,
-                revisions,
                 time,
-                shortDesc,
+                
             } = req.query;
 
 
@@ -185,14 +183,14 @@ export const editGig = async (req, res) => {
                     category,
                     features,
                     price: parseFloat(price),
-                    shortDesc,
-                    revisions: parseInt(revisions),
+                    shortDesc: 'Not Available',
+                    revisions: 0,
                     images: fileNames,
                     createdBy: { connect: { id: req.user.userId } },
                 },
             });
 
-            oidData?.images?.forEach((image) => {
+            oldGig?.images?.forEach((image) => {
                 if(existsSync(`uploads/${image}`)){
                     unlinkSync(`uploads/${image}`);
                 } 
@@ -207,7 +205,7 @@ export const editGig = async (req, res) => {
         // If any required field is missing, return an error
         return res.status(400).json({
             msg: 'All fields are required',
-            success: false,
+            success: true,
         });
     } catch (error) {
         console.log('err', error);
@@ -373,6 +371,10 @@ export const addReview = async (req, res, _) => {
                             reviewer: true
                         }
                     });
+
+                    // socket emit to the seller
+                    io.emit('newReview', newReview);
+
                     return res.status(201).json({
                         newReview,
                         success: true
@@ -384,7 +386,7 @@ export const addReview = async (req, res, _) => {
                 });
             }
             return res.status(400).json({
-                msg: 'You need to purchase the gig to give a rating',
+                msg: 'You need to purchase the service to give a rating',
                 success: false
             });
         };
@@ -549,11 +551,11 @@ export const searchRecommendedGigs = async (req, res) => {
                                 }
                             ]
                         },
-                        // {
-                        //     id: {
-                        //         not: parseInt(gigId)
-                        //     }
-                        // }
+                        {
+                            id: {
+                                not: parseInt(gigId)
+                            }
+                        }
                     ]
                 },
                 include: {

@@ -82,7 +82,7 @@ const ThirdStep = ({ data,state,handlers }) => {
             {/* Location Input */}
             <div>
                 <label htmlFor="location" className="block text-base font-semibold text-gray-700 mb-2">
-                    Location*
+                    Location <span className='text-red-400'>*</span>
                 </label>
                 <input
                     type="text"
@@ -97,7 +97,7 @@ const ThirdStep = ({ data,state,handlers }) => {
             {/* Contact Inputs (Email & Phone) */}
             <div>
                 <label htmlFor="email" className="block text-base font-semibold text-gray-700 mb-2">
-                    Email Address*
+                    Email Address <span className='text-red-400'>*</span>
                 </label>
                 <input
                     type="email"
@@ -113,7 +113,7 @@ const ThirdStep = ({ data,state,handlers }) => {
             <div className="col-span-2 flex justify-end gap-10 mt-5">
                 <Preview data={state.previewData}/>
                 <button
-                    className="px-6 py-2 text-lg font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none transition-all"
+                    className="px-6 py-2 font-semibold bg-primary_button text-white rounded-lg hover:bg-primary_button_hover focus:outline-none transition-all"
                     onClick={handlers.setProfile}
                     type="button"
                 >

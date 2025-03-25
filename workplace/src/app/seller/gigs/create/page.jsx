@@ -18,7 +18,7 @@ const page = () => {
     const router = useRouter();
     const [files, setFiles] = useState([]);
     const [features, setFeatures] = useState([]);
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(0);
     const [isValid, setIsValid] = useState(false);
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -38,10 +38,8 @@ const page = () => {
         category: '',
         description: '',
         time: 0,
-        revisions: 0,
         feature: '',
         price: 0,
-        shortDesc: ''
     });
 
     const handleCopy = (text) => {
@@ -68,20 +66,11 @@ const page = () => {
         if (step === 0) {
             if (!currentData.title || !currentData.category) isStepValid = false;
         } else if (step === 1) {
-            if (
-                !currentData.description ||
-                currentData.time <= 0 ||
-                currentData.revisions <= 0
-            )
-                isStepValid = false;
+            if (!currentData.description || currentData.time <= 0 || currentData.price <= 0) isStepValid = false;
         } else if (step === 2) {
             if (features.length === 0)
                 isStepValid = false;
-        } else if(step === 3){
-            if(!currentData.shortDesc || currentData.price < 0){
-                isStepValid = false;
-            }
-        }
+        } 
         setIsValid(isStepValid); // Update button state
     };
 
@@ -130,9 +119,8 @@ const page = () => {
     const addGig = async () => {
         try {
             setIsSubmitting(true);
-            // console.log(isSubmitting)
-            const { title, category, description, time, revisions, price, shortDesc } = data;
-            if(title && category && description && time && revisions && price && shortDesc){
+            const { title, category, description, time, price } = data;
+            if(title && category && description && time && price){
                 const formData = new FormData();
                 files.forEach((file) => formData.append('images', file));
                 const gigData = {
@@ -140,9 +128,7 @@ const page = () => {
                     category,
                     description,
                     time,
-                    revisions,
                     price,
-                    shortDesc,
                     features
                 };
 
@@ -155,9 +141,9 @@ const page = () => {
                 });
 
                 if(response?.data?.success){
-                    setIsSubmitting(false);
                     toast.success('Service Created Successfully')
                     router.push('/seller/gigs');
+                    setIsSubmitting(false);
                 }
             }
             
@@ -277,29 +263,28 @@ const page = () => {
 
                         {/* Text */}
                         <p className="text-xl font-semibold text-gray-800 mt-5 animate-pulse">
-                            Saving your service...
+                            Creating your service...
                         </p>
                         </div>
                     </div>
-                )}
+            )}
 
             <div className=''>
                 {/* content part */}
                 <div className='flex items-center justify-center flex-col gap-3 mt-2'>
                     <h1 className='text-lg font-bold uppercase text-center'>Create your new Service</h1>
                     <h3 className="text-lg mt-3  text-[#212121]">
-                        Step <strong className='text-blue-600'>{step + 1}</strong> of 4:&nbsp;
+                        Step <strong className='text-blue-600'>{step + 1}</strong> of 3:&nbsp;
                         <span className=''>
                             {step === 0 && "Give the Title and Category of Your Service"}
-                            {step === 1 && "Describe Your Service, Set Time, and Define Revisions"}
+                            {step === 1 && "Describe Your Service, Set Delivery Time, and Define Price for service"}
                             {step === 2 && "Add Features and Upload Service Images"}
-                            {step === 3 && "Set the Price and Provide a Short Description"}
                         </span>
                     </h3>
                     <div className="relative w-full h-1.5 mt-3  bg-gray-300 rounded-full overflow-hidden mb-3">
                         <div 
                             className="absolute top-0 left-0 h-full rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-300" 
-                            style={{ width: `${(step / 3) * 100}%` }}
+                            style={{ width: `${(step / 2) * 100}%` }}
                             ></div>
                     </div>
                 </div>
@@ -444,7 +429,7 @@ const page = () => {
                                     name="description" 
                                     id="description"
                                     placeholder='Write description'
-                                    className='block mt-2 text-base w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-400'
+                                    className='block mt-2 text-sm w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-400'
                                     value={data.description}
                                     onChange={handleChange}
                                 />
@@ -536,7 +521,7 @@ const page = () => {
                                 onClick={prevStep}
                                 onMouseEnter={() => setPrevBtnHover(true)}
                                 onMouseLeave={() => setPrevBtnHover(false)}
-                                className="bg-blue-500 text-white flex items-center justify-center gap-1.5 text-lg font-semibold px-5 py-1 rounded-lg"
+                                className="bg-primary_button text-white flex items-center justify-center gap-1.5 text-lg font-semibold px-5 py-1 rounded-lg"
                             >
                                 <FaAngleLeft size={22} className={`${prevBtnHover ? 'translate-x-[-5px]' : ''} transition-all duration-300`}/>
                                 Back
@@ -548,7 +533,7 @@ const page = () => {
                                 onclick={nextStep}
                                 isLoading={isLoading}
                                 isDisabled={!isValid || isLoading}
-                                className={`${isValid ? 'bg-blue-500' : 'bg-gray-300 text-slate-500 cursor-not-allowed'} text-white`}
+                                className={`${isValid ? 'bg-primary_button' : 'bg-gray-300 text-slate-500 cursor-not-allowed'} text-white`}
                                 setBtnHover={setNextBtnHover}
                                 
                             >
@@ -561,8 +546,7 @@ const page = () => {
                             <div className='flex w-full justify-between'>
                                 <button
                                     onClick={addGig}
-                                    className='bg-blue-500 text-white flex items-center justify-center gap-1.5 text-lg font-semibold px-5 py-2 rounded-lg'
-                                    disabled={isLoading}
+                                    className='bg-primary_button text-white flex items-center justify-center gap-1.5 text-lg font-semibold px-5 py-2 rounded-lg'
                                     >
                                     SUBMIT
                                 </button>

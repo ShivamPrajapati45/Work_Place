@@ -73,7 +73,7 @@ const SecondStep = ({ data,handlers,state,handleGenerateBio }) => {
                     <NextBtn
                         state={state}
                         handlers={handlers}
-                        className={'mt-4 px-6 w-auto py-1 text-lg font-semibold text-white bg-blue-600 rounded-md flex items-center justify-center gap-4 disabled:opacity-50'}
+                        className={'mt-4 px-6 w-auto py-1 text-lg font-semibold text-white bg-primary_button rounded-md flex items-center justify-center gap-4 disabled:opacity-50'}
                     />
                 </div>
             </div>

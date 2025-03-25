@@ -1,10 +1,11 @@
 'use client'
-import { categories } from '@/utils/categories';
+import { categories,serviceCategories } from '@/utils/categories';
 import React, { useEffect, useState } from 'react'
 import ImageUpload from '@/components/ImageUpload';
 import axios from 'axios';
 import { ADD_GIG_ROUTE, EDIT_GIG, GET_GIG_DATA, HOST } from '@/utils/constant';
 import { useRouter,useParams } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 
 const page = () => {
@@ -12,6 +13,7 @@ const page = () => {
     const { id } = useParams(); // or you can use const params = useParams(); and then use params.id
     const [files, setFiles] = useState([]);
     const [features, setFeatures] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [data, setData] = useState({
         title: '',
         category: '',
@@ -27,7 +29,7 @@ const page = () => {
         const fetchData = async () => {
             try {
                 const {data: {gig}} = await axios.get(`${GET_GIG_DATA}/${id}`,{withCredentials: true})
-                setData({...gig, time: gig?.revisions});
+                setData({...gig, time: gig?.deliveryTime});
                 setFeatures(gig?.features);
 
                 // gig.images.forEach((image) => {
@@ -87,8 +89,9 @@ const page = () => {
 
     const editGig = async () => {
         try {
-            const { title, category, description, time, revisions, price, shortDesc } = data;
-            if(title && category && description && time > 0 && revisions > 0 && price > 0 && shortDesc){
+            setIsSubmitting(true);
+            const { title, category, description, time, price } = data;
+            if(title && category && description && time > 0  && price > 0){
                 const formData = new FormData();
                 files.forEach((file) => {
                     formData.append('images', file);
@@ -98,10 +101,8 @@ const page = () => {
                     category,
                     description,
                     time,
-                    revisions,
                     price,
-                    shortDesc,
-                    features,
+                    features
                 };
 
                 const response = await axios.put(`${EDIT_GIG}/${id}`,formData,{
@@ -113,12 +114,17 @@ const page = () => {
                 });
 
                 if(response?.data?.success){
+                    console.log('response',response);
+                    toast.success('Service updated successfully');
                     router.push('/seller/gigs');
+                    setIsSubmitting(false);
                 }
             }
             
         } catch (error) {
             console.log('err', error);
+        }finally{
+            setIsSubmitting(false);
         }
     }
 
@@ -127,12 +133,29 @@ const page = () => {
 
     return (
         <div className='min-h-[80vh] my-10 mt-0 px-32'>
-            <h1 className='text-lg font-bold'>Edit or Update Your Gig</h1>
+
+            {isSubmitting && (
+                    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 backdrop-blur-sm">
+                        <div className="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center">
+                        {/* Loader */}
+                        <div className="relative flex items-center justify-center">
+                            <div className="absolute w-20 h-20 border-4 border-blue-500 border-t-transparent border-b-transparent rounded-full animate-spin"></div>
+                            <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent border-b-transparent rounded-full animate-spin-slow"></div>
+                        </div>
+
+                        {/* Text */}
+                        <p className="text-xl font-semibold text-gray-800 mt-5 animate-pulse">
+                            Updating your service...
+                        </p>
+                        </div>
+                    </div>
+            )}
+            <h1 className='text-lg font-bold'>Edit or Update Your Service</h1>
             <div className='flex flex-col gap-4 mt-10'>
                 <div className='grid grid-cols-2 gap-10'>
                     <div>
                         <label htmlFor="title" className={labelClassName}>
-                            Gig title
+                            Service title
                         </label>
                         <input 
                             type="text" 
@@ -147,16 +170,16 @@ const page = () => {
                     </div>
                     <div>
                         <label htmlFor="category" className={labelClassName}>
-                            select a category
+                            Select a category
                         </label>
                         <select 
                             name="category" 
                             id="category"
-                            className='text-gray-400 text-sm focus:ring-blue-400 focus:border-blue-400 block p-4'
+                            className='text-gray-400 rounded-lg border-2 cursor-pointer text-sm focus:ring-blue-400 focus:border-blue-400 block p-4'
                             onChange={handleChange}
                             value={data.category}
                         >
-                            {categories.map(({ name }) => (
+                            {serviceCategories.map(({ name }) => (
                                 <option key={name} value={name}>{name}</option>
                             ))}
                         </select>
@@ -164,13 +187,13 @@ const page = () => {
                 </div>
                 <div> 
                     <label htmlFor="description" className={labelClassName}>
-                        Gig Description
+                        Service Description
                     </label>
                     <textarea 
                         name="description" 
                         id="description"
                         placeholder='write a short description'
-                        className='block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-400'
+                        className='block p-2 w-full h-48 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-400'
                         value={data.description}
                         onChange={handleChange}
                     ></textarea>
@@ -178,7 +201,7 @@ const page = () => {
                 <div className='grid grid-cols-2 gap-10'>
                     <div>
                         <label htmlFor="delivery" className={labelClassName}>
-                            Gig Delivery
+                            Service Delivery Time (in days)
                         </label>
                         <input 
                             type="number" 
@@ -192,25 +215,25 @@ const page = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="revision" className={labelClassName}>
-                            Gig Revision
+                        <label htmlFor="" className={labelClassName}>
+                            Service Price ($)
                         </label>
                         <input 
                             type="number" 
-                            id='revision'
-                            name='revisions'
-                            value={data.revisions}
-                            onChange={handleChange}
+                            name='price'
                             className={inputClassName}
+                            value={data.price}
+                            onChange={handleChange}
+                            placeholder='Enter price'
+                            id='price'
                             required
-                            placeholder='max number of revisions'
                         />
                     </div>
                 </div>
                 <div className='grid grid-cols-2 gap-10'>
                     <div>
                         <label htmlFor="features" className={labelClassName}>
-                            Gig Features
+                            Service Features
                         </label>
                         <div className='flex gap-3 items-center mb-5'>
                             <input 
@@ -231,11 +254,15 @@ const page = () => {
                                 ADD
                             </button>
                             </div>
-                                <ul className='flex '>
+                            {features?.length > 0 && (
+                                <ul 
+                                    className='flex p-2 flex-wrap rounded-lg overflow-auto'
+                                    style={{ maxHeight: '60px', maxWidth: '400px', border: '1px solid #e5e7eb', backgroundColor: '#f9fafb' }}
+                                >
                                     {features.map((feature, index) => (
                                         <li
                                         key={index + feature}
-                                        className='flex gap-2 items-center py-2 px-5 mb-2 text-sm font-medium'
+                                        className='flex gap-1 bg-blue-100 m-1 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300'
                                         >
                                             <span>{feature}</span>
                                             <span
@@ -247,10 +274,12 @@ const page = () => {
                                         </li>
                                     ))}
                                 </ul>
+                            )}
+
                     </div>
                     <div>
                         <label htmlFor="image" className={labelClassName}>
-                            Gig Images
+                            Service Images
                         </label>
                         <div>
                             <ImageUpload 
@@ -260,41 +289,26 @@ const page = () => {
                         </div>
                     </div>
                 </div>
-                <div className='grid grid-cols-2 gap-10'>
+                {/* <div className='grid grid-cols-2 gap-10'>
                     <div>
-                        <label htmlFor="shortDesc" className={labelClassName}>
-                            Short Description
+                        <label htmlFor="" className={labelClassName}>
+                            Gig Price ($)
                         </label>
                         <input 
-                            type="text" 
-                            name='shortDesc'
+                            type="number" 
+                            name='price'
                             className={inputClassName}
-                            value={data.shortDesc}
+                            value={data.price}
                             onChange={handleChange}
-                            placeholder='Enter short description'
-                            id='shortDesc'
+                            placeholder='Enter price'
+                            id='price'
                             required
-                            />
+                        />
                     </div>
-                <div>
-                    <label htmlFor="" className={labelClassName}>
-                        Gig Price ($)
-                    </label>
-                    <input 
-                        type="number" 
-                        name='price'
-                        className={inputClassName}
-                        value={data.price}
-                        onChange={handleChange}
-                        placeholder='Enter price'
-                        id='price'
-                        required
-                    />
-                </div>
-            </div>
+                </div> */}
             <div>
                 <button 
-                    className='border text-lg font-semibold px-5 py-3 text-white bg-blue-500 rounded-lg hover:bg-blue-600'
+                    className='border text-lg font-semibold px-5 py-3 text-white bg-primary_button rounded-lg hover:bg-primary_button_hover'
                     onClick={editGig}
                     type='button'
                 >
