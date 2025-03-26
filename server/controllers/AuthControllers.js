@@ -5,7 +5,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { oauth2Client } from "../utils/googleConfig.js";
 import bcrypt from 'bcrypt'
 import axios from 'axios'
-import prisma from "../prisma.js";
+import prisma from "../connection.js";
 
 // Generating Bcrypt or Hash password
 const generateHashPassword = async (password) => {

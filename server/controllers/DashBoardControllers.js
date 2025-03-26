@@ -1,4 +1,5 @@
-import prisma from "../prisma.js";
+import prisma from '../connection.js';
+
 
 export const getSellerData = async (req, res,_) => {
     try {

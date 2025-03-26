@@ -1,7 +1,8 @@
-import prisma from '../prisma.js';
+import prisma from '../connection.js';
 import {existsSync, renameSync, unlinkSync} from 'fs'
 import { uploadMultipleToCloudinary } from '../utils/cloudinary.js';
 import { io } from '../socket/socket.js';
+
 
 export const addGig = async (req,res) => {
     try {

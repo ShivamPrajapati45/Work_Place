@@ -9,7 +9,7 @@ import messageRoutes from './routes/MessagesRoute.js'
 import dashBoardRoutes from './routes/DashBoardRoutes.js';
 import aiRoutes from './routes/OpenAI.js';
 import {app, server} from './socket/socket.js'
-import prisma from './prisma.js';
+import prisma from './connection.js';
 
 dotenv.config();
 const port = process.env.PORT || 4009

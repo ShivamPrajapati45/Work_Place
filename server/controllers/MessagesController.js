@@ -1,4 +1,4 @@
-import prisma from '../prisma.js';
+import prisma from '../connection.js';
 import { getReceiverSocketId, io } from '../socket/socket.js';
 
 export const getUnreadMessages = async (req, res) => {
