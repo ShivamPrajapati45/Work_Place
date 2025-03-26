@@ -5,9 +5,11 @@ import Image from 'next/image'
 import Aos from 'aos'
 import { reducerCases } from '@/context/constants'
 import { useStateProvider } from '@/context/StateContext'
+import { useRouter } from 'next/navigation'
 
 const Business = () => {
     const [{ showLogInModel,showSignUpModel }, dispatch] = useStateProvider();
+    const router = useRouter();
     
     useEffect(() => {
         Aos.init({ duration: 2000 });
@@ -21,10 +23,11 @@ const Business = () => {
                 type: reducerCases.TOGGLE_SIGNUP_MODEL,
                 showSignUpModel: true
             });
+            router.push('/login');
         }
     
 
-  return (
+return (
     <div className='bg-black px-20 py-16 flex gap-10'>
         <div className='text-white flex flex-col gap-6 justify-center items-center'>
             <div className='flex gap-2' data-aos='fade-right'>
@@ -57,7 +60,6 @@ const Business = () => {
                 className='text-lg font-medium px-7 py-3 hover:bg-[#ad52c4] transition-all bg-[#963fac] text-white rounded-md'
                 type='button'
                 onClick={handleClick}
-
             >
                 JOIN WORKPLACE
             </button>

@@ -94,7 +94,9 @@ const AllGigsCard = ({ gig }) => {
                 >
                         <div className="flex justify-between items-start mb-1">
                             <h3 className="text-sm truncate">{gig?.title}</h3>
-                            <span className="font-bold text-base">${gig?.price}</span>
+                            <span className="font-bold text-base">₹{gig?.price.toLocaleString()}</span>
+                            {/* <span className="font-bold text-base">₹{gig?.price}</span> */}
+
                         </div>
                         <div className="flex flex-wrap gap-1 mb-2">
                             {gig?.features.slice(0, 1).map((feature, index) => (

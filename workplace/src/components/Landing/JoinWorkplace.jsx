@@ -2,9 +2,11 @@ import React, { useEffect } from 'react'
 import Aos from 'aos';
 import { useStateProvider } from '@/context/StateContext';
 import { reducerCases } from '@/context/constants';
+import { useRouter } from 'next/navigation';
 
 const JoinWorkplace = () => {
     const [{ showLogInModel,showSignUpModel }, dispatch] = useStateProvider();
+    const router = useRouter();
     useEffect(() => {
         Aos.init({ duration: 1200, once:false }); // Initialize AOS
     }, []);
@@ -18,6 +20,7 @@ const JoinWorkplace = () => {
             type: reducerCases.TOGGLE_SIGNUP_MODEL,
             showSignUpModel: true
         });
+        router.push('/login');
     }
 
     return (

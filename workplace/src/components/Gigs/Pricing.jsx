@@ -22,7 +22,8 @@ const Pricing = () => {
                                 {gigData?.shortDesc}
                             </h4>
                             <h6 className='font-bold text-lg text-green-600'>
-                                ${gigData?.price}
+                                {/* ${gigData?.price} */}
+                                ₹{gigData?.price.toLocaleString()}
                             </h6>
                         </div>
 

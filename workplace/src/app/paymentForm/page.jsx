@@ -210,23 +210,24 @@ const page = () => {
                             <div className="space-y-2">
                                 <dl className="flex items-center justify-between gap-4">
                                     <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Original price</dt>
-                                    <dd className="text-base font-medium text-gray-900 dark:text-white">${gig?.price + 2}</dd>
+                                    <dd className="text-base font-medium text-gray-900 dark:text-white">₹{gig?.price?.toLocaleString()}</dd>
+                                    {/* ₹{gig?.price.toLocaleString()} */}
                                 </dl>
 
-                                <dl className="flex items-center justify-between gap-4">
+                                {/* <dl className="flex items-center justify-between gap-4">
                                     <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Savings</dt>
-                                    <dd className="text-base font-medium text-green-500">-$2</dd>
-                                </dl>
+                                    <dd className="text-base font-medium text-green-500"></dd>
+                                </dl> */}
 
                                 <dl className="flex items-center justify-between gap-4">
                                     <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Upfront Payment</dt>
-                                    <dd className="text-base font-medium text-gray-900 dark:text-white">${gig?.price/2}</dd>
+                                    <dd className="text-base font-medium text-gray-900 dark:text-white">₹{gig?.price/2}</dd>
                                 </dl>
                             </div>
 
-                            <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
+                            <dl className="flex items-center justify-between gap-4 border-t-[2px] border-gray-200 pt-2 dark:border-gray-700">
                                 <dt className="text-base font-bold text-gray-900 dark:text-white">Total</dt>
-                                <dd className="text-base font-bold text-gray-900 dark:text-white">${gig?.price}</dd>
+                                <dd className="text-base font-bold text-gray-900 dark:text-white">₹{gig?.price}</dd>
                             </dl>
                         </div>
 
