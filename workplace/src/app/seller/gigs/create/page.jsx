@@ -392,7 +392,7 @@ const page = () => {
                                 </div>
                                 <div>
                                     <label htmlFor="price" className={labelClassName}>
-                                        Service Price ($)
+                                        Service Price (₹)
                                     </label>
                                     <input 
                                         type="number" 

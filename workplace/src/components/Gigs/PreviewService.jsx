@@ -57,11 +57,9 @@ const PreviewService = ({data, files, features}) => {
                     {/* Price & Revisions */}
                     <div className="flex justify-between items-center bg-blue-50 p-4 rounded-lg shadow-sm">
                         <p className="text-lg font-semibold text-blue-600 flex items-center gap-2">
-                            💰 <span className="text-gray-800">₹${data.price}</span>
+                            💰 <span className="text-gray-800">₹{data.price}</span>
                         </p>
-                        <p className="text-gray-700 flex items-center gap-2">
-                            🔄 <span className="text-gray-800">{data.revisions} Revisions</span>
-                        </p>
+                        
                     </div>
 
                     {/* Images Preview */}
